@@ -62,11 +62,21 @@ public class Planet {
 					k++;
 				}
 			}
-			if(k<3){ //must be at least 3 elements
-				
+			int j = 0;
+			if(k<3){ //must be at least 3 elements, if not, add the first unused elements until 3 is reaches.
+				for(int i=0; i<e.length; i++){
+					if(included[j]!=e[i]){
+						included[k] = e[i];
+						k++;
+					}
+					else{
+						j++;
+					}
+				}
 			}
+			
 			this.e = new Element[k]; //initialize the final array
-			int j=0;
+			j = 0;
 			Element temp;
 			for(int i=0; i<k; i++){
 				if(Math.random()<.9){ //give each element a chance to swap with the elements in front of it
@@ -78,8 +88,12 @@ public class Planet {
 				this.e[i] = included[i]; //either way copy it over
 			}
 			
-			//now, generate the double values corresponding with the elements
-			
+			//now, generate the double values corresponding with the elements. The first one is always >33% (to ensure that it truly is the most prevalent).
+			this.pres = new Double[this.e.length];
+			double percentused = 0;
+			pres[0] = Math.random()*42+34;
+			percentused+=pres[0];
+			//Where Jacob stopped as of 2/8/2013 7:23 PM
 			
 		}
 		

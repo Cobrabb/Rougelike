@@ -14,7 +14,7 @@ public class Test {
 			e[i] = new Element(L);
 		}
 		
-		Creature cr = new Creature(e, L);
-		System.out.println(cr.toString());
+		Planet pl = new Planet(e);
+		System.out.println(pl.toString());
 	}
 }

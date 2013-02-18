@@ -6,9 +6,15 @@ public class Planet {
 		private Language L; //the language spoken on the planet
 		private String name;
 		private Element land; //the element that makes up the majority of ground, must be either e[0], e[1], or e[2]
+		private int landNum; //the element number in the array
 		private Element pools; //the element that makes up the majority of the rest of the surface, must be less dense than land and either e[0], e[1], or e[2]
+		private int poolsNum; //same for pools
 		private Element atmosphere; //the most prevalent element in the atmosphere, must be the least dense element in e. 
+		private int atmosNum; //same for atmosphere
 		private Creature[] residents; //the native creatures on the planet
+		
+		final int numTypes = 3; //the number of types of planets. Currently 1 = normal, 2 = aquatic, and 3 = gaseous. This is based on the most common element in the first 3.
+		int type;
 		
 		public int getElementNum(){
 			return e.length;
@@ -54,6 +60,18 @@ public class Planet {
 			return residents[i];
 		}
 		
+		public int getAtmosNum(){
+			return atmosNum;
+		}
+		
+		public int getLandNum(){
+			return landNum;
+		}
+		
+		public int getPoolsNum(){
+			return poolsNum;
+		}
+		
 		public Planet(){//completely randomly generated, not sure if necessary.
 		}
 		
@@ -85,7 +103,7 @@ public class Planet {
 			this.e = new Element[k]; //initialize the final array
 			j = 0;
 			Element temp;
-			this.atmosphere = e[0]; 
+			this.atmosphere = included[0]; 
 			for(int i=0; i<k; i++){
 				if(Math.random()<.9){ //give each element a chance to swap with the elements in front of it
 					j = (int)(Math.random()*(k-i))+i; //random number between i and k
@@ -112,29 +130,30 @@ public class Planet {
 			
 			//get everything in its correct order
 			pres[pres.length-1] = percentremains;
-			if(percentremains>pres[pres.length-2]){
-				int i=pres.length-3; 
-				while(i>1&&percentremains>pres[i]) i--;
-				for(j=i+1; j<pres.length-1; j++){
-					percentremains=pres[j];
-					pres[j]=pres[pres.length-1];
-					pres[pres.length-1]=percentremains;
-				}
-			}
+			//need to insert some sorting here.
 			
 			//generate the land and pools
 			j=0;
+			type = 0; //default case, normal planet
+			atmosNum = 3;
 			if(atmosphere == this.e[0]){
+				atmosNum = 0;
 				j=1;
+				type = 3; //atmosphere is most abundant, gas planet
 			}
 			
 			if(this.e[j].compareTo(this.e[j+1])>=0){
+				landNum = j;
+				poolsNum = j+1;
 				this.land = this.e[j];
 				this.pools = this.e[j+1];
 			}
 			else{
+				landNum = j+1;
+				poolsNum = j;
 				this.land = this.e[j+1];
 				this.pools = this.e[j];
+				if(type!=3) type = 2; //pools are most abundant, aquatic planet
 			}
 			
 			//generate creatures
@@ -155,11 +174,7 @@ public class Planet {
 				out+=", ";
 				count+=pres[i];
 			}
-			out+="and the total abundance is "+count+".";
-			for(int i=0; i<residents.length; i++){
-				out+=residents[i].toString();
-				out+=" ";
-			}
+			out+="and the total abundance is "+count+". ";
 			out+="The surface is "+land.getName()+", the pools are "+pools.getName()+", and the atmosphere is made of "+atmosphere.getName()+".";
 			return out;
 		}

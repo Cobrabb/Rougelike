@@ -1,3 +1,4 @@
+package roguelike.orig;
 import java.util.*;
 import java.io.*;
 

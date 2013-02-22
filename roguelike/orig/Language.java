@@ -1,3 +1,4 @@
+package roguelike.orig;
 import java.lang.Math;
 
 public class Language {

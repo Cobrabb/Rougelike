@@ -1,9 +1,11 @@
+package roguelike.orig;
 import java.lang.Math;
 
 public class Element {
 
 	private String name; //name of the element
 	private double density; //density
+	
 	public String getName(){
 		return this.name;
 	}

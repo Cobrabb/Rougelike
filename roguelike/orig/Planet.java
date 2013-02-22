@@ -1,3 +1,4 @@
+package roguelike.orig;
 
 public class Planet {
 
@@ -16,7 +17,7 @@ public class Planet {
 		final int numTypes = 3; //the number of types of planets. Currently 1 = normal, 2 = aquatic, and 3 = gaseous. This is based on the most common element in the first 3.
 		int type;
 		
-		public int getElementNum(){
+		public int getElementCount(){
 			return e.length;
 		}
 		

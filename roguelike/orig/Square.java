@@ -1,3 +1,4 @@
+package roguelike.orig;
 
 public class Square {
 

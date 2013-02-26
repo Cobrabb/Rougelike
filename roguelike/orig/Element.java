@@ -5,6 +5,9 @@ public class Element {
 
 	private String name; //name of the element
 	private double density; //density
+	private double granularity; //or viscosity
+	private double mall; //how easy it gets smashed, I'm not going to spell the actual word
+	static enum basephase {GAS, LIQUID, SOLID};
 	
 	public String getName(){
 		return this.name;
@@ -12,6 +15,14 @@ public class Element {
 	
 	public double getDensity(){
 		return this.density;
+	}
+	
+	public double getMall(){
+		return this.mall;
+	}
+	
+	public double getGranularity(){
+		return this.granularity;
 	}
 	
 	public Element(){ //completely random constructor

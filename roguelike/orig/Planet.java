@@ -1,9 +1,11 @@
 package roguelike.orig;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Planet {
 
-		private Element[] e; //the elements present on the planet
-		private Double[] pres; //the %presence of the elements, 1-1 correspondence with e, most prevalent first
+		private ArrayList<ElementPair> e; //the elements present on the planet
 		private Language L; //the language spoken on the planet
 		private String name;
 		private Element land; //the element that makes up the majority of ground, must be either e[0], e[1], or e[2]
@@ -13,12 +15,12 @@ public class Planet {
 		private Element atmosphere; //the most prevalent element in the atmosphere, must be the least dense element in e. 
 		private int atmosNum; //same for atmosphere
 		private Creature[] residents; //the native creatures on the planet
-		
-		final int numTypes = 3; //the number of types of planets. Currently 1 = normal, 2 = aquatic, and 3 = gaseous. This is based on the most common element in the first 3.
-		int type;
+
+		private types type;
+		static enum types {GAS, AQUATIC, NORMAL};
 		
 		public int getElementCount(){
-			return e.length;
+			return e.size();
 		}
 		
 		public String getName(){
@@ -27,14 +29,14 @@ public class Planet {
 		
 		public Element getElement(int i){
 			if(i<0) return null;
-			if(i>=e.length) return null;
-			else return e[i];
+			if(i>=e.size()) return null;
+			else return e.get(i).first;
 		}
 		
 		public double getElementPres(int i){
 			if(i<0) return -1;
-			if(i>=pres.length) return -1;
-			else return pres[i];
+			if(i>=e.size()) return -1;
+			else return e.get(i).second;
 		}
 		
 		public Language getLanguage(){
@@ -76,96 +78,66 @@ public class Planet {
 		public Planet(){//completely randomly generated, not sure if necessary.
 		}
 		
-		public Planet(Element[] e){ //given a list of elements in the universe, generate a planet
+		public Planet(Element[] el){ //given a list of elements in the universe, generate a planet
 			this.L = new Language();
 			this.name = L.generate();
 			
-			Element[] included = new Element[e.length];
+			Element[] included = new Element[el.length];
 			int k = 0;
-			for(int i=0; i<e.length; i++){ //first, randomly choose some of the elements to be included in this planet
-				if(Math.random()<.4){
-					included[k] = e[i];
-					k++;
-				}
-			}
-			int j = 0;
-			if(k<3){ //must be at least 3 elements, if not, add the first unused elements until 3 is reaches.
-				for(int i=0; i<e.length; i++){
-					if(included[j]!=e[i]){
-						included[k] = e[i];
+			while(k<3){
+				for(int i=0; i<el.length; i++){ //first, randomly choose some of the elements to be included in this planet
+					if(Math.random()<.4){
+						included[k] = el[i];
 						k++;
 					}
-					else{
-						j++;
-					}
 				}
 			}
-			
-			this.e = new Element[k]; //initialize the final array
-			j = 0;
-			Element temp;
-			this.atmosphere = included[0]; 
-			for(int i=0; i<k; i++){
-				if(Math.random()<.9){ //give each element a chance to swap with the elements in front of it
-					j = (int)(Math.random()*(k-i))+i; //random number between i and k
-					temp = included[i];
-					included[i] = included[j];
-					included[j] = temp;
-				}
-				this.e[i] = included[i]; //either way copy it over
-				if(this.e[i].getDensity()<atmosphere.getDensity()){
-					atmosphere = this.e[i]; //must be the lightest element
-				}
-			}
-			
-			//now, generate the double values corresponding with the elements. The first one is always >50% (to ensure that it truly is the most prevalent).
-			this.pres = new Double[this.e.length];
+			//runs again if less than three elements
 			double percentremains = 1;
-			pres[0] = Math.random()*.2+.5;
-			percentremains-=pres[0];
-			
-			for(int i=1; i<pres.length-1; i++){ //generate everything except for the last element
-				pres[i] = Math.random()*(percentremains-((pres.length-i-2)/100.0)); //the idea is to keep at least 1% per element.
-				percentremains-=pres[i];
+			this.e = new ArrayList<ElementPair>(k); //initialize the final arrayList
+			for(int i=0; i<k; i++){
+				e.add(new ElementPair(included[i]));
+				e.get(i).second = Math.random()*(percentremains)-((k-1)/100); //might be a bad formula
+				if(i==k-1){
+					e.get(i).second = percentremains;
+				}
+				percentremains -= e.get(i).second;
 			}
+
+			Collections.sort(this.e); //sort the arraylist
 			
-			//get everything in its correct order
-			pres[pres.length-1] = percentremains;
-			//need to insert some sorting here.
-			
-			//generate the land and pools
-			j=0;
-			type = 0; //default case, normal planet
+			int j=0;
+			type = types.NORMAL;
 			atmosNum = 3;
-			if(atmosphere == this.e[0]){
+			if(atmosphere.compareTo(this.e.get(0).first)==0){
 				atmosNum = 0;
 				j=1;
-				type = 3; //atmosphere is most abundant, gas planet
+				type = types.GAS; //atmosphere is most abundant, gas planet
 			}
 			
-			if(this.e[j].compareTo(this.e[j+1])>=0){
+			if(this.e.get(j).first.compareTo(this.e.get(j+1).first)>=0){
 				landNum = j;
 				poolsNum = j+1;
-				this.land = this.e[j];
-				this.pools = this.e[j+1];
+				this.land = this.e.get(j).first;
+				this.pools = this.e.get(j+1).first;
 			}
 			else{
 				landNum = j+1;
 				poolsNum = j;
-				this.land = this.e[j+1];
-				this.pools = this.e[j];
-				if(type!=3) type = 2; //pools are most abundant, aquatic planet
+				this.land = this.e.get(j+1).first;
+				this.pools = this.e.get(j).first;
+				if(type!=types.GAS) type = types.AQUATIC; //pools are most abundant, aquatic planet
 			}
 			
 			//generate creatures
 			j = (int)(Math.random()*8+3);
 			this.residents = new Creature[j];
 			for(int i=0; i<j; i++){
-				residents[i] = new Creature(this.e, L);
+				//residents[i] = new Creature(this.e, L);
 			}
 		}
 		
-		public String toString(){
+/*		public String toString(){
 			String out = "This is the planet "+name+". Common elements are ";
 			double count=0;
 			for(int i=0; i<pres.length; i++){
@@ -179,7 +151,8 @@ public class Planet {
 			out+="The surface is "+land.getName()+", the pools are "+pools.getName()+", and the atmosphere is made of "+atmosphere.getName()+".";
 			return out;
 		}
-
+*/
+//I simply commented out code that broke which was not related to planet's constructor, as it is not important right now.
 			
 			
 	}

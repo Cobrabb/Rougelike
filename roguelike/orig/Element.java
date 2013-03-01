@@ -1,4 +1,4 @@
-package roguelike.orig;
+package orig;
 import java.lang.Math;
 
 public class Element {

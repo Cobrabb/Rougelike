@@ -1,6 +1,10 @@
-package roguelike.orig;
+package orig;
 import java.util.*;
 import java.io.*;
+
+import orig.Creature.cStats;
+import orig.Creature.cVal;
+import orig.Race.rStats;
 
 public class Test {
 	public static void main(String[] args){
@@ -17,5 +21,25 @@ public class Test {
 		
 		Planet pl = new Planet(e);
 		System.out.println(pl.toString());
+		//creature test
+		//String stat = Stats.TOTAL;
+		cStats s[] = cStats.values();
+		cVal v[] = cVal.values();
+		for(int i = 0; i < cStats.TOTAL.ordinal()+1; i++) {
+			System.out.println(s[i] + " = " + s[i].ordinal());
+		}
+		cStats cs = cStats.DETECT_SIGHT;
+		Race r = new Race();
+		rStats rs = rStats.DETECTION;
+		System.out.println(rs + " ~ " + rs.ordinal());
+		Creature c = new Creature();
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			for(int j = 0; j < cVal.TOTAL.ordinal(); j++) {
+				System.out.println(s[i] + " : " + v[j] + " = "  + c.get(s[i],v[j]));
+			}
+		}
+		c.gain(cs, cVal.XP, 300);
+		System.out.println(cs.name() + " ~ " + c.get(cs, cVal.LEVEL) + ", " + c.get(cs, cVal.XP));
+		//System.out.println(cStats.SPEED_MOVE + " : " + c.get(cStats.SPEED_MOVE,0));
 	}
 }

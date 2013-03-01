@@ -1,4 +1,4 @@
-package roguelike.orig;
+package orig;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.tiled.TiledMap;

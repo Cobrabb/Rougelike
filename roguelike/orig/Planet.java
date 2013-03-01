@@ -1,4 +1,4 @@
-package roguelike.orig;
+package orig;
 
 public class Planet {
 

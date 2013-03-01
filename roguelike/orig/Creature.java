@@ -1,148 +1,107 @@
-package roguelike.orig;
+package orig;
+
+import java.util.ArrayList;
+
+import orig.Race.rStats;
+//import java.lang.Math;
+import orig.Race.rVal;
 
 public class Creature {
+	public enum cStats {
+		STR_CLIMB, STR_PHYS_ATTACK, SPEED_MOVE, SPEED_ATTACK, DETECT_SIGHT,	DETECT_SOUND,
+		STEALTH_SIGHT, STEALTH_SOUND, TECH_WEAPON, TECH_ARMOR, STAM_HEALTH, STAM_ENERGY, TOTAL
+	}
+	public enum cVal {
+		LEVEL,XP,MAX,CURRENT,TOTAL
+	}
 
-	private String name;
-	private int diet;  //How it eats, not what it eats
-	private Element consumes; //what it eats
-	private Element produces; //what it poops
-	private Element casing; //the flesh
-	private Element fluid; //the blood
-	private Element organs;
-	private boolean genders; //true if the creature is not a hermaphodite
-	final int numdiets = 4; //the possible diet options 
+	private String name; 
+	private Race race;
+
+	private int[][] stat;
+	//private int[] statXP;
 	
-	public String getName(){
-		return this.name;
+	private ArrayList<Item> inventory;
+	private Item[] equipped;
+	private int staminaMaxInventory;
+	private int maxLvl = 100;
+	private int raceGain;
+	final int slots = 3;
+	
+	public Creature() {
+		this.race = new Race();
+		this.name = race.getName();
+		this.inventory = new ArrayList<Item>();
+		this.stat = new int[cStats.TOTAL.ordinal()][cVal.TOTAL.ordinal()];
+		this.equipped = new Item[slots+this.race.getNumArms()];
+		//this.statXP = new int[(cStats.TOTAL.ordinal()+1)];
+		randomInit();
 	}
 	
-	public Element getCasing(){
-		return this.casing;
+	public Creature(Element e[], Language l) {
+		this.race = new Race(e,l);
+		this.name = race.getName();
+		this.inventory = new ArrayList<Item>();
+		this.stat = new int[cStats.TOTAL.ordinal()][cVal.TOTAL.ordinal()];
+		this.equipped = new Item[slots+this.race.getNumArms()];
+		randomInit();
+
 	}
 	
-	public Element getFluid(){
-		return this.fluid;
+	public int get(cStats s, cVal v) {
+		return stat[s.ordinal()][v.ordinal()];//[n];
 	}
 	
-	public Element getOrgans(){
-		return this.organs;
+	public void set(cStats s,cVal v, int n) {
+		stat[s.ordinal()][v.ordinal()] = n;
 	}
 	
-	public int getDiet(){
-		return this.diet;
-	}
 	
-	public Element getConsumes(){
-		return this.consumes;
-	}
-	
-	public Element getProduces(){
-		return this.produces;
-	}
-	
-	public boolean getGenders(){
-		return this.genders;
-	}
-	
-	public Creature(){ //completely random, probably not necessary. 
-	}
-	
-	public Creature(Element[] e, Language L){ //semi random
-		this.name  = L.generate();
-		int i = (int)(Math.random()*e.length);
-		this.casing = e[i];
-		i = (int)(Math.random()*e.length);
-		this.fluid = e[i];
-		int count = 0;
-		while(this.fluid.getDensity()>this.casing.getDensity()){ //organs and fluid must be less dense than the casing, otherwise we have problems.
-			i = (int)(Math.random()*e.length);
-			this.fluid = e[i];
-			if(count>20){
-				this.fluid = this.casing;
-			}
-			count++;
-		}
-		i = (int)(Math.random()*e.length);
-		this.organs = e[i];
-		while(this.organs.getDensity()>this.casing.getDensity()){
-			i = (int)(Math.random()*e.length);
-			this.organs = e[i];
-			if(count>40){ //hard limit on how long it can try to get good organs
-				this.organs = this.casing;
-			}
-			count++;
-		}
-		i = (int)(Math.random()*4+1);
-		this.diet = i;
-		if(this.diet == 1){ //if diet is 1, it either eats nothing and makes nothing, or it eats and makes the same thing.
-			if(Math.random()<.5){
-				this.produces = null;
-				this.consumes = null;
-			}
-			else{
-				i = (int)(Math.random()*e.length);
-				this.produces = this.consumes = e[i];
-			}
-		}
-		else if(this.diet == 2){ //if diet is 2, it consumes nothing and produces something
-			this.consumes = null;
-			i = (int)(Math.random()*e.length);
-			this.produces = e[i];
-		}
-		else if(this.diet ==3){ //consumes something and produces nothing (useful)
-			this.produces = null;
-			i = (int)(Math.random()*e.length);
-			this.consumes = e[i];
-		}
-		else{ //consumes something and produces something else
-			i = (int)(Math.random()*e.length);
-			this.produces = e[i];
-			i = (int)(Math.random()*e.length);
-			this.consumes = e[i];
-		}
-		this.genders = true;
-		if(Math.random()<.5){
-			this.genders = false;
+	public void randomInit() {
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			stat[i][cVal.LEVEL.ordinal()] = cStats.values()[i].ordinal();
+			stat[i][cVal.XP.ordinal()] = (int) Math.pow(stat[i][cVal.LEVEL.ordinal()],3);
+			stat[i][cVal.MAX.ordinal()] = (int) Math.pow(stat[i][cVal.LEVEL.ordinal()],2.3);
+			stat[i][cVal.CURRENT.ordinal()] = (int) stat[i][cVal.MAX.ordinal()];
 		}
 	}
 	
-	public Creature(String name, int diet, Element produces, Element consumes, Element casing, Element fluid, Element organs){
-		this.name = name;
-		if(diet>numdiets||diet<=0){
-			this.diet = 1;
-		}
-		else this.diet = diet;
-		this.produces = produces;
-		this.consumes = consumes;
-		this.casing = casing;
-		this.fluid = fluid;
-		this.organs = organs;
+	//Gain/lose health,energy,stats,XP etc
+	public void gain(cStats s, cVal v, int n) {
+		this.stat[s.ordinal()][v.ordinal()] += n;
+		checkXP(s);
 	}
 	
-	public String toString(){
-		String str = "This is the creature "+name+". Its flesh is "+casing.getName()+". Its blood is "+fluid.getName()+". Its organs are "+organs.getName()+". It consumes ";
-		if(consumes==null){
-			str+="nothing";
+	//If XP >= mul*(lvl)^rate, then lvlUP
+	private void checkXP(cStats s) {
+		double mul = 10; 
+		double rate = 1.15; 
+		boolean test = (this.stat[s.ordinal()][rVal.XP.ordinal()]) >= ((int) mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate));
+		if(test) {
+			lvlUp(s);
 		}
-		else{
-			str+=consumes.getName();
-		}
-		str+=", and produces ";
-		if(produces==null){
-			str+="nothing";
-		}
-		else{
-			str+=produces.getName();
-		}
-		str+=". It is a ";
-		if(genders){
-			str+="gendered";
-		}
-		else{
-			str+="hermaphroditic";
-		}
-		str+=" species.";
-		return str;
+	}
+	private void lvlUp(cStats s) {
+		this.stat[s.ordinal()][cVal.LEVEL.ordinal()]++;
+		this.stat[s.ordinal()][cVal.XP.ordinal()] = 0;
+//		this.race.gain(decode(s),rVal.XP,raceGain);
 	}
 	
+	private rStats decode(cStats s) {
+		String str = s.toString();
+		System.out.println(str);
+		raceGain = 2;
+		return rStats.SPEED;
+	}
+	
+	public void attack(Square s) {
+		for(int i=0; i<this.race.getNumArms(); i++) {
+			this.equipped[slots+i].attack(s,this.stat[cStats.STR_PHYS_ATTACK.ordinal()][cVal.CURRENT.ordinal()],this.stat[cStats.TECH_WEAPON.ordinal()][cVal.CURRENT.ordinal()]);
+		}
+	}
+	
+	public void takeDamage(Element[] consists, int damage) {
+		//get resistances from univeral reaction table
+	}
+
 }

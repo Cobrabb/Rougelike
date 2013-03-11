@@ -1,10 +1,11 @@
-package roguelike.util;
+package util;
 
 import java.io.IOException;
 import java.util.Random;
 
-import roguelike.orig.Element;
-import roguelike.orig.Planet;
+import orig.Element;
+import orig.Planet;
+
 
 
 

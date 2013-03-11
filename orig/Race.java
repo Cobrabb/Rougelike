@@ -1,13 +1,23 @@
 package orig;
 
-import orig.Creature.cVal;
+//import orig.Creature.cStats;
+
+//import orig.Creature.cVal;
 
 public class Race {
 	public enum rStats {
-		STRENGTH,SPEED,DETECTION,STEALTH,TECH,STAMINA,TOTAL
+		STRENGTH,SPEED,DETECTION,STEALTH,TECH,STAMINA,TOTAL;
+		
+		public String toString() {
+			return this.name();
+		}
 	}
 	public enum rVal {
-		LEVEL,XP,MAX,CURRENT,TOTAL
+		LEVEL,XP,MAX,CURRENT,TOTAL;
+		
+		public String toString() {
+			return this.name();
+		}
 	}
 
 	private String name;
@@ -22,11 +32,21 @@ public class Race {
 	private int numArms;
 	private int numLegs;
 	
-	private int initCap; //initial cap on stat points
 
 	private int stat[][];
 	
+	//behind the scenes
+	private double mul = 10;
+	private double rate = 1.15;
+	private int lvlGain = 1;
+	
 	public Race(){ //completely random, probably not necessary. 
+		this.stat = new int[rStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
+		for(int i=0; i<rStats.TOTAL.ordinal(); i++) {
+			for(int j=0; j<rVal.TOTAL.ordinal(); j++) {
+				this.stat[i][j] = 0;
+			}
+		}
 	}
 
 	public Race(Element[] e, Language L){ //semi random
@@ -180,6 +200,26 @@ public class Race {
 		checkXP(s);
 	}
 	
+	//If XP >= mul*(lvl)^rate, then lvlUP
+	private void checkXP(rStats s) {
+		//while XP >= max for level, level up
+		while( (this.stat[s.ordinal()][rVal.XP.ordinal()]) >= ((int) mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate)) ){
+			//System.out.println(stat[s.ordinal()][rVal.XP.ordinal()] + ", " + (int) (mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate)));
+			lvlUp(s, mul, rate);
+		}
+	}
+	private void lvlUp(rStats s, double mul, double rate) {
+		//Incrementlevel and decrement XP by XP cap for level;
+		this.stat[s.ordinal()][rVal.XP.ordinal()] -= ((int) mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate));
+		this.stat[s.ordinal()][rVal.LEVEL.ordinal()]++;
+		this.stat[s.ordinal()][rVal.MAX.ordinal()] += lvlGain;
+		// current = max (unless temp effect has it above max already)
+		if(this.stat[s.ordinal()][rVal.CURRENT.ordinal()] < this.stat[s.ordinal()][rVal.MAX.ordinal()]) {
+			this.stat[s.ordinal()][rVal.CURRENT.ordinal()] = this.stat[s.ordinal()][rVal.MAX.ordinal()];
+		}
+//		this.race.gain(decode(s),rVal.XP,raceGain);
+	}
+		/*
 	//if  XP >= mul*(lvl)^rate, then lvlUp
 	public void checkXP(rStats s) {
 		double mul = 10; 
@@ -194,7 +234,7 @@ public class Race {
 		this.stat[s.ordinal()][rVal.LEVEL.ordinal()]++;
 		this.stat[s.ordinal()][rVal.XP.ordinal()] = 0;
 	}
-	
+	*/
 
 	public String toString(){
 		String str = "This is the Race "+name+". Its flesh is "+casing.getName()+". Its blood is "+fluid.getName()+". Its organs are "+organs.getName()+". It consumes ";

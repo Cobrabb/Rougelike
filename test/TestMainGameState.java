@@ -1,4 +1,4 @@
-package game;
+package test;
 
 
 import org.newdawn.slick.GameContainer;
@@ -9,7 +9,11 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-public class MainGameState extends BasicGameState{
+
+import orig.DungeonMap;
+import orig.Element;
+import orig.Planet;
+public class TestMainGameState extends BasicGameState{
 	int stateID = -1;
 	Image floor = null;
 	Image wall1 = null;
@@ -24,8 +28,9 @@ public class MainGameState extends BasicGameState{
 	int pX = 223;
 	int pY = 223;
 	int inputDelta = 100;
+	Planet planet = null;
 	
-    MainGameState( int stateID ) 
+    TestMainGameState( int stateID ) 
     {
        this.stateID = stateID;
     }
@@ -36,6 +41,13 @@ public class MainGameState extends BasicGameState{
     }
 	
 	public void init(GameContainer container, StateBasedGame Sbg) throws SlickException {
+		Element elem1 = new Element("stone_floor", 1.0);
+		Element elem2 = new Element("stone_wall_updown", 2.0);
+		Element elem3 = new Element("stone_wall_leftright", 2.0);
+		planet = new Planet(new Element[] {elem1, elem2, elem3});
+		String path = planet.generateMap("planetX");
+		planet.setCurrentDungeon(path);
+		
 		floor = new Image("data/tiles/stone_floor.png");
 		wall1 = new Image("data/tiles/stone_wall_updown.png");
 		wall2 = new Image("data/tiles/stone_wall_leftright.png");
@@ -50,27 +62,8 @@ public class MainGameState extends BasicGameState{
 	}
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
-		wall5.draw(0,0);
-		for(int i=15; i<575; i+=16){
-			wall1.draw(0, i);
-		}
-		wall6.draw(0, 575);
-		for(int i=15; i<783; i+=16){
-			wall2.draw(i, 575);
-		}
-		wall4.draw(783, 575);
-		for(int i=15; i<575; i+=16){
-			wall1.draw(783, i);
-		}
-		wall3.draw(783, 0);
-		for(int i=15; i<783; i+=16){
-			wall2.draw(i, 0);
-		}
-		for(int i=15; i<768; i+=16){
-			for(int j=15; j<560; j+=16){
-				floor.draw(i, j);
-			}
-		}
+		DungeonMap dm = planet.getCurrentDungeon();
+		dm.render(container, sbg, g);
 		e1.draw();
 		player.draw(pX, pY);
     }

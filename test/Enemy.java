@@ -1,4 +1,4 @@
-package game;
+package test;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Sound;

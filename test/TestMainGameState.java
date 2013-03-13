@@ -45,7 +45,7 @@ public class TestMainGameState extends BasicGameState{
 		Element elem2 = new Element("stone_wall_updown", 2.0);
 		Element elem3 = new Element("stone_wall_leftright", 2.0);
 		planet = new Planet(new Element[] {elem1, elem2, elem3});
-		String path = planet.generateMap("planetX");
+		String path = planet.generateMap("map1");
 		planet.setCurrentDungeon(path);
 		
 		floor = new Image("data/tiles/stone_floor.png");

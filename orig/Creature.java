@@ -33,8 +33,11 @@ public class Creature {
 	private int[][] stat;
 	//private int[] statXP;
 	
-	private ArrayList<Item> inventory;
-	private Item[] equipped;
+	public ArrayList<Item> inventory;
+	public Item[] equipped;
+	public Item[] inhands;
+	private int currentInhands;
+	private int freeHands;
 	private int staminaMaxInventory;
 	private int maxLvl = 100;
 	private int raceGain;
@@ -53,7 +56,10 @@ public class Creature {
 		this.name = race.getName();
 		this.inventory = new ArrayList<Item>();
 		this.stat = new int[cStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots+this.race.getNumArms()];
+		this.equipped = new Item[slots];
+		this.inhands = new Item[this.race.getNumArms()];
+		this.freeHands = this.inhands.length;
+		this.currentInhands = 0;
 		//set all of stat to 0 and set each level to n
 		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<rVal.TOTAL.ordinal(); j++) {
@@ -68,7 +74,10 @@ public class Creature {
 		this.name = race.getName();
 		this.inventory = new ArrayList<Item>();
 		this.stat = new int[cStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots+this.race.getNumArms()];
+		this.equipped = new Item[slots];
+		this.inhands = new Item[this.race.getNumArms()];
+		this.freeHands = this.inhands.length;
+		this.currentInhands = 0;
 		//set all of stat to 0 and set each level to n
 		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<rVal.TOTAL.ordinal(); j++) {
@@ -83,7 +92,10 @@ public class Creature {
 		this.name = race.getName();
 		this.inventory = new ArrayList<Item>();
 		this.stat = new int[cStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots+this.race.getNumArms()];
+		this.equipped = new Item[slots];
+		this.inhands = new Item[this.race.getNumArms()];
+		this.freeHands = this.inhands.length;
+		this.currentInhands = 0;
 		//set all of stat to 0 and set each level to n
 		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<rVal.TOTAL.ordinal(); j++) {
@@ -99,7 +111,10 @@ public class Creature {
 		this.name = race.getName();
 		this.inventory = new ArrayList<Item>();
 		this.stat = new int[cStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots+this.race.getNumArms()];
+		this.equipped = new Item[slots];
+		this.inhands = new Item[this.race.getNumArms()];
+		this.freeHands = this.inhands.length;
+		this.currentInhands = 0;
 		//set all of stat to 0 and set each level to n
 		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<rVal.TOTAL.ordinal(); j++) {
@@ -225,6 +240,32 @@ public class Creature {
 		}
 		equipped[i.getType().ordinal()] = i;
 		return true;
+	}
+	
+	public boolean equip(Item i){
+		if(i.getType()==iType.HAND){
+			if(i.getHands()<=freeHands){
+				freeHands=freeHands-i.getHands();
+				inhands[currentInhands]=i;
+				currentInhands++;
+				return true;
+			}
+			return false;
+		}
+		equipped[i.getType().ordinal()] = i;
+		return true;
+	}
+	
+	public String getEquipped(int i){
+		if(i>slots+inhands.length) return "ERROR";
+		else if(i<slots){
+			if(equipped[i]==null) return "None";
+			else return equipped[i].getName();
+		}
+		else{
+			if(inhands[i-slots]==null) return "None";
+			else return inhands[i-slots].getName();
+		}
 	}
 
 }

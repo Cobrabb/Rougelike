@@ -34,10 +34,6 @@ public class Enemy {
 		else if(yPos<y){
 			yPos+=16;
 		}
-		if(xPos==x&&yPos==y){
-			roar.play();
-			roared = true;
-		}
 	}
 	
 }

@@ -47,6 +47,7 @@ public class Race {
 				this.stat[i][j] = 0;
 			}
 		}
+		numArms = 4;
 	}
 
 	public Race(Element[] e, Language L){ //semi random

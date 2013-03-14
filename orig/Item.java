@@ -17,11 +17,15 @@ public class Item {
 	private double phys_tech_ratio; //0 is pure physical, 1 is pure tech (projectile)
 	private int baseDmg;
 	private iType type;
+	private String name;
 	
 	public Item() {
 		//generate random elements for consists and repairs
-		
+		name = "LOOOOL";
+		type = iType.HAND;
+		hands = 2;
 	}
+	
 	
 	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, int baseDmg, iType type) {
 		this.consists = consists;
@@ -50,5 +54,13 @@ public class Item {
 	
 	public iType getType() {
 		return this.type;
+	}
+	
+	public String getName(){
+		return this.name;
+	}
+	
+	public int getHands(){
+		return this.hands;
 	}
 }

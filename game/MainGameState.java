@@ -12,6 +12,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import orig.Creature;
 import orig.Item;
+import orig.Race;
 
 public class MainGameState extends BasicGameState{
 	int stateID = -1;
@@ -49,7 +50,7 @@ public class MainGameState extends BasicGameState{
     MainGameState( int stateID ) 
     {
        this.stateID = stateID;
-       player1 = new Creature();
+       player1 = new Creature(new Race());
     }
  
     @Override
@@ -70,9 +71,9 @@ public class MainGameState extends BasicGameState{
 		Sound roar = new Sound("data/roar.wav");
 		e1 = new Enemy(enemy, 95, 95, roar);
 		Item i = new Item();
-		player1.inventory.add(i);
-		player1.inventory.add(i);
-		player1.inventory.add(i);
+		player1.pickup(i);
+		player1.pickup(i);
+		player1.pickup(i);
 	}
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
@@ -108,8 +109,8 @@ public class MainGameState extends BasicGameState{
 				}
 				onscreen=0;
 				scrolldown = false;
-				for(int i=outer;i<player1.inventory.size(); i++){
-					g.drawString(player1.inventory.get(i).getName(),0,header+((i+1)*textAllowed));
+				for(int i=outer;i<player1.getInventory().size(); i++){
+					g.drawString(player1.getInventory().get(i).getName(),0,header+((i+1)*textAllowed));
 					onscreen++;
 					if(i>outer+itemFit){
 						scrolldown=true;
@@ -124,7 +125,7 @@ public class MainGameState extends BasicGameState{
 				g.drawString("Head: "+player1.getEquipped(0), 0, header+textAllowed);
 				g.drawString("Body: "+player1.getEquipped(1), 0, header+(2*textAllowed));
 				g.drawString("Legs: "+player1.getEquipped(2), 0, header+(3*textAllowed));
-				for(int i=3;i<player1.getRace().getNumArms()+3;i++){
+				for(int i=3;i<player1.getNumArms()+3;i++){
 					g.drawString("Hands: "+player1.getEquipped(i), 0, header+(i+1)*textAllowed);
 				}
 				g.drawString("Back", 0, 600-footer-textAllowed);
@@ -207,9 +208,9 @@ public class MainGameState extends BasicGameState{
 		        		outer=outer-itemFit;
 		        	}
 		        	else if(mouseX<150&&mouseY>(header+textAllowed)&&mouseY<(header+onscreen*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		boolean equipcheck = player1.equip(player1.inventory.get((mouseY-header-itemFit)/itemFit+outer));
+		        		boolean equipcheck = player1.equip(player1.getInventory().get((mouseY-header-itemFit)/itemFit+outer));
 		        		if(equipcheck){
-		        			player1.inventory.remove((mouseY-header-itemFit)/itemFit+outer);
+		        			player1.getInventory().remove((mouseY-header-itemFit)/itemFit+outer);
 		        		}
 		        	}
 		        	else if(mouseX<150&&mouseY>=footer-textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&scrolldown){

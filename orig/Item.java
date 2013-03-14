@@ -10,14 +10,16 @@ public class Item {
 		}
 	}
 
-	private Element[] consists;
-	private Element[] repairs;
+	private Element[] consists; //need to know proportions
+	private Element[] repairs; //need to know proportions
+	//private Element[] improve;
 	private int hands; //number of hands required to wield
 	private int techRequired;
 	private double phys_tech_ratio; //0 is pure physical, 1 is pure tech (projectile)
 	private int baseDmg;
 	private iType type;
 	private String name;
+	private double weight;
 	
 	public Item() {
 		//generate random elements for consists and repairs
@@ -26,8 +28,7 @@ public class Item {
 		hands = 2;
 	}
 	
-	
-	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, int baseDmg, iType type) {
+	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, int baseDmg, iType type, double weight) {
 		this.consists = consists;
 		this.repairs = repairs;
 		this.hands = hands;
@@ -35,6 +36,7 @@ public class Item {
 		this.phys_tech_ratio = phys_tech_ratio;
 		this.baseDmg = baseDmg;
 		this.type = type;
+		this.weight = weight;
 	}
 	
 	public void attack(Square s, int phys, int tech) {
@@ -60,7 +62,11 @@ public class Item {
 		return this.name;
 	}
 	
-	public int getHands(){
+	public int getHands() {
 		return this.hands;
+	}
+	
+	public  double getWeight() {
+		return this.weight;
 	}
 }

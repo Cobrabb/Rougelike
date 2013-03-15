@@ -1,6 +1,11 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Random;
 
 import orig.Element;
@@ -15,6 +20,7 @@ public final class DungeonMapGenerator {
 	Element wallBase;
 	
 	public DungeonMapGenerator(Planet p) {
+		MapUtil.loadTiles();
 		if (p.getElementCount() > 1) {
 			floorBase = p.getElement(0);
 			wallBase = p.getElement(1);
@@ -26,7 +32,7 @@ public final class DungeonMapGenerator {
 	
 	/**
 	 *make a map array that hold double array of booleans which represents where we will place tiles
-	 *initally false = wall, true = tiles
+	 *initially false = wall, true = tiles
 	 * 
 	 */
 	
@@ -79,19 +85,18 @@ public final class DungeonMapGenerator {
 		return map;
 	}
 	
-	
 	public String weakRandomMapGen(String mapPath, int width, int height) {
 		String[] layers = {"floor", "wall", "doors"};
-		String[][][] tiles = new String[layers.length][width][height];
+		int[][][] tiles = new int[layers.length][width][height];
 		Random rand = new Random();
 		// poor implementation
 		for (int x = 0; x < width; ++x) {
 			for (int y = 0; y < height; ++y) {
-				tiles[0][x][y] =  floorBase.getName();
-				tiles[1][x][y] = "";
-				tiles[2][x][y] = "";
+				tiles[0][x][y] =  MapUtil.getGID(floorBase.getName());
+				tiles[1][x][y] = MapUtil.getGID("");
+				tiles[2][x][y] = MapUtil.getGID("");
 				if (rand.nextInt(6) == 0) {
-					tiles[1][x][y] = wallBase.getName();
+					tiles[1][x][y] = MapUtil.getGID(wallBase.getName());
 				}
 			}
 		}

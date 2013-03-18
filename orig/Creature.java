@@ -142,7 +142,7 @@ public class Creature {
 		if(v == rVal.XP) { 
 			rStats r = decode(s);
 			this.race.gain(r, v, n/raceGain); //Race gains XP in corresponding stat, divided by number of cstats that map to it
-			System.out.println(n+ " / " + raceGain + " = " + n/raceGain);
+			//System.out.println(n+ " / " + raceGain + " = " + n/raceGain);
 		}
 		checkXP(s);
 	}

@@ -41,11 +41,15 @@ public class Element {
 		int i = (int)(Math.random()*6)+4;
 		name = L.generate(i);
 		this.density = Math.pow((Math.random()*200),.5);
+		this.granularity = Math.pow((Math.random()*200),.5);
+		this.mal = Math.pow((Math.random()*200),.5);
 	}
 	
 	public Element(String name, double density){
 		this.name = name;
 		this.density = density;
+		this.granularity = Math.pow((Math.random()*200),.5);
+		this.mal = Math.pow((Math.random()*200),.5);
 	}
 	
 	public Element(String name, double density, double granularity, double mal){

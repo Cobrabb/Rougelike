@@ -6,6 +6,7 @@ import orig.Creature.cStats;
 import orig.Race.rVal;
 //import orig.Creature.rVal;
 import orig.Race.rStats;
+import game.UniversalElements;
 
 public class Test {
 	public static void main(String[] args){
@@ -48,7 +49,7 @@ public class Test {
 			statPrint += c.decode(s[i]).toString() + " , " + c.getRaceGain();
 			System.out.println(statPrint);
 		}
-		
+		/*
 		System.out.println("----------------------Level Detect_Sight Test------------------------");
 		for(int i=0; i<400; i++) {
 			System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
@@ -60,7 +61,7 @@ public class Test {
 		c.gain(cs, rVal.XP, 3000);
 		System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
 		//String statPrint;
-		
+		*/
 		System.out.println("----------------------------Current Value Test------------------------------");
 		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
 			statPrint = s[i] + " : ";
@@ -107,5 +108,7 @@ public class Test {
 			System.out.println(statPrint);
 		}
 		//System.out.println(cStats.SPEED_MOVE + " : " + c.get(cStats.SPEED_MOVE,0));
+		
+		UniversalElements uE = new UniversalElements();
 	}
 }

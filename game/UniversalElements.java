@@ -3,8 +3,10 @@ package game;
 import java.util.ArrayList;
 
 import orig.Element;
+import orig.Language;
 
 public class UniversalElements {
+	private final Language l;
 	public final int WATER = 0;
 	public final int MEAT = 1;
 	public final int STONE = 2;
@@ -22,6 +24,14 @@ public class UniversalElements {
 	
 	public UniversalElements()
 	{
+		String temp = "";
+		for(char c = 'a'; c != 'Z'+1; c++) {
+			temp += c;
+			if(c == 'z'){
+				c = 'A'-1;
+			}
+		}
+		l = new Language("Language",0,temp,true);
 		elementList.add(new Element("Water", 1 ,1 , 1));
 		elementList.add(new Element("Meat", 2, 1 , 1));
 		elementList.add(new Element("Stone", 3.2 ,1 , 1));
@@ -31,7 +41,7 @@ public class UniversalElements {
 		elementList.add(new Element("Wood", 2.5 , 2 , 1));
 		while(elementList.size() < TOTAL)
 		{
-			elementList.add(new Element());
+			elementList.add(new Element(l));
 		}
 		
 		
@@ -92,18 +102,44 @@ public class UniversalElements {
 			for(int j=0; j<elementList.size(); j++) {
 				if(i > WOOD || j > WOOD) {
 					Element b = elementList.get(j);
-					dmgRatioMultiplier[i][j] = (a.getDensity()/b.getDensity())*b.getGranularity()*(b.getMal()/a.getMal());
+					this.dmgRatioMultiplier[i][j] = (a.getDensity()/b.getDensity())*b.getGranularity()*(b.getMal()/a.getMal())*Math.random();
+					this.dmgRatioMultiplier[i][j] = ((int)(100*this.dmgRatioMultiplier[i][j]))/100.0;
 				}
 			}
 		}
-		
-		
-		
+		printDmgTable();
 	}
 	
 	public double getDmg(Element attack, Element defend) {
 		return this.dmgRatioMultiplier[this.elementList.indexOf(attack)][this.elementList.indexOf(defend)];
 	}
 	
-	
+	public void printDmgTable() {		
+		String printUE = "\t\t" + elementList.get(0).getName();
+		int longest = 0;
+		for(int i=1; i<elementList.size(); i++) {
+			printUE += ",\t" + elementList.get(i).getName();
+			if(elementList.get(i).getName().length() > longest) {
+				longest = elementList.get(i).getName().length();
+			}
+		}
+		printUE += "\n";
+		for(int i=0; i<elementList.size(); i++) {
+			Element a = elementList.get(i);
+			printUE += a.getName() + ":";
+			for(int j=((a.getName().length()+1)/8); j<((longest+2)/8+1);j++) {
+				printUE += "\t";
+			}
+			printUE += getDmg(a,elementList.get(0));
+			for(int j=1; j<elementList.size(); j++) {
+				printUE += ",";
+				for(int k=0; k<((elementList.get(j).getName().length()+1)/8+1);k++){
+					printUE += "\t";
+				}
+				printUE += getDmg(a,elementList.get(j));
+			}
+			printUE += "\n";
+		}
+		System.out.println(printUE);
+	}
 }

@@ -39,19 +39,28 @@ public class Item {
 		this.weight = weight;
 	}
 	
-	public void attack(Square s, int phys, int tech) {
-		if(s.c != null) {
-			int damage = (int) (baseDmg*((1-phys_tech_ratio)*phys + phys_tech_ratio*tech));
-			s.c.takeDamage(consists, damage);
-		}
+	public Element[] getConsists() {
+		return this.consists;
 	}
 	
-	public boolean repair(Element[] elements) {
-		boolean bool = false;
-		for(Element e: elements) {
-			
-		}
-		return bool;
+	public Element[] getRepairs() {
+		return this.repairs;
+	}
+	
+	public int getHands() {
+		return this.hands;
+	}
+	
+	public int getTechRequired() {
+		return this.techRequired;
+	}
+	
+	public double getPhysTechRatio() {
+		return this.phys_tech_ratio;
+	}
+	
+	public int getBaseDmg() {
+		return this.baseDmg;
 	}
 	
 	public iType getType() {
@@ -62,11 +71,37 @@ public class Item {
 		return this.name;
 	}
 	
-	public int getHands() {
-		return this.hands;
-	}
-	
 	public  double getWeight() {
 		return this.weight;
 	}
+	
+	public void attack(Square s, int phys, int tech) {
+		if(s.c != null) {
+			int damage = (int) (baseDmg*((1-phys_tech_ratio)*phys + phys_tech_ratio*tech));
+			s.c.takeDamage(this, damage);
+		}
+		
+	}
+	
+	public int reflectDamage() {
+		//
+		return 0;
+	}
+	
+	public void takeDamage(Item i, int dmg) {
+		//This item should take damage (assume it is when the equipping character gets attacked)
+		//everything dependent upon universal Element reactions
+	}
+	
+	public void takeReflected(Item i) {
+		//This item takes some reflected damage when it attacks something
+		//everything dependent upon universal Element reactions
+	}
+	
+	public boolean repair(Element[] elements) {
+		boolean bool = false;
+
+		return bool;
+	}
+	
 }

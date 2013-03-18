@@ -1,9 +1,6 @@
 package orig;
-import java.util.*;
-import java.io.*;
 
 import orig.Creature.cStats;
-import orig.Creature.bStats;
 import orig.Creature.sVal;
 
 public class Test {
@@ -25,18 +22,27 @@ public class Test {
 		cStats s[] = cStats.values();
 		sVal v[] = sVal.values();
 
-		cStats cs = cStats.DETECT_SIGHT;
+//		cStats cs = cStats.DETECT_SIGHT;
 		Race r = new Race(e, L);
 		//bStats rs = bStats.DETECTION;
 		//ystem.out.println(rs + " ~ " + rs.ordinal());
 		Creature c = new Creature(r);
 		Creature c2 = new Creature(r);
 		Creature c3 = new Creature(r);
+		Creature c4 = r.spawn();
+		r.randomInitPoints();
+		Creature c5 = r.spawn();
+		Creature c6 = r.spawn();
 		//c2.gain(s[0], sVal.XP, 500000);
 		for(int i=0; i<100;i++) {
 			//c.autoLvlPointsBy(10);
-			c2.autoLvlXP(11000);
+			c.randomInitPoints();
+			c2.randomInitXP();
+			c3.autoLvlXP(11000);
 		}
+		c4.autoLvlPointsTo(500);
+		c5.autoLvlPointsTo(30);
+		c6.autoLvlPointsBy(450);
 		String statPrint;
 	/*	
 		System.out.println("-----------------------Initial Stat Test----------------------------");
@@ -114,7 +120,7 @@ public class Test {
 			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
 				statPrint += c.get(s[i], v[j]) + ", ";
 			}
-			statPrint += c.decode(s[i]).toString() + ", " + c.getRaceGain() + ", " + c.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			statPrint += c.decode(s[i]).toString() + ", " + c.getBaseGain() + ", " + c.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
 			System.out.println(statPrint);
 		}
 
@@ -124,7 +130,7 @@ public class Test {
 			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
 				statPrint += c2.get(s[i], v[j]) + ", ";
 			}
-			statPrint += c2.decode(s[i]).toString() + ", " + c2.getRaceGain() + ", " + c2.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			statPrint += c2.decode(s[i]).toString() + ", " + c2.getBaseGain() + ", " + c2.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
 			System.out.println(statPrint);
 		}
 
@@ -134,7 +140,40 @@ public class Test {
 			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
 				statPrint += c3.get(s[i], v[j]) + ", ";
 			}
-			statPrint += c3.decode(s[i]).toString() + ", " + c3.getRaceGain() + ", " + c3.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			statPrint += c3.decode(s[i]).toString() + ", " + c3.getBaseGain() + ", " + c3.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			System.out.println(statPrint);
+		}
+
+
+		System.out.println("-----------------------------Get Effective Test--------------------------");
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			statPrint = s[i] + " : ";
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
+				statPrint += c4.get(s[i], v[j]) + ", ";
+			}
+			statPrint += c4.decode(s[i]).toString() + ", " + c4.getBaseGain() + ", " + c4.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			System.out.println(statPrint);
+		}
+
+
+		System.out.println("-----------------------------Get Effective Test--------------------------");
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			statPrint = s[i] + " : ";
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
+				statPrint += c5.get(s[i], v[j]) + ", ";
+			}
+			statPrint += c5.decode(s[i]).toString() + ", " + c5.getBaseGain() + ", " + c5.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			System.out.println(statPrint);
+		}
+
+
+		System.out.println("-----------------------------Get Effective Test--------------------------");
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			statPrint = s[i] + " : ";
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
+				statPrint += c6.get(s[i], v[j]) + ", ";
+			}
+			statPrint += c6.decode(s[i]).toString() + ", " + c6.getBaseGain() + ", " + c6.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
 			System.out.println(statPrint);
 		}
 

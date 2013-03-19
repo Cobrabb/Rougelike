@@ -548,8 +548,14 @@ public class Creature {
 
 
 	public String getEquipped(int i){
-		if(i>=this.weilding.size() || i < 0) return "ERROR";
-		else return this.weilding.get(i).getName();
+		if(i>=this.weilding.size()+this.equipped.length || i < 0) return "None";
+		else if(i<this.equipped.length){
+			if(equipped[i] == null) return "None";			
+			return equipped[i].getName();
+		}
+		else{
+			return this.weilding.get(i-slots).getName();
+		}
 	}
 	
 	public String getEquipped(Item i) {

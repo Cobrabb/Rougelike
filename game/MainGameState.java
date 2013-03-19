@@ -25,18 +25,25 @@ public class MainGameState extends BasicGameState{
 	Image wall6 = null;
 	Image player = null;
 	Image enemy = null;
-	Enemy e1;
+	OnScreenChar o1;
+	
+	//variables related to the size of screen and tiles
+	public static final int sizeX = 1024-1;
+	public static final int sizeY = 672-1;
+	final int tileSize = 32;
+	final int upperX = sizeX-tileSize; //last place a tile should be rendered
+	final int upperY = sizeY-tileSize; //last place a tile should be rendered
 	
 	//player stuff
-	int pX = 223;
-	int pY = 223;
+	int pX = sizeX-6*tileSize;
+	int pY = sizeY-6*tileSize;
 	Creature player1;
 	
 	//menu variables, can be tweaked to change the menus
-	int textAllowed = 25; //How much vertical space is allowed for text
-	int header = 50; //How much vertical space is reserved to make things look nice
-	int footer = 50; //same except for bottom
-	int itemFit = ((600-header-footer)/textAllowed)-2; //trust me on this
+	final int textAllowed = 25; //How much vertical space is allowed for text
+	final int header = 50; //How much vertical space is reserved to make things look nice
+	final int footer = 50; //same except for bottom
+	final int itemFit = ((600-header-footer)/textAllowed)-2; //trust me on this
 	
 	
 	int inputDelta = 100;
@@ -69,7 +76,7 @@ public class MainGameState extends BasicGameState{
 		player = new Image("data/tiles/player.png");
 		enemy = new Image("data/tiles/enemy.png");
 		Sound roar = new Sound("data/roar.wav");
-		e1 = new Enemy(enemy, 95, 95, roar);
+		o1 = new OnScreenChar(enemy, tileSize*8-1, tileSize*8-1, tileSize);
 		Item i = new Item();
 		player1.pickup(i);
 		player1.pickup(i);
@@ -79,27 +86,27 @@ public class MainGameState extends BasicGameState{
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 		if(!menutime){
 			wall5.draw(0,0);
-			for(int i=15; i<575; i+=16){
+			for(int i=tileSize-1; i<upperY; i+=tileSize){
 				wall1.draw(0, i);
 			}
-			wall6.draw(0, 575);
-			for(int i=15; i<783; i+=16){
-				wall2.draw(i, 575);
+			wall6.draw(0, upperY);
+			for(int i=tileSize-1; i<upperX; i+=tileSize){
+				wall2.draw(i, upperY);
 			}
-			wall4.draw(783, 575);
-			for(int i=15; i<575; i+=16){
-				wall1.draw(783, i);
+			wall4.draw(upperX, upperY);
+			for(int i=tileSize-1; i<upperY; i+=tileSize){
+				wall1.draw(upperX, i);
 			}
-			wall3.draw(783, 0);
-			for(int i=15; i<783; i+=16){
+			wall3.draw(upperX, 0);
+			for(int i=tileSize-1; i<upperX; i+=tileSize){
 				wall2.draw(i, 0);
 			}
-			for(int i=15; i<768; i+=16){
-				for(int j=15; j<560; j+=16){
+			for(int i=tileSize-1; i<upperX; i+=tileSize){
+				for(int j=tileSize-1; j<upperY; j+=tileSize){
 					floor.draw(i, j);
 				}
 			}
-			e1.draw();
+			o1.draw();
 			player.draw(pX, pY);
 		}
 		else{
@@ -146,58 +153,58 @@ public class MainGameState extends BasicGameState{
 	    	if(!menutime){
 		    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
 		    		kp = true;
-		    		pX-=16;
-		    		pY+=16;
+		    		pX-=tileSize;
+		    		pY+=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
 		    		kp = true;
-		    		pY+=16;
+		    		pY+=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
 		    		kp = true;
-		    		pX +=16;
-		    		pY +=16;
+		    		pX +=tileSize;
+		    		pY +=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
 		    		kp = true;
-		    		pX +=16;
+		    		pX +=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
 		    		kp = true;
-		    		pX +=16;
-		    		pY -=16;
+		    		pX +=tileSize;
+		    		pY -=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
 		    		kp = true;
-		    		pY -=16;
+		    		pY -=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
 		    		kp = true;
-		    		pX -=16;
-		    		pY -=16;
+		    		pX -=tileSize;
+		    		pY -=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
 		    		kp = true;
-		    		pX -=16;
+		    		pX -=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_ESCAPE)){
 		    		menutime = true;
 		    	}
 		    	if(kp){
 		    		inputDelta=100;
-		    		if(pX>767){
-		    			pX=767;
+		    		if(pX>upperX-tileSize){
+		    			pX=upperX-tileSize;
 		    		}
-		    		if(pX<15){
-		    			pX=15;
+		    		if(pX<tileSize-1){
+		    			pX=tileSize-1;
 		    		}
-		    		if(pY>559){
-		    			pY=559;
+		    		if(pY>upperY-tileSize){
+		    			pY=upperY-tileSize;
 		    		}
-		    		if(pY<15){
-		    			pY=15;
+		    		if(pY<tileSize-1){
+		    			pY=tileSize-1;
 		    		}
-		    		e1.step(pX, pY);
+		    		o1.step(pX, pY);
 		    	}
 	    	}
 	    	else{

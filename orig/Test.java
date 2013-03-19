@@ -110,5 +110,6 @@ public class Test {
 		//System.out.println(cStats.SPEED_MOVE + " : " + c.get(cStats.SPEED_MOVE,0));
 		
 		UniversalElements uE = new UniversalElements();
+		uE.printDmgTable();
 	}
 }

@@ -220,12 +220,8 @@ public class MainGameState extends BasicGameState{
 		        		inventorytime=false;
 		        	}
 	    		}
-	    		else if(equippedtime){
-		    		int mouseX = input.getMouseX();
-		        	int mouseY = input.getMouseY();
-	    			if(mouseX<150&&mouseY>=600-footer-textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-	    				equippedtime=false;
-	    			}
+	    		if(pY>559){
+	    			pY=559;
 	    		}
 	    		else{
 		    		int mouseX = input.getMouseX();

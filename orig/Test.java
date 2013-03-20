@@ -3,10 +3,9 @@ import java.util.*;
 import java.io.*;
 
 import orig.Creature.cStats;
-import orig.Race.rVal;
-//import orig.Creature.rVal;
-import orig.Race.rStats;
 import game.UniversalElements;
+import orig.Creature.bStats;
+import orig.Creature.sVal;
 
 public class Test {
 	public static void main(String[] args){
@@ -21,29 +20,30 @@ public class Test {
 			e[i] = new Element(L);
 		}
 		
-		Planet pl = new Planet(e);
-		System.out.println(pl.toString());
+	//	Planet pl = new Planet(e);
+	//	System.out.println(pl.toString());
 		//creature test
-		//String stat = Stats.TOTAL;
 		cStats s[] = cStats.values();
-		rVal v[] = rVal.values();
+		sVal v[] = sVal.values();
 
-		/*
-		for(int i = 0; i < cStats.TOTAL.ordinal()+1; i++) {
-			System.out.println(s[i] + " = " + s[i].ordinal());
-		}
-		*/
 		cStats cs = cStats.DETECT_SIGHT;
-		Race r = new Race();
-		rStats rs = rStats.DETECTION;
+		Race r = new Race(e, L);
+		//bStats rs = bStats.DETECTION;
 		//ystem.out.println(rs + " ~ " + rs.ordinal());
-		Creature c = new Creature(0);
+		Creature c = new Creature(r);
+		Creature c2 = new Creature(r);
+		Creature c3 = new Creature(r);
+		//c2.gain(s[0], sVal.XP, 500000);
+		for(int i=0; i<100;i++) {
+			//c.autoLvlPointsBy(10);
+			c2.autoLvlXP(11000);
+		}
 		String statPrint;
-		
+	/*	
 		System.out.println("-----------------------Initial Stat Test----------------------------");
 		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
 			statPrint = s[i] + " : ";
-			for(int j = 0; j < rVal.TOTAL.ordinal(); j++) {
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
 				statPrint += c.get(s[i], v[j]) + " , ";
 			}
 			statPrint += c.decode(s[i]).toString() + " , " + c.getRaceGain();
@@ -52,20 +52,20 @@ public class Test {
 		/*
 		System.out.println("----------------------Level Detect_Sight Test------------------------");
 		for(int i=0; i<400; i++) {
-			System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
-			c.gain(cs, rVal.XP, 10);
+			//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
+			c.gain(cs, sVal.XP, 10);
 		}
-		System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
-		c.gain(cs, rVal.XP, 300);
-		System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
-		c.gain(cs, rVal.XP, 3000);
-		System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
+		System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
+		//c.gain(cs, sVal.XP, 300);
+		//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
+		//c.gain(cs, sVal.XP, 3000);
+		//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
 		//String statPrint;
 		*/
 		System.out.println("----------------------------Current Value Test------------------------------");
 		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
 			statPrint = s[i] + " : ";
-			for(int j = 0; j < rVal.TOTAL.ordinal(); j++) {
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
 				statPrint += c.get(s[i], v[j]) + " , ";
 			}
 			statPrint += c.decode(s[i]).toString() + " , " + c.getRaceGain();
@@ -73,43 +73,76 @@ public class Test {
 		}
 		for(int k = 0; k<cStats.TOTAL.ordinal(); k++) {
 			for(int i=0; i<k*1000; i++) {
-				//System.out.println(cs.name() + " ~ " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
-				c.gain(s[k], rVal.XP, 10);
+				//System.out.println(cs.name() + " ~ " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
+				c.gain(s[k], sVal.XP, 10);
 			}
 		}
-		/*
-		System.out.println("Level Detect Sight Test");
-		System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
-		c.gain(cs, rVal.XP, 300);
-		System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
-		c.gain(cs, rVal.XP, 3000);
-		System.out.println(cs.name() + " > " + c.get(cs, rVal.LEVEL) + ", " + c.get(cs, rVal.XP));
+		
+		//System.out.println("Level Detect Sight Test");
+		//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
+		//c.gain(cs, sVal.XP, 300);
+		//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
+		//c.gain(cs, sVal.XP, 3000);
+		//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
 		//String statPrint;
-		*/
+		
 		
 		System.out.println("-----------------------------Get Effective Test--------------------------");
 		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
 			statPrint = s[i] + " : ";
-			for(int j = 0; j < rVal.TOTAL.ordinal(); j++) {
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
 				statPrint += c.get(s[i], v[j]) + ", ";
 			}
-			statPrint += c.decode(s[i]).toString() + ", " + c.getRaceGain() + ", " + c.getEffective(s[i], v[rVal.CURRENT.ordinal()]);
+			statPrint += c.decode(s[i]).toString() + ", " + c.getRaceGain() + ", " + c.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
 			System.out.println(statPrint);
 		}
-		
-		System.out.println("-----------------------------RStats Test------------------------------------");
-		rStats rstat[] = rStats.values();
-		for(int i=0; i<rStats.TOTAL.ordinal(); i++) {
+
+		/*System.out.println("-----------------------------bStats Test------------------------------------");
+		bStats rstat[] = bStats.values();
+		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
 			statPrint = rstat[i] + " : " + c.getRace().get(rstat[i], v[0]);
-			for(int j = 1; j < rVal.TOTAL.ordinal(); j++) {
+			for(int j = 1; j < sVal.TOTAL.ordinal(); j++) {
 				statPrint += ", " + c.getRace().get(rstat[i], v[j]);
 			}
 			//statPrint += c.decode(s[i]).toString() + " , " + c.getRaceGain();
 			System.out.println(statPrint);
 		}
 		//System.out.println(cStats.SPEED_MOVE + " : " + c.get(cStats.SPEED_MOVE,0));
+<<<<<<< HEAD
 		
 		UniversalElements uE = new UniversalElements();
 		uE.printDmgTable();
+=======
+		 * */
+		System.out.println("-----------------------------Get Effective Test--------------------------");
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			statPrint = s[i] + " : ";
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
+				statPrint += c.get(s[i], v[j]) + ", ";
+			}
+			statPrint += c.decode(s[i]).toString() + ", " + c.getRaceGain() + ", " + c.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			System.out.println(statPrint);
+		}
+
+		System.out.println("-----------------------------Get Effective Test--------------------------");
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			statPrint = s[i] + " : ";
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
+				statPrint += c2.get(s[i], v[j]) + ", ";
+			}
+			statPrint += c2.decode(s[i]).toString() + ", " + c2.getRaceGain() + ", " + c2.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			System.out.println(statPrint);
+		}
+
+		System.out.println("-----------------------------Get Effective Test--------------------------");
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			statPrint = s[i] + " : ";
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
+				statPrint += c3.get(s[i], v[j]) + ", ";
+			}
+			statPrint += c3.decode(s[i]).toString() + ", " + c3.getRaceGain() + ", " + c3.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			System.out.println(statPrint);
+		}
+
 	}
 }

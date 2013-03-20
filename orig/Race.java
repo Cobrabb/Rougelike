@@ -1,25 +1,13 @@
 package orig;
 
-//import orig.Creature.cStats;
-
-//import orig.Creature.cVal;
+import orig.Creature.cStats;
+import orig.Creature.bStats;
+import orig.Creature.sVal;
 
 public class Race {
-	public enum rStats {
-		STRENGTH,SPEED,DETECTION,STEALTH,TECH,STAMINA,TOTAL;
-		
-		public String toString() {
-			return this.name();
-		}
-	}
-	public enum rVal {
-		LEVEL,XP,MAX,CURRENT,TOTAL;
-		
-		public String toString() {
-			return this.name();
-		}
-	}
 
+	public Language L;
+	
 	private String name;
 	private int diet;  //How it eats, not what it eats
 	private Element consumes; //what it eats
@@ -28,28 +16,39 @@ public class Race {
 	private Element fluid; //the blood
 	private Element organs;
 	private boolean genders; //true if the Race is not a hermaphodite
-	final int numdiets = 4; //the possible diet options 
 	private int numArms;
 	private int numLegs;
 	
 
-	private int stat[][];
+	private int cStat[][];
+	private int bStat[][];
 	
 	//behind the scenes
-	private double mul = 10;
-	private double rate = 1.15;
-	private int lvlGain = 1;
+	final double mul = 10;
+	final double rate = 1.15;
+	final int lvlGain = 1;
+	final int numdiets = 4; //the possible diet options 
 	
-	public Race(){ //completely random, probably not necessary. 
-		this.stat = new int[rStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
-		for(int i=0; i<rStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<rVal.TOTAL.ordinal(); j++) {
-				this.stat[i][j] = 0;
+	public Race(){ //completely random, probably not necessary.
+		this.L = new Language();
+		this.name = L.generate();
+		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
+		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
+		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
+			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
+				this.cStat[i][j] = 0;
 			}
 		}
+		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
+			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
+				this.bStat[i][j] = 0;
+			}
+		}
+		numArms = 4;
 	}
 
 	public Race(Element[] e, Language L){ //semi random
+		this.L = L;
 		this.name  = L.generate();
 		int i = (int)(Math.random()*e.length);
 		this.casing = e[i];
@@ -107,13 +106,21 @@ public class Race {
 		if(Math.random()<.5){
 			this.genders = false;
 		}
-		this.stat = new int[rStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
+		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
+		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
+		
 		//initialize stat to 0's
-		for(int j=0; j<rStats.TOTAL.ordinal(); j++) {
-			for(int k=0; k<rVal.TOTAL.ordinal(); k++) {
-				this.stat[j][k] = 0;
+		for(int j=0; j<cStats.TOTAL.ordinal(); j++) {
+			for(int k=0; k<sVal.TOTAL.ordinal(); k++) {
+				this.cStat[j][k] = 0;
+			}
+		}		
+		for(int j=0; j<bStats.TOTAL.ordinal(); j++) {
+			for(int k=0; k<sVal.TOTAL.ordinal(); k++) {
+				this.bStat[j][k] = 0;
 			}
 		}
+
 		this.numArms = 2*(int) (Math.random()/.2);
 		this.numLegs = 2*(int) (Math.random()/.4);
 	}
@@ -131,13 +138,21 @@ public class Race {
 		this.organs = organs;
 		this.numArms = numArms;
 		this.numLegs = numLegs;
-		this.stat = new int[rStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
+		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
+		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
+		
 		//initialize stat to 0's
-		for(int i=0; i<rStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<rVal.TOTAL.ordinal(); j++) {
-				this.stat[i][j] = 0;
+		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
+			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
+				this.cStat[i][j] = 0;
 			}
 		}
+		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
+			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
+				this.bStat[i][j] = 0;
+			}
+		}
+		
 	}
 	
 	public String getName(){
@@ -187,55 +202,79 @@ public class Race {
 	public void setNumLegs(int n) {
 		this.numLegs = n;
 	}
-	public int get(rStats s, rVal v) {
-		return stat[s.ordinal()][v.ordinal()];
+	public int get(cStats s, sVal v) {
+		return cStat[s.ordinal()][v.ordinal()];
 	}
 	
-	public void set(rStats s, rVal v, int n) {
-		stat[s.ordinal()][v.ordinal()] = n;
+	public void set(cStats s, sVal v, int n) {
+		cStat[s.ordinal()][v.ordinal()] = n;
+	}
+	
+	public int get(bStats s, sVal v) {
+		return bStat[s.ordinal()][v.ordinal()];
+	}
+	
+	public void set(bStats s, sVal v, int n) {
+		bStat[s.ordinal()][v.ordinal()] = n;
 	}
 
-	public void gain(rStats s, rVal v, int n) {
-		this.stat[s.ordinal()][v.ordinal()] += n;
+	public Language getL() {
+		return this.L;
+	}
+	
+	public void gain(cStats s, sVal v, int n) {
+		this.cStat[s.ordinal()][v.ordinal()] += n;
+		checkXP(s);
+	}
+	
+	private void gain(bStats s, sVal v, int n) {
+		this.bStat[s.ordinal()][v.ordinal()] += n;
 		checkXP(s);
 	}
 	
 	//If XP >= mul*(lvl)^rate, then lvlUP
-	private void checkXP(rStats s) {
+	private void checkXP(cStats s) {
 		//while XP >= max for level, level up
-		while( (this.stat[s.ordinal()][rVal.XP.ordinal()]) >= ((int) mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate)) ){
-			//System.out.println(stat[s.ordinal()][rVal.XP.ordinal()] + ", " + (int) (mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate)));
+		while( (this.cStat[s.ordinal()][sVal.XP.ordinal()]) >= ((int) mul*Math.pow(this.cStat[s.ordinal()][sVal.LEVEL.ordinal()],rate)) ){
+			//System.out.println(stat[s.ordinal()][sVal.XP.ordinal()] + ", " + (int) (mul*Math.pow(this.stat[s.ordinal()][sVal.LEVEL.ordinal()],rate)));
 			lvlUp(s, mul, rate);
 		}
 	}
-	private void lvlUp(rStats s, double mul, double rate) {
-		//Incrementlevel and decrement XP by XP cap for level;
-		this.stat[s.ordinal()][rVal.XP.ordinal()] -= ((int) mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate));
-		this.stat[s.ordinal()][rVal.LEVEL.ordinal()]++;
-		this.stat[s.ordinal()][rVal.MAX.ordinal()] += lvlGain;
-		// current = max (unless temp effect has it above max already)
-		if(this.stat[s.ordinal()][rVal.CURRENT.ordinal()] < this.stat[s.ordinal()][rVal.MAX.ordinal()]) {
-			this.stat[s.ordinal()][rVal.CURRENT.ordinal()] = this.stat[s.ordinal()][rVal.MAX.ordinal()];
+	
+	//If XP >= mul*(lvl)^rate, then lvlUP
+	private void checkXP(bStats s) {
+		//while XP >= max for level, level up
+		while( (this.bStat[s.ordinal()][sVal.XP.ordinal()]) >= ((int) mul*Math.pow(this.bStat[s.ordinal()][sVal.LEVEL.ordinal()],rate)) ){
+			//System.out.println(stat[s.ordinal()][sVal.XP.ordinal()] + ", " + (int) (mul*Math.pow(this.stat[s.ordinal()][sVal.LEVEL.ordinal()],rate)));
+			lvlUp(s, mul, rate);
 		}
-//		this.race.gain(decode(s),rVal.XP,raceGain);
 	}
-		/*
-	//if  XP >= mul*(lvl)^rate, then lvlUp
-	public void checkXP(rStats s) {
-		double mul = 10; 
-		double rate = 1.15; 
-		boolean test =	(this.stat[s.ordinal()][rVal.XP.ordinal()]) >= ((int) mul*Math.pow(this.stat[s.ordinal()][rVal.LEVEL.ordinal()],rate));
-		if(test) {
-			lvlUp(s);
+
+	private void lvlUp(cStats s, double mul, double rate) {
+		//Incrementlevel and decrement XP by XP cap for level;
+		this.cStat[s.ordinal()][sVal.XP.ordinal()] -= ((int) mul*Math.pow(this.cStat[s.ordinal()][sVal.LEVEL.ordinal()],rate));
+		this.cStat[s.ordinal()][sVal.LEVEL.ordinal()]++;
+		this.cStat[s.ordinal()][sVal.MAX.ordinal()] += lvlGain;
+		if(this.cStat[s.ordinal()][sVal.CURRENT.ordinal()] < this.cStat[s.ordinal()][sVal.MAX.ordinal()]) {
+			this.cStat[s.ordinal()][sVal.CURRENT.ordinal()] = this.cStat[s.ordinal()][sVal.MAX.ordinal()];
 		}
 	}
 	
-	public void lvlUp(rStats s) {
-		this.stat[s.ordinal()][rVal.LEVEL.ordinal()]++;
-		this.stat[s.ordinal()][rVal.XP.ordinal()] = 0;
+	private void lvlUp(bStats s, double mul, double rate) {
+		//Incrementlevel and decrement XP by XP cap for level;
+		this.bStat[s.ordinal()][sVal.XP.ordinal()] -= ((int) mul*Math.pow(this.bStat[s.ordinal()][sVal.LEVEL.ordinal()],rate));
+		this.bStat[s.ordinal()][sVal.LEVEL.ordinal()]++;
+		this.bStat[s.ordinal()][sVal.MAX.ordinal()] += lvlGain;
+		if(this.bStat[s.ordinal()][sVal.CURRENT.ordinal()] < this.bStat[s.ordinal()][sVal.MAX.ordinal()]) {
+			this.bStat[s.ordinal()][sVal.CURRENT.ordinal()] = this.bStat[s.ordinal()][sVal.MAX.ordinal()];
+		}
 	}
-	*/
-
+	
+	public Creature spawn() {
+		Creature c = new Creature(name, L.generate(),diet,consumes,produces,casing,fluid,organs,genders,numArms,numLegs,cStat,bStat,null,null,null,bStat[bStats.STAMINA.ordinal()][sVal.CURRENT.ordinal()],numArms,0,0);
+		return c;
+	}
+	
 	public String toString(){
 		String str = "This is the Race "+name+". Its flesh is "+casing.getName()+". Its blood is "+fluid.getName()+". Its organs are "+organs.getName()+". It consumes ";
 		if(consumes==null){

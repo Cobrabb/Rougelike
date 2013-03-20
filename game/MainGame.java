@@ -8,6 +8,8 @@ import org.newdawn.slick.state.StateBasedGame;
 public class MainGame extends StateBasedGame{
 	public static final int MENUSTATE = 0;
 	public static final int MAINGAMESTATE = 1;
+	public static final int sizeX = 1024;
+	public static final int sizeY = 672;
 
 	public MainGame(){
 		super("Space Rougelike");
@@ -20,7 +22,7 @@ public class MainGame extends StateBasedGame{
    public static void main(String[] args) {
         try {
             AppGameContainer app = new AppGameContainer(new MainGame());
-            app.setDisplayMode(800, 600, false);
+            app.setDisplayMode(sizeX, sizeY, false);
             app.start();
         } catch (SlickException e) {
             e.printStackTrace();

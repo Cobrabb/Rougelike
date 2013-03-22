@@ -18,7 +18,7 @@ public class Item {
 	private double phys_tech_ratio; //0 is pure physical, 1 is pure tech (projectile)
 	private int baseDmg;
 	private iType type;
-	private String name;
+	public String name;
 	private double weight;
 	
 	public Item() {

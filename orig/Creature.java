@@ -1,15 +1,12 @@
 package orig;
 
 import java.util.ArrayList;
-
 import orig.Item.iType;
 
 
-//import java.lang.Math;
-
 public class Creature {
 	public enum cStats {
-		STR_CLIMB, STR_PHYS_ATTACK, STR_MAX_CAPACITY, SPEED_MOVE, SPEED_ATTACK, DETECT_SIGHT,	DETECT_SOUND,
+		STR_CLIMB, STR_PHYS_ATTACK, STR_JUMP, SPEED_MOVE, SPEED_ATTACK, DETECT_SIGHT,	DETECT_SOUND,
 		STEALTH_SIGHT, STEALTH_SOUND, TECH_WEAPON, TECH_ARMOR, STAM_HEALTH, STAM_ENERGY, TOTAL;
 		
 		public String toString() {
@@ -32,15 +29,7 @@ public class Creature {
 			return this.name();
 		}
 	}
-	/*
-	public enum Elem {
-		CONSUMES, PRODUCES, CASING, FLUID, ORGANS, TOTAL;
-		
-		public String toString() {
-			return this.name();
-		}
-	}
-*/
+
 	private String name; 
 	private String rName;
 
@@ -65,6 +54,7 @@ public class Creature {
 	private int staminaMaxInventory;
 	private int availHands;
 	private double weight;
+	private ArrayList<Effect> effects;
 	
 	
 	// behind the scenes
@@ -265,10 +255,36 @@ public class Creature {
 	
 	public int getEffective(cStats s, sVal v) {
 		//returns effective value for stat (useful for current/max)
+		bStats b = decode(s);
 		int eff = (int) (base_creat_ratio*bStat[decode(s).ordinal()][v.ordinal()] + cStat[s.ordinal()][v.ordinal()]);
+		for(int i=0; i<effects.size(); i++) {
+			if(effects.get(i).getBase() == true) {
+				if((effects.get(i).getCStat() == s) && (effects.get(i).getSVal() == v)) {  
+					eff += effects.get(i).getValue();
+				}
+			}
+			else {
+				if((effects.get(i).getBStat() == b) && (effects.get(i).getSVal() == v)) {
+					eff += effects.get(i).getValue();
+				}
+			}
+			
+		}
 		return eff;
 	}
 	
+//Decrement and remove Effects
+	public void update() {
+		for(int i=0; i<effects.size(); i++) {
+			//decrements steps remaining
+			effects.get(i).update();
+			//removes expired effects
+			if(effects.get(i).getSteps() <= 0) {
+				effects.remove(i);
+				i--;
+			}
+		}
+	}
 	
 	public void randomInitXP() {
 		int total = 0, xp, min = cStat[0][sVal.LEVEL.ordinal()], max = cStat[0][sVal.LEVEL.ordinal()], stat;
@@ -484,16 +500,13 @@ public class Creature {
 		return this.raceGain;
 	}
 
-	/*
-	public void attack(Square s) {
-		for(int i=0; i<this.getNumArms(); i++) {
-			//slots holds the number of non-arm slots in equipped
-			// for each arm-slot, attack s
-			this.equipped[slots+i].attack(s,getEffective(cStats.STR_PHYS_ATTACK,sVal.CURRENT),getEffective(cStats.TECH_WEAPON,sVal.CURRENT));
+	
+	public void attack(int x, int y) {
+		for(int i=0; i<this.getNumArms(); ) {
+			
 			//this.stat[cStats.STR_PHYS_ATTACK.ordinal()][sVal.CURRENT.ordinal()],this.stat[cStats.TECH_WEAPON.ordinal()][sVal.CURRENT.ordinal()]);
 		}
 	}
-	*/
 	
 	public void takeDamage(Element[] consists, int damage) {
 		//get resistances from univeral reaction table
@@ -548,25 +561,22 @@ public class Creature {
 
 
 	public String getEquipped(int i){
-		if(i>=this.weilding.size()+this.equipped.length || i < 0) return "None";
-		else if(i<this.equipped.length){
+		if(i>this.equipped.length || i < 0) return "None";
+		else {
 			if(equipped[i] == null) return "None";			
 			return equipped[i].getName();
 		}
-		else{
-			return this.weilding.get(i-slots).getName();
-		}
 	}
 	
-	public String getEquipped(Item i) {
-		if(i.getType() != iType.HAND) {
-			if(i.getType() == iType.TOTAL) return "Don't pass TOTAL to this";
+	public String getEquipped(iType i, int n) {
+		if(i != iType.HAND) {
+			if(i == iType.TOTAL) return "Don't pass TOTAL to this";
 			
-			if(equipped[i.getType().ordinal()] == null) return "None";
-			else return equipped[i.getType().ordinal()].getName();
+			if(equipped[i.ordinal()] == null) return "None";
+			else return equipped[i.ordinal()].getName();
 		}
 		else {
-			return getEquipped(0); //get default (first) weapon
+			return getEquipped(n); //get weapons
 		}
 	}
 }

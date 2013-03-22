@@ -1,5 +1,8 @@
 package orig;
 
+import java.util.ArrayList;
+import orig.Attack.AttackPattern;
+
 public class Item {
 	
 	public enum iType {
@@ -20,6 +23,8 @@ public class Item {
 	private iType type;
 	private String name;
 	private double weight;
+	private ArrayList<Effect> effects;
+	private AttackPattern pattern;
 	
 	public Item() {
 		//generate random elements for consists and repairs
@@ -39,11 +44,8 @@ public class Item {
 		this.weight = weight;
 	}
 	
-	public void attack(Square s, int phys, int tech) {
-		if(s.c != null) {
-			int damage = (int) (baseDmg*((1-phys_tech_ratio)*phys + phys_tech_ratio*tech));
-			s.c.takeDamage(consists, damage);
-		}
+	public void attack(int x, int y, int phys, int tech) {
+		int damage = (int) (baseDmg*((1-phys_tech_ratio)*phys + phys_tech_ratio*tech));
 	}
 	
 	public boolean repair(Element[] elements) {

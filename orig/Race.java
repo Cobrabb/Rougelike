@@ -4,6 +4,8 @@ import orig.Creature.cStats;
 import orig.Creature.bStats;
 import orig.Creature.sVal;
 
+import java.util.ArrayList;
+
 public class Race {
 
 	public Language L;
@@ -18,6 +20,7 @@ public class Race {
 	private boolean genders; //true if the Race is not a hermaphodite
 	private int numArms;
 	private int numLegs;
+	private ArrayList<Race> friendly;
 	
 
 	private int cStat[][];
@@ -45,6 +48,7 @@ public class Race {
 			}
 		}
 		numArms = 4;
+		this.friendly = new ArrayList<Race>(0);
 	}
 
 	public Race(Element[] e, Language L){ //semi random
@@ -123,9 +127,10 @@ public class Race {
 
 		this.numArms = 2*(int) (Math.random()/.2);
 		this.numLegs = 2*(int) (Math.random()/.4);
+		this.friendly = new ArrayList<Race>(0);
 	}
 
-	public Race(String name, int diet, Element produces, Element consumes, Element casing, Element fluid, Element organs, int numArms, int numLegs){
+	public Race(String name, int diet, Element produces, Element consumes, Element casing, Element fluid, Element organs, int numArms, int numLegs, ArrayList<Race> friendly){
 		this.name = name;
 		if(diet>numdiets||diet<=0){
 			this.diet = 1;
@@ -153,6 +158,28 @@ public class Race {
 			}
 		}
 		
+		this.friendly = new ArrayList<Race>(0);
+		for(int i=0; i<friendly.size();i++){
+			this.friendly.add(friendly.get(i));
+		}
+	}
+	
+	public boolean isFriendly(Race r) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i) == r) return true;
+		}
+		return false;
+	}
+	
+	public void addFriendly(Race r) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i) == r) return;
+		}
+		this.friendly.add(r);
+	}
+	
+	public ArrayList<Race> getFriendly() {
+		return this.friendly;
 	}
 	
 	public String getName(){

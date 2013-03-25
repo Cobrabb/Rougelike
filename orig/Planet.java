@@ -1,11 +1,7 @@
 package orig;
 
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
-
 import util.DungeonMapGenerator;
+import util.MapUtil;
 
 public class Planet {
 
@@ -193,18 +189,14 @@ public class Planet {
 		}
 
 		// returns the String referring to the fileLocation of this dungeon
-		public String generateMap(String mapPath) {
-			mapPath = String.format("%s\\%s", this.name, mapPath);
-			mapPath = this.mapGenerator.weakRandomMapGen(mapPath, 48, 36);
+		public String generateMap(String mapName) {
+			mapName = String.format("%s__%s", this.name, mapName);
+			String mapPath = this.mapGenerator.generateBlankSquareMap(mapName, 25, 19);
 			return mapPath;
 		}
 		
 		public void setCurrentDungeon(String mapPath) {
-			try {
-				this.currentDungeon = new DungeonMap(mapPath, this, true, false);
-			} catch (SlickException e) {
-				e.printStackTrace();
-			}
+			this.currentDungeon = MapUtil.readMap(mapPath);
 		}
 		
 		public DungeonMap getCurrentDungeon() {

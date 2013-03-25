@@ -1,8 +1,10 @@
 package orig;
-import java.lang.Math;
+import java.io.Serializable;
 
-public class Element {
+public class Element implements Serializable {
 
+	private static final long serialVersionUID = 692007231011169197L;
+	
 	private String name; //name of the element
 	private double density; //density
 	

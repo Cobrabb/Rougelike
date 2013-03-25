@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
 
+import orig.DungeonMap;
 import orig.Element;
 import orig.Planet;
 
@@ -20,7 +21,7 @@ public final class DungeonMapGenerator {
 	Element wallBase;
 	
 	public DungeonMapGenerator(Planet p) {
-		MapUtil.loadTiles();
+		ImageUtil.loadImages();
 		if (p.getElementCount() > 1) {
 			floorBase = p.getElement(0);
 			wallBase = p.getElement(1);
@@ -34,13 +35,9 @@ public final class DungeonMapGenerator {
 	 *make a map array that hold double array of booleans which represents where we will place tiles
 	 *initially false = wall, true = tiles
 	 * 
+	 * Returns the mapPath where the map has been generated to.
 	 */
-	
-	public void makeAllUnvisited()// sets the whole map as unvisited
-	{
-		
-	}
-	public boolean[][] generateMap(String mapPath, int width, int height)
+	public String generateBlankSquareMap(String mapName, int width, int height)
 	{
 		boolean map[][] = new boolean[width][height];
 		int numRoom = r.nextInt(6) + 15;
@@ -82,7 +79,8 @@ public final class DungeonMapGenerator {
 				}
 			}
 		}
-		return map;
+		DungeonMap dm = new DungeonMap(map, this.wallBase, this.floorBase);
+		return MapUtil.writeMap(mapName, dm);
 	}
 	
 	public String weakRandomMapGen(String mapPath, int width, int height) {

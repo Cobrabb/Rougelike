@@ -2,10 +2,16 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
+
+import orig.DungeonMap;
 
 public final class MapUtil {
 	private static HashMap<String, Integer> labelToGID = null;
@@ -21,6 +27,35 @@ public final class MapUtil {
 			return labelToGID.get(label);
 		}
 		return 0;
+	}
+	
+	public static String writeMap(String mapName, DungeonMap dm) {
+		String mapPath = String.format("%s\\%s", MapUtil.folderDirectory, mapName);
+		try {
+			FileOutputStream fos = new FileOutputStream(mapPath);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(dm);
+			oos.close();
+		} catch (IOException e) {
+			System.err.printf("Error writing dungeon map\n");
+			e.printStackTrace();
+			mapPath = null;
+		}
+		return mapPath;
+	}
+	
+	public static DungeonMap readMap(String mapPath) {
+		DungeonMap ret = null;
+		try {
+			FileInputStream fis = new FileInputStream(mapPath);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			ret = (DungeonMap)ois.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 	
 	// loads from a file a mapping from String labels to the GID in the .tsx files

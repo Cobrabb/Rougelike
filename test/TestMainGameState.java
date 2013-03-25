@@ -13,6 +13,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import orig.DungeonMap;
 import orig.Element;
 import orig.Planet;
+import util.TestImageUtil;
 public class TestMainGameState extends BasicGameState{
 	int stateID = -1;
 	Image floor = null;
@@ -41,9 +42,9 @@ public class TestMainGameState extends BasicGameState{
     }
 	
 	public void init(GameContainer container, StateBasedGame Sbg) throws SlickException {
-		Element elem1 = new Element("stone_floor", 1.0);
-		Element elem2 = new Element("stone_wall_updown", 2.0);
-		Element elem3 = new Element("stone_wall_leftright", 2.0);
+		Element elem1 = new Element("ice", 1.0);
+		Element elem2 = new Element("silver brick", 2.0);
+		Element elem3 = new Element("cobblestone", 2.0);
 		planet = new Planet(new Element[] {elem1, elem2, elem3});
 		String path = planet.generateMap("map1");
 		planet.setCurrentDungeon(path);

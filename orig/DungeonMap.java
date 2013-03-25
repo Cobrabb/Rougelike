@@ -1,19 +1,22 @@
 package orig;
 
+import java.io.Serializable;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
-public class DungeonMap implements TileBasedMap { //extends TiledMap
+import util.MapUtil;
+
+public class DungeonMap implements TileBasedMap, Serializable { 
+	
+	private static final long serialVersionUID = -6764222487499645397L;
 
 	//getting around
 	int mapID;
-	
-	private TiledMap map;
 	
 	//the map's properties
 	Square[][] squares;
@@ -39,15 +42,31 @@ public class DungeonMap implements TileBasedMap { //extends TiledMap
 		}
 	}
 	
-	public DungeonMap(String mapPath, Planet p, boolean outer, boolean generate) throws SlickException {
+	public DungeonMap(String mapPath, Planet p, boolean outer) {
 		this(p, outer);
-		if (generate)
-			mapPath = p.generateMap(mapPath);
-		this.map = new TiledMap(mapPath, "maps");
 	}
 	
+	public DungeonMap(boolean[][] wallFloor, Element wbase, Element fbase) {
+		this.wallsbase = wbase;
+		this.floorsbase = fbase;
+		this.squares = new Square[wallFloor.length][wallFloor[0].length];
+		for (int row = 0; row < wallFloor.length; ++row) {
+			for (int col = 0; col < wallFloor[row].length; ++col) {
+				// might want to look into changing this way of initializing squares
+				Square sq = new Square();
+				sq.passable = wallFloor[row][col];
+				sq.consists = (sq.passable ? fbase : wbase);
+				this.squares[row][col] = sq;
+			}
+		}
+	}
+
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) {
-		this.map.render(0, 0);
+		for (int row = 0; row < squares.length; ++row) {
+			for (int col = 0; col < squares[row].length; ++col) {
+				squares[row][col].render(row, col);
+			}
+		}
 	}
 
 	@Override
@@ -63,12 +82,11 @@ public class DungeonMap implements TileBasedMap { //extends TiledMap
 
 	@Override
 	public int getHeightInTiles() {
-		return map.getHeight();
+		return squares[0].length;
 	}
 
-	@Override
 	public int getWidthInTiles() {
-		return map.getWidth();
+		return squares.length;
 	}
 
 	@Override

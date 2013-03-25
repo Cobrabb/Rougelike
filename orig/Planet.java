@@ -190,7 +190,7 @@ public class Planet {
 
 		// returns the String referring to the fileLocation of this dungeon
 		public String generateMap(String mapName) {
-			mapName = String.format("%s__%s", this.name, mapName);
+			mapName = String.format("planet\\%s\\%s", this.name, mapName);
 			String mapPath = this.mapGenerator.generateBlankSquareMap(mapName, 25, 19);
 			return mapPath;
 		}

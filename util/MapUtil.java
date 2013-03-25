@@ -44,6 +44,17 @@ public final class MapUtil {
 		return mapPath;
 	}
 	
+ 	private static void createPlanetFolder(String mapPath) throws IOException {
+ 		String[] parts = mapPath.split("\\\\");
+ 		String first = mapPath.substring(0, mapPath.length() - parts[parts.length-1].length() - 1);
+-		File planetFolder = new File(MapWriter.getFolderDirectory() + first);
++		File planetFolder = new File(MapUtil.getFolderDirectory() + first);
+ 		boolean success = planetFolder.mkdirs();
+ 		if (!success)
+ 			throw new IOException("Failed to create the planet directory for dungeon map " + mapPath);
+ 	}
+
+	
 	public static DungeonMap readMap(String mapPath) {
 		DungeonMap ret = null;
 		try {

@@ -22,13 +22,9 @@ public class TestMainGame extends StateBasedGame{
     }
 	public static void main(String[] args) {
 		MapUtil.setFolderDirectory("maps");
-		MapUtil.setTileSource("test.labelmap");
-		MapUtil.setResourceFile("rougelike.tsx");
 		ImageUtil.setRelativeFolder("maps");
 		ImageUtil.setTPF("tileset_parse.tpf");
 		ImageUtil.setTilesetImageFile("ccrgeek_ground_tileset.png");
-		MapUtil.setTileWidth(16);
-		MapUtil.setTileHeight(16);
 		try {
 	        AppGameContainer app = new AppGameContainer(new TestMainGame());
 	        app.setDisplayMode(800, 608, false);

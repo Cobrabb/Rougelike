@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 
 import orig.DungeonMap;
@@ -79,10 +81,48 @@ public final class DungeonMapGenerator {
 				}
 			}
 		}
+		//DungeonMapGenerator.minConnect(map);
 		DungeonMap dm = new DungeonMap(map, this.wallBase, this.floorBase);
 		return MapUtil.writeMap(mapName, dm);
 	}
 	
+	private static void minConnect(boolean[][] map) {
+		// does minimum spanning tree algo, treating map rooms as one location.
+		
+		int componentCount = 2;
+		while (componentCount != 1) {
+			componentCount = 0;
+			int[][] visited = new int[map.length][map[0].length];
+			Queue<Loc> queue = new LinkedList<Loc>();
+			for (int row = 0; row < map.length; ++row) {
+				for (int col = 0; col < map[row].length; ++col) {
+					if (map[row][col] && visited[row][col] == 0) {
+						++componentCount;
+						queue.add(new Loc(row, col));
+						visited[row][col] = componentCount;
+					}
+					
+				}
+			}
+		}
+	}
+	
+	private static class Loc implements Comparable<Loc> {
+		int x;
+		int y;
+		
+		public Loc(int xx, int yy) {
+			x = xx;
+			y = yy;
+		}
+
+		@Override
+		public int compareTo(Loc arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+	}
+
 	public String weakRandomMapGen(String mapPath, int width, int height) {
 		String[] layers = {"floor", "wall", "doors"};
 		int[][][] tiles = new int[layers.length][width][height];

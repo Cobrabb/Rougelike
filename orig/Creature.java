@@ -257,18 +257,22 @@ public class Creature {
 		//returns effective value for stat (useful for current/max)
 		bStats b = decode(s);
 		int eff = (int) (base_creat_ratio*bStat[decode(s).ordinal()][v.ordinal()] + cStat[s.ordinal()][v.ordinal()]);
-		for(int i=0; i<effects.size(); i++) {
-			if(effects.get(i).getBase() == true) {
-				if((effects.get(i).getCStat() == s) && (effects.get(i).getSVal() == v)) {  
-					eff += effects.get(i).getValue();
+		if(this.effects != null) {
+			for(int i=0; i<effects.size(); i++) {
+				if(!effects.get(i).isBase()) {
+					if((effects.get(i).getCStat() == s) && (effects.get(i).getSVal() == v)) {  
+						eff += effects.get(i).getValue();
+					}
 				}
-			}
-			else {
-				if((effects.get(i).getBStat() == b) && (effects.get(i).getSVal() == v)) {
-					eff += effects.get(i).getValue();
+				else {
+					if((effects.get(i).getBStat() == b) && (effects.get(i).getSVal() == v)) {
+						eff += effects.get(i).getValue();
+					}
 				}
-			}
-			
+			}			
+		}
+		if((s == cStats.SPEED_MOVE) && ((v == sVal.CURRENT) || (v == sVal.MAX) )){
+			eff *= Math.max(0,Math.min()) 
 		}
 		return eff;
 	}

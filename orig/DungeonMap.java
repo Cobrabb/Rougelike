@@ -75,7 +75,8 @@ public class DungeonMap implements TileBasedMap { //extends TiledMap
 	public void pathFinderVisited(int arg0, int arg1) {
 	}
 	
-//prototype Attack function (should just pass to creature at each of the points in attack pattern) 
+//prototype Attack function (should just pass to creature/Item at each of the points in attack pattern) 
+//remove if it is already implemented - Michael
 	public void attack(Attack a) {
 		//handle attacks and Attack results
 	}

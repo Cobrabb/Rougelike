@@ -2,10 +2,11 @@ package orig;
 import java.util.*;
 import java.io.*;
 
+import orig.Attack.AttackDirection;
+import orig.Attack.AttackPattern;
 import orig.Creature.cStats;
 import orig.Creature.bStats;
 import orig.Creature.sVal;
-import game.UniversalElements;
 
 
 public class Test {
@@ -149,7 +150,12 @@ public class Test {
 		}
 
 		
-		UniversalElements uE = new UniversalElements();
+		UET uE = UET.getUET();
 		uE.printDmgTable();
+		
+		Attack a0 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.EAST);
+		Attack a1 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.NORTH);
+		Attack a2 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.WEST);
+		Attack a3 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.SOUTH);
 	}
 }

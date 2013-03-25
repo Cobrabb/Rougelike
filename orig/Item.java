@@ -12,25 +12,64 @@ public class Item {
 			return this.name();
 		}
 	}
+	
+	public enum AttackType {
+		BUFF, PHYS, RANGED, NONE
+	}
+	
+	//private UniversalElements UE = null;
 
-	private Element[] consists; //need to know proportions
-	private Element[] repairs; //need to know proportions
+	private Element[] consists = null; //need to know proportions
+	private Element[] repairs = null; //need to know proportions
 	//private Element[] improve;
-	private int hands; //number of hands required to wield
-	private int techRequired;
-	private double phys_tech_ratio; //0 is pure physical, 1 is pure tech (projectile)
-	private int baseDmg;
-	private iType type;
-	private String name;
-	private double weight;
-	private ArrayList<Effect> effects;
-	private AttackPattern pattern;
+	private int hands = 1; //number of hands required to wield
+	private int techRequired = 1;
+	private double phys_tech_ratio = 0; //0 is pure physical, 1 is pure tech (projectile)
+	private int baseDmg = 0;
+	private iType type = null;
+	private String name = "";
+	private double weight = 0.0;
+	private double health = 0.0;
+	private ArrayList<Effect> effects = null; //does item pass on any additional effects
+	private AttackPattern pattern = null; // how does this item attack
+	private AttackType atype = AttackType.PHYS; // defaults to physical attack
+	private int attackSize = 1; // defaults to a single space attack
+//	private double wearDmg = 0.0;
 	
 	public Item() {
+		this.name = new Language().generate();
+		iType types[] = iType.values();
+		this.type = types[(int) Math.random()*iType.TOTAL.ordinal()];
 		//generate random elements for consists and repairs
-		name = "LOOOOL";
-		type = iType.HAND;
-		hands = 2;
+		this.consists = new Element[(int) Math.max((1.0/Math.random()),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
+		for(int i=0; i<this.consists.length; i++) {
+			this.consists[i] = UET.getUET().getElementList().get((int) (Math.min((UET.TOTAL+1)*Math.random(),UET.TOTAL)));
+		}
+		this.repairs = new Element[(int) Math.max((1.0/Math.random()),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
+		for(int i=0; i<this.repairs.length; i++) {
+			this.repairs[i] = UET.getUET().getElementList().get((int) ((UET.TOTAL+1)*Math.random()));
+		}
+		if(this.type == iType.HAND) {
+			this.hands = (int) Math.max((1.0/Math.random()),1); //generate random number of hands (at least 1 hand though)
+			this.baseDmg = (int) (1.0/Math.random())*this.hands; //generate random damage (assuming more hands means a more powerful weapon)
+		}
+		else {
+			this.hands = 0;
+			this.baseDmg = 0;
+		}
+		this.techRequired = (int) (100*Math.random()); //generate tech level required
+		this.phys_tech_ratio = Math.random(); //generate random ratio of physical and tech
+		this.weight = 1/Math.random();
+		this.health = 1/Math.random();
+		this.effects = new ArrayList<Effect>(0);
+		while(Math.random() < .7) {
+			this.effects.add(new Effect());
+		}
+		AttackPattern ap[] = AttackPattern.values();
+		this.pattern = ap[(int) (AttackPattern.TOTAL.ordinal()*Math.random())];
+		AttackType at[] = AttackType.values();
+		this.atype = at[(int) (AttackType.NONE.ordinal()*Math.random())];
+		this.attackSize = (int) (1/Math.random());
 	}
 	
 	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, int baseDmg, iType type, double weight) {
@@ -44,8 +83,9 @@ public class Item {
 		this.weight = weight;
 	}
 	
-	public void attack(int x, int y, int phys, int tech) {
-		int damage = (int) (baseDmg*((1-phys_tech_ratio)*phys + phys_tech_ratio*tech));
+	public double attack(int x, int y, int phys, int tech) {
+		double damage = baseDmg*((1-phys_tech_ratio)*phys + phys_tech_ratio*tech);
+		return damage;
 	}
 	
 	public boolean repair(Element[] elements) {
@@ -71,4 +111,73 @@ public class Item {
 	public  double getWeight() {
 		return this.weight;
 	}
+	
+	public double getHealth() {
+		return this.health;
+	}
+	
+	public Element[] getConsists() {
+		return this.consists;
+	}
+	
+	public AttackPattern getAttackPattern() {
+		return this.pattern;
+	}
+	
+	public int getAttackSize() {
+		return this.attackSize;
+	}
+	
+	public boolean canEquip(int techLevel) {
+		return (techLevel >= this.techRequired);
+	}
+	
+////////////////////////////////Stuff for attacking////////////////////////////////////	
+	public AttackType getAttackType() {
+		return this.atype;
+	}
+	
+	public AttackResults takeAttack(Attack a) {
+		double dmg = 0, count = 0, atStr = a.getAttackStrength();
+		for(Element ae : a.getWeapon().getConsists()) {
+			for(Element me : this.consists) {
+				dmg += atStr*UET.getUET().getDmg(ae, me);
+				count++;
+			}
+		}
+		dmg /= count;
+		this.health -= dmg;
+		if(this.health < 0) this.health = 0;
+		
+		if(a.getWeapon().getAttackType() == AttackType.PHYS){
+			ArrayList<Element> elements = new ArrayList<Element>(0);
+			for(Element e : this.consists) {
+				elements.add(e);
+			}
+			AttackResults ar = new AttackResults(effects, this , elements);
+			return ar;
+		}
+		return null;
+	}
+	
+	public void takeAttackResults(AttackResults ar) {
+		if(ar != null) {//takes reflected damaged
+			double dmg = 0, count = 0, atStr = ar.getAttackStrength();
+			for(Element ae : ar.getConsists()) {
+				for(Element me : this.consists) {
+					dmg += atStr*UET.getUET().getDmg(ae, me);
+					count++;
+				}
+			}
+			dmg /= count;
+			this.health -= dmg;
+			if(this.health < 0) this.health = 0;
+			
+		}
+		else {//need to figure out how much firing damage it should take
+			//damage should be proportional to damage dealt, but inversely to skill (know how to take care of weapon)
+		}
+	}
+	
+
 }

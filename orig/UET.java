@@ -1,11 +1,13 @@
-package game;
+package orig;
 
 import java.util.ArrayList;
 
 import orig.Element;
 import orig.Language;
 
-public class UniversalElements {
+public class UET {
+	public static UET uET = null;
+	
 	private final Language l;
 	public final int WATER = 0;
 	public final int MEAT = 1;
@@ -16,13 +18,13 @@ public class UniversalElements {
 	public final int WOOD = 6;
 	
 	public static final int TOTAL = 20;
-	ArrayList<Element> elementList = new ArrayList<Element>();
+	private ArrayList<Element> elementList = new ArrayList<Element>();
 	
 	
 	
 	double dmgRatioMultiplier[][] = new double[TOTAL][TOTAL];
 	
-	public UniversalElements()
+	private UET()
 	{
 		String temp = "";
 		for(char c = 'a'; c != 'Z'+1; c++) {
@@ -99,6 +101,10 @@ public class UniversalElements {
 		}
 	}
 	
+	public ArrayList<Element> getElementList() {
+		return this.elementList;
+	}
+	
 	public double getDmg(Element attack, Element defend) {
 		double dRM, density, gran, mal;
 		dRM = this.dmgRatioMultiplier[this.elementList.indexOf(attack)][this.elementList.indexOf(defend)];
@@ -135,5 +141,12 @@ public class UniversalElements {
 			printUE += "\n";
 		}
 		System.out.println(printUE);
+	}
+	
+	public static UET getUET() {
+		if(uET == null) {
+			uET = new UET();
+		}
+		return uET;
 	}
 }

@@ -53,12 +53,23 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		for (int row = 0; row < wallFloor.length; ++row) {
 			for (int col = 0; col < wallFloor[row].length; ++col) {
 				// might want to look into changing this way of initializing squares
-				Square sq = new Square();
-				sq.passable = wallFloor[row][col];
-				sq.consists = (sq.passable ? fbase : wbase);
+				boolean passable = wallFloor[row][col];
+				Element cons = (wallFloor[row][col] ? fbase : wbase);
+				Square sq = new Square(passable, cons);
 				this.squares[row][col] = sq;
 			}
 		}
+	}
+	
+	public boolean isPassable(int xCoor, int yCoor) {
+		// validate coordinates
+		if (!validateCoordinates(xCoor, yCoor))
+			return false; // tell caller they can't move off the grid, maybe throw exception
+		return squares[xCoor][yCoor].isPassable();
+	}
+
+	private boolean validateCoordinates(int xCoor, int yCoor) {
+		return (xCoor >= 0 && xCoor < squares.length && yCoor >= 0 && yCoor < squares[0].length);
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) {

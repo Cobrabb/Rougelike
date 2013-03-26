@@ -26,10 +26,11 @@ public class TestMainGameState extends BasicGameState{
 	Image player = null;
 	Image enemy = null;
 	Enemy e1;
-	int pX = 223;
-	int pY = 223;
+	int pX = 224;
+	int pY = 224;
 	int inputDelta = 100;
 	Planet planet = null;
+	DungeonMap dm = null;
 	
     TestMainGameState( int stateID ) 
     {
@@ -48,6 +49,7 @@ public class TestMainGameState extends BasicGameState{
 		planet = new Planet(new Element[] {elem1, elem2, elem3});
 		String path = planet.generateMap("map1");
 		planet.setCurrentDungeon(path);
+		dm = planet.getCurrentDungeon();
 		
 		floor = new Image("data/tiles/stone_floor.png");
 		wall1 = new Image("data/tiles/stone_wall_updown.png");
@@ -59,7 +61,7 @@ public class TestMainGameState extends BasicGameState{
 		player = new Image("data/tiles/player.png");
 		enemy = new Image("data/tiles/enemy.png");
 		Sound roar = new Sound("data/roar.wav");
-		e1 = new Enemy(enemy, 95, 95, roar);
+		e1 = new Enemy(enemy, 96, 96, roar, dm);
 	}
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
@@ -99,57 +101,64 @@ public class TestMainGameState extends BasicGameState{
     	boolean kp = false;
     	inputDelta-=delta;
     	if(inputDelta<0){
+    		int newX = pX;
+    		int newY = pY;
 	    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
 	    		kp = true;
-	    		pX-=16;
-	    		pY+=16;
+	    		newX-=16;
+	    		newY+=16;
 	    	}
 	    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
 	    		kp = true;
-	    		pY+=16;
+	    		newY+=16;
 	    	}
 	    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
 	    		kp = true;
-	    		pX +=16;
-	    		pY +=16;
+	    		newX +=16;
+	    		newY +=16;
 	    	}
 	    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
 	    		kp = true;
-	    		pX +=16;
+	    		newX +=16;
 	    	}
 	    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
 	    		kp = true;
-	    		pX +=16;
-	    		pY -=16;
+	    		newX +=16;
+	    		newY -=16;
 	    	}
 	    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
 	    		kp = true;
-	    		pY -=16;
+	    		newY -=16;
 	    	}
 	    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
 	    		kp = true;
-	    		pX -=16;
-	    		pY -=16;
+	    		newX -=16;
+	    		newY -=16;
 	    	}
 	    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
 	    		kp = true;
-	    		pX -=16;
+	    		newX -=16;
 	    	}
 	    	if(kp){
 	    		inputDelta=100;
-	    		if(pX>767){
-	    			pX=767;
+	    		if(newX>768){
+	    			newX=768;
 	    		}
-	    		if(pX<15){
-	    			pX=15;
+	    		if(newX<32){
+	    			newX=32;
 	    		}
-	    		if(pY>559){
-	    			pY=559;
+	    		if(newY>576){
+	    			newY=576;
 	    		}
-	    		if(pY<15){
-	    			pY=15;
+	    		if(newY<32){
+	    			newY=32;
 	    		}
-	    		e1.step(pX, pY);
+	    		// validate newx, newy
+	    		if(dm.isPassable(newX/32, newY/32)) {
+	    			pX = newX;
+	    			pY = newY;
+		    		e1.step(pX, pY);
+	    		}
 	    	}
     	}
     }

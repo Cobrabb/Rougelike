@@ -15,7 +15,7 @@ public class Planet {
 		private int poolsNum; //same for pools
 		private Element atmosphere; //the most prevalent element in the atmosphere, must be the least dense element in e. 
 		private int atmosNum; //same for atmosphere
-		private Creature[] residents; //the native creatures on the planet
+		private Race[] residents; //the native creatures on the planet
 		private DungeonMapGenerator mapGenerator; // generates the maps for this planet.
 		private DungeonMap currentDungeon; // the currently loaded dungeon.
 		
@@ -62,7 +62,7 @@ public class Planet {
 			return residents.length;
 		}
 		
-		public Creature getResident(int i){
+		public Race getResident(int i){
 			return residents[i];
 		}
 		
@@ -164,9 +164,9 @@ public class Planet {
 			
 			//generate creatures
 			j = (int)(Math.random()*8+3);
-			this.residents = new Creature[j];
+			this.residents = new Race[j];
 			for(int i=0; i<j; i++){
-				residents[i] = new Creature(this.e, L);
+				residents[i] = new Race(this.e, L);
 			}
 			
 			// create map generator

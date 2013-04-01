@@ -13,18 +13,21 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import orig.Creature;
+import orig.DungeonMap;
+import orig.Element;
 import orig.Item;
+import orig.Planet;
 import orig.Race;
 
 public class MainGameState extends BasicGameState{
 	int stateID = -1;
-	Image floor = null;
-	Image wall1 = null;
-	Image wall2 = null;
-	Image wall3 = null;
-	Image wall4 = null;
-	Image wall5 = null;
-	Image wall6 = null;
+//	Image floor = null;
+//	Image wall1 = null;
+//	Image wall2 = null;
+//	Image wall3 = null;
+//	Image wall4 = null;
+//	Image wall5 = null;
+//	Image wall6 = null;
 	Image player = null;
 	Image enemy = null;
 	Image b_equip = null;
@@ -36,6 +39,8 @@ public class MainGameState extends BasicGameState{
 	Creature d = new Creature(r);
 	ArrayList<Item> items;
 	OnScreenChar o1;
+	Planet planet = null;
+	DungeonMap dm = null;
 	
 	//variables related to the size of screen and tiles
 	public static final int sizeX = 1024-1;
@@ -43,9 +48,15 @@ public class MainGameState extends BasicGameState{
 	final int tileSize = 32;
 	final int upperX = sizeX-tileSize; //last place a tile should be rendered
 	final int upperY = sizeY-tileSize; //last place a tile should be rendered
+	final int numXtiles = (sizeX+1)/tileSize;
+	final int numYtiles = (sizeY+1)/tileSize;
 	
 	//player stuff
 	OnScreenChar p1;
+	
+	//dungeon stuff
+	int mapX = 0;
+	int mapY = 0;
 	
 	//menu variables, can be tweaked to change the menus
 	final int textAllowed = 32; //How much vertical space is allowed for text
@@ -74,13 +85,21 @@ public class MainGameState extends BasicGameState{
     }
 	
 	public void init(GameContainer container, StateBasedGame Sbg) throws SlickException {
-		floor = new Image("data/tiles/stone_floor.png");
-		wall1 = new Image("data/tiles/stone_wall_updown.png");
-		wall2 = new Image("data/tiles/stone_wall_leftright.png");
-		wall3 = new Image("data/tiles/stone_wall_leftdown.png");
-		wall4 = new Image("data/tiles/stone_wall_leftup.png");
-		wall5 = new Image("data/tiles/stone_wall_rightdown.png");
-		wall6 = new Image("data/tiles/stone_wall_rightup.png");
+		Element elem1 = new Element("ice", 1.0);
+		Element elem2 = new Element("silver brick", 2.0);
+		Element elem3 = new Element("cobblestone", 2.0);
+		planet = new Planet(new Element[] {elem1, elem2, elem3});
+		String path = planet.generateMap("map1");
+		planet.setCurrentDungeon(path);
+		dm = planet.getCurrentDungeon();
+		
+//		floor = new Image("data/tiles/stone_floor.png");
+//		wall1 = new Image("data/tiles/stone_wall_updown.png");
+//		wall2 = new Image("data/tiles/stone_wall_leftright.png");
+//		wall3 = new Image("data/tiles/stone_wall_leftdown.png");
+//		wall4 = new Image("data/tiles/stone_wall_leftup.png");
+//		wall5 = new Image("data/tiles/stone_wall_rightdown.png");
+//		wall6 = new Image("data/tiles/stone_wall_rightup.png");
 		player = new Image("data/tiles/player.png");
 		enemy = new Image("data/tiles/enemy.png");
 		
@@ -90,8 +109,11 @@ public class MainGameState extends BasicGameState{
 		b_drop = new Image("data/tiles/button_drop.png");
 		b_examine = new Image("data/tiles/button_examine.png");
 		
-		o1 = new OnScreenChar(enemy, 1, 1, c);
-		p1 = new OnScreenChar(player, 10, 10, c);
+		o1 = new OnScreenChar(enemy, 30, 30, c);
+		dm.put(o1.xPos, o1.yPos, o1.baseCreature);
+		p1 = new OnScreenChar(player, numXtiles/2, numYtiles/2, c);
+		dm.put(p1.xPos, p1.yPos, p1.baseCreature);
+		dm.reveal(8, p1.xPos, p1.yPos);
 		Item i = new Item();
 		Item j = new Item();
 		Item k = new Item();
@@ -104,29 +126,10 @@ public class MainGameState extends BasicGameState{
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 		if(!menutime){
-			wall5.draw(0,0);
-			for(int i=tileSize-1; i<upperY; i+=tileSize){
-				wall1.draw(0, i);
-			}
-			wall6.draw(0, upperY);
-			for(int i=tileSize-1; i<upperX; i+=tileSize){
-				wall2.draw(i, upperY);
-			}
-			wall4.draw(upperX, upperY);
-			for(int i=tileSize-1; i<upperY; i+=tileSize){
-				wall1.draw(upperX, i);
-			}
-			wall3.draw(upperX, 0);
-			for(int i=tileSize-1; i<upperX; i+=tileSize){
-				wall2.draw(i, 0);
-			}
-			for(int i=tileSize-1; i<upperX; i+=tileSize){
-				for(int j=tileSize-1; j<upperY; j+=tileSize){
-					floor.draw(i, j);
-				}
-			}
-			o1.draw();
-			p1.draw();
+			DungeonMap dm = planet.getCurrentDungeon();
+			dm.render(container, sbg, g, mapX, mapY, numXtiles, numYtiles);
+			o1.draw(mapX, mapY);
+			p1.draw(mapX, mapY);
 		}
 		else{
 			if(inventorytime){
@@ -187,42 +190,63 @@ public class MainGameState extends BasicGameState{
 	    	if(!menutime){
 		    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
 		    		kp = true;
-		    		p1.move(-1, 1);
+		    		if(p1.canMove(-1, 1, dm)){
+		    			mapX--;
+		    			mapY++;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
 		    		kp = true;
-		    		p1.move(0, 1);
+		    		if(p1.canMove(0, 1, dm)){
+		    			mapY++;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
 		    		kp = true;
-		    		p1.move(1, 1);
+		    		if(p1.canMove(1, 1, dm)){
+		    			mapX++;
+		    			mapY++;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
 		    		kp = true;
-		    		p1.move(1, 0);
+		    		if(p1.canMove(1, 0, dm)){
+		    			mapX++;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
 		    		kp = true;
-		    		p1.move(1, -1);
+		    		if(p1.canMove(1, -1, dm)){
+		    			mapX++;
+		    			mapY--;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
-		    		p1.move(0, -1);
 		    		kp = true;
+		    		if(p1.canMove(0, -1, dm)){
+		    			mapY--;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
 		    		kp = true;
-		    		p1.move(-1, -1);
+		    		if(p1.canMove(-1, -1, dm)){
+		    			mapX--;
+		    			mapY--;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
 		    		kp = true;
-		    		p1.move(-1, 0);
+		    		if(p1.canMove(-1, 0, dm)){
+		    			mapX--;
+		    		}
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_ESCAPE)){
 		    		menutime = true;
 		    	}
 		    	if(kp){
+		    		dm.reveal(5, p1.xPos, p1.yPos);
 		    		inputDelta=100;
-		    		o1.step(p1.xPos, p1.yPos, 1);
+		    		o1.step(p1.xPos, p1.yPos, dm);
 		    	}
 	    	}
 	    	else{

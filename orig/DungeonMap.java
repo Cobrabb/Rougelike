@@ -46,6 +46,16 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		this(p, outer);
 	}
 	
+	public void reveal(int radius, int x, int y){
+		for(int i=(x-radius); i<x+radius; i++ ){
+			for(int j=(y-radius); j<y+radius; j++){
+				if(validateCoordinates(i,j)){
+					squares[i][j].seen = true;
+				}
+			}
+		}
+	}
+	
 	public DungeonMap(boolean[][] wallFloor, Element wbase, Element fbase) {
 		this.wallsbase = wbase;
 		this.floorsbase = fbase;
@@ -61,10 +71,24 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		}
 	}
 	
+	public void put(int x, int y, Creature c){
+		if(validateCoordinates(x,y)){
+			if(squares[x][y].c==null)
+			squares[x][y].c = c;
+		}
+	}
+	
+	public void remove(int x, int y){
+		if(validateCoordinates(x,y)) squares[x][y].c=null;
+	}
+	
 	public boolean isPassable(int xCoor, int yCoor) {
 		// validate coordinates
 		if (!validateCoordinates(xCoor, yCoor))
 			return false; // tell caller they can't move off the grid, maybe throw exception
+		if(squares[xCoor][yCoor].c!=null){
+			return false;
+		}
 		return squares[xCoor][yCoor].isPassable();
 	}
 
@@ -72,10 +96,14 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		return (xCoor >= 0 && xCoor < squares.length && yCoor >= 0 && yCoor < squares[0].length);
 	}
 
-	public void render(GameContainer container, StateBasedGame sbg, Graphics g) {
-		for (int row = 0; row < squares.length; ++row) {
-			for (int col = 0; col < squares[row].length; ++col) {
-				squares[row][col].render(row, col);
+	public void render(GameContainer container, StateBasedGame sbg, Graphics g, int xPos, int yPos, int screenX, int screenY) {
+		int xUpper = (xPos+screenX>squares.length)? squares.length : xPos+screenX;
+		int yUpper = (yPos+screenY>squares[0].length)? squares[0].length : yPos+screenY;
+		int xLower = (xPos<0)? 0 : xPos;
+		int yLower = (yPos<0)? 0 : yPos;
+		for (int row = xLower; row < xUpper; ++row) {
+			for (int col = yLower; col < yUpper; ++col) {
+				squares[row][col].render(row-xPos, col-yPos);
 			}
 		}
 	}

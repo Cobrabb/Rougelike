@@ -15,10 +15,12 @@ public class Square implements Serializable {
 	//MapObject[] contains - It may be useful to store what is "here" in the square class, but I'm thinking not. If it is, we can fill this in later
 	private Image elementTile;
 	public Creature c; //at most one creature may be on a square
+	public boolean seen;
 	
 	public Square(boolean pass, Element cons) {
 		this.passable = pass;
 		this.consists = cons;
+		seen = false;
 	}
 	
 	public boolean isPassable() {
@@ -30,7 +32,9 @@ public class Square implements Serializable {
 		if (elementTile == null) {
 			elementTile = ImageUtil.getImage(consists.getName());
 		}
-		elementTile.draw(row*ImageUtil.getTileWidth(), col*ImageUtil.getTileHeight(), (passable ? Color.white : Color.darkGray));
+		if(seen){
+			elementTile.draw(row*ImageUtil.getTileWidth(), col*ImageUtil.getTileHeight(), (passable ? Color.white : Color.darkGray));
+		}
 	}
 	
 	

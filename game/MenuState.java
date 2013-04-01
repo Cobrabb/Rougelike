@@ -11,7 +11,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class MenuState extends BasicGameState{
 	int stateID = -1;
-	Sound fx = null;
+	//Sound fx = null;
 	 
     MenuState( int stateID ) 
     {
@@ -24,7 +24,7 @@ public class MenuState extends BasicGameState{
     }
  
     public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-    	fx = new Sound("data/ding.wav");
+    	//fx = new Sound("data/ding.wav");
     }
  
     public void render(GameContainer gc, StateBasedGame sbg, Graphics gp) throws SlickException {
@@ -41,7 +41,7 @@ public class MenuState extends BasicGameState{
     	if( ( mouseX >= 250 && mouseX <= 250 + 50) &&
     		    ( mouseY >= 200 && mouseY <= 200 + 50) ){
     		    insideStartGame = true;
-    		    fx.play();
+    		  //  fx.play();
     	}
     	else{
     		

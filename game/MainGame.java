@@ -5,6 +5,9 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.state.StateBasedGame;
 
+import util.ImageUtil;
+import util.MapUtil;
+
 public class MainGame extends StateBasedGame{
 	public static final int MENUSTATE = 0;
 	public static final int MAINGAMESTATE = 1;
@@ -20,6 +23,10 @@ public class MainGame extends StateBasedGame{
     	this.addState(new MainGameState(MAINGAMESTATE));
     }
    public static void main(String[] args) {
+	   MapUtil.setFolderDirectory("maps");
+		ImageUtil.setRelativeFolder("maps");
+		ImageUtil.setTPF("tileset_parse.tpf");
+		ImageUtil.setTilesetImageFile("ccrgeek_ground_tileset.png");
         try {
             AppGameContainer app = new AppGameContainer(new MainGame());
             app.setDisplayMode(sizeX, sizeY, false);

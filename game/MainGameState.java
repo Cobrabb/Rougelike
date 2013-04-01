@@ -33,6 +33,7 @@ public class MainGameState extends BasicGameState{
 	Image b_examine = null;
 	Race r = new Race();
 	Creature c = new Creature(r);
+	Creature d = new Creature(r);
 	ArrayList<Item> items;
 	OnScreenChar o1;
 	
@@ -44,9 +45,7 @@ public class MainGameState extends BasicGameState{
 	final int upperY = sizeY-tileSize; //last place a tile should be rendered
 	
 	//player stuff
-	int pX = sizeX-6*tileSize;
-	int pY = sizeY-6*tileSize;
-	Creature player1;
+	OnScreenChar p1;
 	
 	//menu variables, can be tweaked to change the menus
 	final int textAllowed = 32; //How much vertical space is allowed for text
@@ -67,7 +66,6 @@ public class MainGameState extends BasicGameState{
     MainGameState( int stateID ) 
     {
        this.stateID = stateID;
-       player1 = new Creature(new Race());
     }
  
     @Override
@@ -92,15 +90,16 @@ public class MainGameState extends BasicGameState{
 		b_drop = new Image("data/tiles/button_drop.png");
 		b_examine = new Image("data/tiles/button_examine.png");
 		
-		o1 = new OnScreenChar(enemy, tileSize*8-1, tileSize*8-1, tileSize, c);
+		o1 = new OnScreenChar(enemy, 1, 1, c);
+		p1 = new OnScreenChar(player, 10, 10, c);
 		Item i = new Item();
 		Item j = new Item();
 		Item k = new Item();
 		j.name = "ROFL";
 		k.name = "LMAO";
-		player1.pickup(i);
-		player1.pickup(j);
-		player1.pickup(k);
+		p1.pickup(i);
+		p1.pickup(j);
+		p1.pickup(k);
 	}
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
@@ -127,7 +126,7 @@ public class MainGameState extends BasicGameState{
 				}
 			}
 			o1.draw();
-			player.draw(pX, pY);
+			p1.draw();
 		}
 		else{
 			if(inventorytime){
@@ -136,8 +135,8 @@ public class MainGameState extends BasicGameState{
 				}
 				onscreen=0;
 				scrolldown = false;
-				for(int i=outer;i<player1.getInventory().size(); i++){
-					g.drawString(player1.getInventory().get(i).getName(),0,header+((i+1)*textAllowed));
+				for(int i=outer;i<p1.getInventory().size(); i++){
+					g.drawString(p1.getInventory().get(i).getName(),0,header+((i+1)*textAllowed));
 					b_equip.draw(itemMax, header+((i+1)*textAllowed));
 					b_examine.draw(itemMax+tileSize,header+((i+1)*textAllowed));
 					b_drop.draw(itemMax+(tileSize*2),header+((i+1)*textAllowed));
@@ -152,20 +151,20 @@ public class MainGameState extends BasicGameState{
 			}
 			else if(equippedtime){
 				g.drawString("Equipped", 0, header);
-				g.drawString("Head: "+player1.getEquipped(0), 0, header+textAllowed);
+				g.drawString("Head: "+p1.getEquipped(0), 0, header+textAllowed);
 				b_unequip.draw(itemMax, header+(1*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(1*textAllowed));
 				b_drop.draw(itemMax+(tileSize*2),header+(1*textAllowed));
-				g.drawString("Body: "+player1.getEquipped(1), 0, header+(2*textAllowed));
+				g.drawString("Body: "+p1.getEquipped(1), 0, header+(2*textAllowed));
 				b_unequip.draw(itemMax, header+(2*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(2*textAllowed));
 				b_drop.draw(itemMax+(tileSize*2),header+(2*textAllowed));
-				g.drawString("Legs: "+player1.getEquipped(2), 0, header+(3*textAllowed));
+				g.drawString("Legs: "+p1.getEquipped(2), 0, header+(3*textAllowed));
 				b_unequip.draw(itemMax, header+(3*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(3*textAllowed));
 				b_drop.draw(itemMax+(tileSize*2),header+(3*textAllowed));
-				for(int i=3;i<player1.getNumArms()+3;i++){
-					g.drawString("Hands: "+player1.getEquipped(i), 0, header+(i+1)*textAllowed);
+				for(int i=3;i<p1.getNumArms()+3;i++){
+					g.drawString("Hands: "+p1.getEquipped(i), 0, header+(i+1)*textAllowed);
 					b_unequip.draw(itemMax, header+((i+1)*textAllowed));
 					b_examine.draw(itemMax+tileSize,header+((i+1)*textAllowed));
 					b_drop.draw(itemMax+(tileSize*2),header+((i+1)*textAllowed));
@@ -188,58 +187,42 @@ public class MainGameState extends BasicGameState{
 	    	if(!menutime){
 		    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
 		    		kp = true;
-		    		pX-=tileSize;
-		    		pY+=tileSize;
+		    		p1.move(-1, 1);
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
 		    		kp = true;
-		    		pY+=tileSize;
+		    		p1.move(0, 1);
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
 		    		kp = true;
-		    		pX +=tileSize;
-		    		pY +=tileSize;
+		    		p1.move(1, 1);
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
 		    		kp = true;
-		    		pX +=tileSize;
+		    		p1.move(1, 0);
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
 		    		kp = true;
-		    		pX +=tileSize;
-		    		pY -=tileSize;
+		    		p1.move(1, -1);
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
+		    		p1.move(0, -1);
 		    		kp = true;
-		    		pY -=tileSize;
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
 		    		kp = true;
-		    		pX -=tileSize;
-		    		pY -=tileSize;
+		    		p1.move(-1, -1);
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
 		    		kp = true;
-		    		pX -=tileSize;
+		    		p1.move(-1, 0);
 		    	}
 		    	else if(input.isKeyDown(Input.KEY_ESCAPE)){
 		    		menutime = true;
 		    	}
 		    	if(kp){
 		    		inputDelta=100;
-		    		if(pX>upperX-tileSize){
-		    			pX=upperX-tileSize;
-		    		}
-		    		if(pX<tileSize-1){
-		    			pX=tileSize-1;
-		    		}
-		    		if(pY>upperY-tileSize){
-		    			pY=upperY-tileSize;
-		    		}
-		    		if(pY<tileSize-1){
-		    			pY=tileSize-1;
-		    		}
-		    		o1.step(pX, pY);
+		    		o1.step(p1.xPos, p1.yPos, 1);
 		    	}
 	    	}
 	    	else{
@@ -250,13 +233,13 @@ public class MainGameState extends BasicGameState{
 		        		outer=outer-itemFit;
 		        	}
 		        	else if(mouseX>itemMax&&mouseX<=itemMax+tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		player1.equip(player1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+		        		p1.equip(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        	}
 		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+2*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		//examine
 		        	}
 		        	else if(mouseX>itemMax+2*tileSize&&mouseX<=itemMax+3*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		player1.drop(player1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+		        		p1.drop(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        	}
 		        	else if(mouseX<150&&mouseY>=footer-textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&scrolldown){
 		        		outer=outer+itemFit;
@@ -272,13 +255,13 @@ public class MainGameState extends BasicGameState{
 	    				equippedtime=false;
 	    			}
 	    			else if(mouseX>itemMax&&mouseX<=itemMax+tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		player1.unequip(player1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+		        		//p1.unequip(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        	}
 		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+2*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		//examine
 		        	}
 		        	else if(mouseX>itemMax+2*tileSize&&mouseX<=itemMax+3*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		player1.drop(player1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+		        		//p1.drop(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        	}
 	    		}
 	    		else{

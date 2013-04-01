@@ -1,5 +1,12 @@
 package orig;
 
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
+
+import util.DungeonMapGenerator;
+
 public class Planet {
 
 		private Element[] e; //the elements present on the planet
@@ -12,6 +19,8 @@ public class Planet {
 		private int poolsNum; //same for pools
 		private Element atmosphere; //the most prevalent element in the atmosphere, must be the least dense element in e. 
 		private int atmosNum; //same for atmosphere
+		private DungeonMapGenerator mapGenerator; // generates the maps for this planet.
+		private DungeonMap currentDungeon; // the currently loaded dungeon.
 		private Race[] residents; //the native creatures on the planet
 		
 		final int numTypes = 3; //the number of types of planets. Currently 1 = normal, 2 = aquatic, and 3 = gaseous. This is based on the most common element in the first 3.
@@ -73,10 +82,10 @@ public class Planet {
 			return poolsNum;
 		}
 		
-		public Planet(){//completely randomly generated, not sure if necessary.
+		protected Planet(){//completely randomly generated, not sure if necessary.
 		}
 		
-		public Planet(Element[] e){ //given a list of elements in the universe, generate a planet
+		public Planet(Element[] e) { //given a list of elements in the universe, generate a planet
 			this.L = new Language();
 			this.name = L.generate();
 			
@@ -163,6 +172,9 @@ public class Planet {
 			for(int i=0; i<j; i++){
 				residents[i] = new Race(this.e, L);
 			}
+			
+			// create map generator
+			this.mapGenerator = new DungeonMapGenerator(this);
 		}
 		
 		public String toString(){
@@ -180,7 +192,24 @@ public class Planet {
 			return out;
 		}
 
-			
+		// returns the String referring to the fileLocation of this dungeon
+		public String generateMap(String mapPath) {
+			mapPath = String.format("%s\\%s", this.name, mapPath);
+			mapPath = this.mapGenerator.weakRandomMapGen(mapPath, 48, 36);
+			return mapPath;
+		}
+		
+		public void setCurrentDungeon(String mapPath) {
+			try {
+				this.currentDungeon = new DungeonMap(mapPath, this, true, false);
+			} catch (SlickException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public DungeonMap getCurrentDungeon() {
+			return this.currentDungeon;
+		}
 			
 	}
 		

@@ -5,6 +5,8 @@ import java.io.*;
 import orig.Creature.cStats;
 import orig.Creature.bStats;
 import orig.Creature.sVal;
+import game.UniversalElements;
+
 
 public class Test {
 	public static void main(String[] args){
@@ -48,7 +50,7 @@ public class Test {
 			statPrint += c.decode(s[i]).toString() + " , " + c.getRaceGain();
 			System.out.println(statPrint);
 		}
-		
+		/*
 		System.out.println("----------------------Level Detect_Sight Test------------------------");
 		for(int i=0; i<400; i++) {
 			//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
@@ -60,7 +62,7 @@ public class Test {
 		//c.gain(cs, sVal.XP, 3000);
 		//System.out.println(cs.name() + " > " + c.get(cs, sVal.LEVEL) + ", " + c.get(cs, sVal.XP));
 		//String statPrint;
-		
+		*/
 		System.out.println("----------------------------Current Value Test------------------------------");
 		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
 			statPrint = s[i] + " : ";
@@ -95,7 +97,7 @@ public class Test {
 			statPrint += c.decode(s[i]).toString() + ", " + c.getRaceGain() + ", " + c.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
 			System.out.println(statPrint);
 		}
-*/		
+		
 		/*System.out.println("-----------------------------bStats Test------------------------------------");
 		bStats rstat[] = bStats.values();
 		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
@@ -107,6 +109,14 @@ public class Test {
 			System.out.println(statPrint);
 		}
 		//System.out.println(cStats.SPEED_MOVE + " : " + c.get(cStats.SPEED_MOVE,0));
+<<<<<<< HEAD
+<<<<<<< HEAD
+		
+		UniversalElements uE = new UniversalElements();
+		uE.printDmgTable();
+=======
+=======
+>>>>>>> michael2
 		 * */
 		System.out.println("-----------------------------Get Effective Test--------------------------");
 		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
@@ -138,5 +148,8 @@ public class Test {
 			System.out.println(statPrint);
 		}
 
+		
+		UniversalElements uE = new UniversalElements();
+		uE.printDmgTable();
 	}
 }

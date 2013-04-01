@@ -1,6 +1,9 @@
 package orig;
 
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
@@ -36,9 +39,15 @@ public class DungeonMap implements TileBasedMap { //extends TiledMap
 		}
 	}
 	
-	public DungeonMap(String mapPath, Planet p, boolean outer) throws SlickException {
+	public DungeonMap(String mapPath, Planet p, boolean outer, boolean generate) throws SlickException {
 		this(p, outer);
-		this.map = new TiledMap(mapPath);
+		if (generate)
+			mapPath = p.generateMap(mapPath);
+		this.map = new TiledMap(mapPath, "maps");
+	}
+	
+	public void render(GameContainer container, StateBasedGame sbg, Graphics g) {
+		this.map.render(0, 0);
 	}
 
 	@Override
@@ -49,26 +58,26 @@ public class DungeonMap implements TileBasedMap { //extends TiledMap
 
 	@Override
 	public float getCost(PathFindingContext arg0, int arg1, int arg2) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getHeightInTiles() {
-		// TODO Auto-generated method stub
-		return 0;
+		return map.getHeight();
 	}
 
 	@Override
 	public int getWidthInTiles() {
-		// TODO Auto-generated method stub
-		return 0;
+		return map.getWidth();
 	}
 
 	@Override
 	public void pathFinderVisited(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
+	}
+	
+//prototype Attack function (should just pass to creature at each of the points in attack pattern) 
+	public void attack(Attack a) {
+		//handle attacks and Attack results
 	}
 	
 }

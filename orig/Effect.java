@@ -8,6 +8,7 @@ public class Effect {
 
 	private cStats cstat = null; //which cStat to affect
 	private bStats bstat = null; // which bStat to affect
+	private boolean attack = true; //whether harms others or help self
 	private sVal sval = null; // which sVal to affect
 	private double value = 0.0; // amount to modify by initially;
 	private double repeatRate = 0.0; // amount to modify value by each step (i.e. it decreases in effectiveness each step)
@@ -19,6 +20,24 @@ public class Effect {
 	private boolean move = false; // whether or not to move position
 	private int rel[];  // new coordinates of creature (relative to current)
 	
+	public Effect(Effect e) {
+		this.cstat = e.getCStat();
+		this.bstat = e.getBStat();
+		this.attack = e.isAttack();
+		this.sval = e.getSVal();
+		this.value = e.getValue();
+		this.repeatRate = e.getRepeateRate();
+		this.base = e.isBase();
+		this.permanent = !e.isTemp();
+		this.steps = e.getSteps();
+		this.elemental = e.isElemental();
+		this.element = e.getElement();
+		this.move = e.isMove();
+		this.rel = new int[e.getRel().length];
+		for(int i=0; i<e.getRel().length; i++) {
+			rel[i] = e.getRel()[i];
+		}
+	}
 	public Effect() {
 		this.base = (Math.random() < .15); //chooses whether it deals with base or creature values (weighted 85% toward Creature)
 		if(base) {
@@ -31,6 +50,7 @@ public class Effect {
 		}
 		sVal s[] = sVal.values();
 		this.sval = s[(int) (sVal.TOTAL.ordinal()*Math.random())];
+		this.attack = (Math.random() <.7);  // 70% chance of being an attack  effect
 		this.value = 1/Math.random();
 		this.repeatRate = Math.random()/Math.random(); // can be higher or lower
 		this.steps = (int) (1/Math.random());
@@ -136,8 +156,16 @@ public class Effect {
 		return this.sval;
 	}
 	
+	public boolean isAttack() {
+		return this.attack;
+	}
+	
 	public int getSteps() {
 		return this.steps;
+	}
+	
+	public void setSteps(int steps) {
+		this.steps = steps;
 	}
 	
 	public boolean isBase() {
@@ -162,6 +190,10 @@ public class Effect {
 	
 	public int[] getRel() {
 		return this.rel;
+	}
+	
+	protected double getRepeateRate() {
+		return this.repeatRate;
 	}
 	
 	public void update() {

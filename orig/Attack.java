@@ -41,11 +41,13 @@ public class Attack {
 	private double attackStrength;
 	private AttackDirection ad = AttackDirection.OTHER;
 	
-	public Attack(int x, int y, Item item, Creature attacker, AttackDirection ad) {
+	public Attack(int x, int y, double attackStrength, Item item, Creature attacker, AttackDirection ad) {
 		this.x = x;
 		this.y = y;
 		this.attacker = attacker;
 		this.ad = ad;
+		this.attackStrength = attackStrength;
+		//this.attackStrength = item.
 		decodePattern(item.getAttackPattern(), item.getAttackSize());
 	}
 
@@ -109,16 +111,16 @@ public class Attack {
 				this.pattern.get(i+2)[0] = this.x-i;
 				this.pattern.get(i+2)[1] = this.y;
 				this.pattern.get(i+3)[0] = this.x;
-				this.pattern.get(i+3)[0] = this.y-i;
-				
-			}
-			
+				this.pattern.get(i+3)[0] = this.y-i;	
+			}	
 			break;
 		case WEDGE:
 			this.pattern = new ArrayList<int[]>(attackRadius*attackRadius/2);//triangle pattern
 			//deal with direction
-			
 			break;
+		case TOTAL:
+		case OTHER:
+			this.pattern = new ArrayList<int[]>(1); //must add points manually
 		}
 	}
 	

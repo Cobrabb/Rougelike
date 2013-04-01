@@ -1,6 +1,9 @@
 package orig;
 
 import java.util.ArrayList;
+
+import orig.Attack.AttackDirection;
+import orig.Item.AttackType;
 import orig.Item.iType;
 
 
@@ -51,10 +54,11 @@ public class Creature {
 	private ArrayList<Item> inventory;
 	private Item[] equipped; // which items (non-hand)
 	private ArrayList<Item> weilding; // which items (hands)
-	private int staminaMaxInventory;
+	private int MaxInventory;
 	private int availHands;
 	private double weight;
 	private ArrayList<Effect> effects;
+	private ArrayList<String> friendly;
 	
 	
 	// behind the scenes
@@ -88,89 +92,8 @@ public class Creature {
 		randomInitXP();
 	}
 	*/
-/*
-	public Creature(int n) {
-		//this.name = race.getName();
-		this.inventory = new ArrayList<Item>();
-<<<<<<< HEAD
-		this.stat = new int[cStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots];
-		this.inhands = new Item[this.race.getNumArms()];
-		this.freeHands = this.inhands.length;
-		this.currentInhands = 0;
-=======
-		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots];
->>>>>>> Fixed Race/Creature Implementation
-		//set all of stat to 0 and set each level to n
-		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.cStat[i][j] = 0;
-			}
-			this.cStat[i][sVal.LEVEL.ordinal()] = n;
-		}
-		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.bStat[i][j] = 0;
-			}
-			this.bStat[i][sVal.LEVEL.ordinal()] = n;
-		}
-	}
-*/	
-	/*
-	public Creature(Element e[], Language l) {
-		//this.name = race.getName();
-		this.inventory = new ArrayList<Item>();
-		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots];
-		//set all of stat to 0 and set each level to n
-		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.cStat[i][j] = 0;
-			}
-		}
-		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.bStat[i][j] = 0;
-			}
-		}
-		randomInitPoints();
-	}
-	*/
-/*	
-	public Creature(Element e[], Language l, int n) {
-		//this.name = race.getName();
-		this.inventory = new ArrayList<Item>();
-<<<<<<< HEAD
-		this.stat = new int[cStats.TOTAL.ordinal()][rVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots];
-		this.inhands = new Item[this.race.getNumArms()];
-		this.freeHands = this.inhands.length;
-		this.currentInhands = 0;
-=======
-		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots];
->>>>>>> Fixed Race/Creature Implementation
-		//set all of stat to 0 and set each level to n
-		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.cStat[i][j] = 0;
-			}
-			this.cStat[i][sVal.LEVEL.ordinal()] = n;
-		}
-		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.bStat[i][j] = 0;
-			}
-			this.bStat[i][sVal.LEVEL.ordinal()] = n;
-		}
-	}
-*/
 	
-	public Creature(String name, String rName, int diet, Element consumes, Element produces, Element casing, Element fluid, Element organs, boolean genders, int numArms, int numLegs, int[][] cStat, int[][] bStat, ArrayList<Item> inventory, Item[] equipped, ArrayList<Item> weilding, int staminaMaxInventory, int availHands, double weight, int initCap) {
+	public Creature(String name, String rName, int diet, Element consumes, Element produces, Element casing, Element fluid, Element organs, boolean genders, int numArms, int numLegs, int[][] cStat, int[][] bStat, ArrayList<Item> inventory, Item[] equipped, ArrayList<Item> weilding, int MaxInventory, int availHands, double weight, int initCap) {
 		this.name = name;
 		this.rName = rName;
 		this.diet = diet;
@@ -190,7 +113,7 @@ public class Creature {
 		else this.equipped = new Item[slots];
 		if(weilding != null) this.weilding = weilding;
 		else this.weilding = new ArrayList<Item>(0);
-		this.staminaMaxInventory = staminaMaxInventory;
+		this.MaxInventory = MaxInventory;
 		if(availHands <= numArms && availHands >= 0) this.availHands = availHands;
 		else availHands = numArms;
 		this.weight = weight;
@@ -229,8 +152,16 @@ public class Creature {
 		this.inventory = new ArrayList<Item>(0);
 		this.equipped = new Item[slots];
 		this.weilding = new ArrayList<Item>(0);
-		this.staminaMaxInventory = staminaMaxInventory;
+		//this.MaxInventory = MaxInventory;
 		this.availHands = this.numArms;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public String getRName() {
+		return this.rName;
 	}
 	
 	public int get(cStats s, sVal v) {
@@ -271,9 +202,10 @@ public class Creature {
 				}
 			}			
 		}
-		if((s == cStats.SPEED_MOVE) && ((v == sVal.CURRENT) || (v == sVal.MAX) )){
-			eff *= Math.max(0,Math.min()) 
-		}
+		//if over encumbered, everything is less effective
+		//if((s == cStats.SPEED_MOVE) && ((v == sVal.CURRENT) || (v == sVal.MAX) )){
+			eff *= (1-Math.max(0,Math.min(1,(this.weight-this.MaxInventory)/(this.MaxInventory))));
+		//}
 		return eff;
 	}
 	
@@ -290,6 +222,7 @@ public class Creature {
 		}
 	}
 	
+//Random Leveling//////////////////////////	
 	public void randomInitXP() {
 		int total = 0, xp, min = cStat[0][sVal.LEVEL.ordinal()], max = cStat[0][sVal.LEVEL.ordinal()], stat;
 		cStats c[] = cStats.values();
@@ -356,16 +289,12 @@ public class Creature {
 
 	public void autoLvlXP(int xp) {
 		// randomly allocating chunks of xp/100 
-		int div = 100;//, mod;// = xp % div;
-		int total = 0, min = cStat[0][sVal.LEVEL.ordinal()], stat, givenXP = 0;
+		int div = 100;
+		int total = 0, stat, givenXP = 0;
 		cStats c[] = cStats.values();
-		/*for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
-			if(min > cStat[i][sVal.LEVEL.ordinal()]) {
-				min = cStat[i][sVal.LEVEL.ordinal()];
-			}
-		}*/
+
 		while(total < xp) {
-			givenXP = (int) ((10*Math.random())*div*(Math.random()));// can't level up by anymore than 1 level (lowest level)
+			givenXP = (int) ((10*Math.random())*div*(Math.random()));
 			if(givenXP > (xp - total))
 				givenXP = (xp-total);
 			
@@ -378,15 +307,9 @@ public class Creature {
 				gain(c[stat],sVal.XP,xp-total);
 				total = xp;
 			}
-			/*for(int i = 0; i < cStats.TOTAL.ordinal(); i++) { 
-				if(min > cStat[i][sVal.LEVEL.ordinal()]) {
-					min = cStat[i][sVal.LEVEL.ordinal()];
-				}
-			}*/
 		}
 	}
 
-	
 //Gaining stats/leveling up///////////////////////////////////////////////
 	//Gain/lose health,energy,stats,XP etc
 	public int gain(cStats s, sVal v, int n) {
@@ -450,7 +373,6 @@ public class Creature {
 		}
 	}
 	
-	
 	private void lvlUp(cStats s) {
 		//Incrementlevel and decrement XP by XP cap for level;
 		this.cStat[s.ordinal()][sVal.XP.ordinal()] -= ((int) mul*Math.pow(this.cStat[s.ordinal()][sVal.LEVEL.ordinal()],rate));
@@ -504,18 +426,155 @@ public class Creature {
 		return this.raceGain;
 	}
 
+//Dealing with attacking///////////////////////////////////////////////////////////
+	public boolean isFriendly(Race r) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i).equalsIgnoreCase(r.getName())) return true;
+		}
+		return false;
+	}
+
+	public boolean isFriendly(Creature c) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i).equalsIgnoreCase(c.getRName())) return true;
+		}
+		return false;
+	}
+
+	public boolean isFriendly(String str) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i).equalsIgnoreCase(str)) return true;
+		}
+		return false;
+	}
 	
-	public void attack(int x, int y) {
+	public void addFriendly(Race r) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i).equalsIgnoreCase(r.getName())) return;
+		}
+		this.friendly.add(r.getName());
+	}
+	
+	public void addFriendly(Creature c) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i).equalsIgnoreCase(c.getRName())) return;
+		}
+		this.friendly.add(c.getRName());
+	}
+	
+	public ArrayList<String> getFriendly() {
+		return this.friendly;
+	}
+
+	
+////////////////////////////// Attacking ////////////////////////////////////////////////////////////////////
+	public ArrayList<Attack> attack(int x, int y, AttackDirection ad) {//the attacking starts here
+		ArrayList<Attack> att = new ArrayList<Attack>(0);
 		for(int i=0; i<this.getNumArms(); ) {
+			if(i<this.weilding.size())	att.add(this.weilding.get(i).attack(x, y, ad, this));
+			else {
+				//handle unarmed case
+			}
+		}
+		return att;
+	}
+	
+	public void takeAttack(Attack a) {
+		//get resistances from univeral reaction table
+		double atStr = a.getAttackStrength(), fullStr = a.getAttackStrength();
+		ArrayList<Effect> attEff;
+		for(int i=0; i<this.equipped.length; i++) {
+			atStr -= this.equipped[i].getAttackSize();
+			this.equipped[i].takeAttack(a);
+			/*
+			attEff = new ArrayList<Effect>(0);
+			for(int j=0; j<this.equipped[i].getEffects().size(); j++){
+				if(this.equipped[i].getEffects().get(j).isAttack()) {
+					attEff.add(this.equipped[i].getEffects().get(j));
+				}
+			}
+			a.getWeapon().takeAttackResults(new AttackResults(attEff, this.equipped[i],fullStr));
+			attEff = null;
+			*/
+		}
+		if(atStr > 0) {
+			double dmg = 0;
+			for(int i=0; i<a.getWeapon().getConsists().length; i++) {
+				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.casing);
+				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.fluid);
+				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.organs);
+			}
+			dmg /= a.getWeapon().getConsists().length*3;
+			this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] -= dmg;
+			attEff = new ArrayList<Effect>(0);
+			for(int i=0; i<this.effects.size(); i++) {
+				if(this.effects.get(i).isAttack()) {
+					attEff.add(this.effects.get(i));
+				}
+			}
+			//adds XP to strength and tech (proportional to weapon)
+			attEff.add(new Effect(cStats.STR_PHYS_ATTACK,sVal.XP,(1.0-a.getWeapon().getPhysTech())*dmg,true));
+			attEff.add(new Effect(cStats.TECH_WEAPON,sVal.XP,(1.0-a.getWeapon().getPhysTech())*dmg,true));
+			if(a.getWeapon().getType() == iType.HAND && a.getWeapon().getAttackType() == AttackType.PHYS) {
+				AttackResults ar = new AttackResults(this.effects,null,dmg);
+				a.getAttacker().takeAttackResults(ar);
+			}
 			
-			//this.stat[cStats.STR_PHYS_ATTACK.ordinal()][sVal.CURRENT.ordinal()],this.stat[cStats.TECH_WEAPON.ordinal()][sVal.CURRENT.ordinal()]);
+		}
+		//apply effects
+		for(int i=0; i<a.getEffects().size(); i++) {
+			attackEffect(a.getEffects().get(i));
 		}
 	}
 	
-	public void takeDamage(Element[] consists, int damage) {
+	public void takeAttackResults(AttackResults ar) {
 		//get resistances from univeral reaction table
+		double atStr = ar.getAttackStrength();
+		
+		ar.getConsists();
+	}
+
+	
+	public boolean isDead() {
+		return (getEffective(cStats.STAM_HEALTH,sVal.CURRENT) <= 0);
 	}
 	
+	public void attackEffect(Effect e) {
+		if(e.isAttack()) { //if it is an attack
+			double value = e.getValue(), dmg = e.getValue();
+			if(e.isTemp()) {
+				effects.add(new Effect(e));
+			}
+			else {
+				if(e.isElemental()) {
+					dmg = value*UET.getUET().getDmg(e.getElement(),this.casing);
+					dmg += value*UET.getUET().getDmg(e.getElement(),this.casing);
+					dmg += value*UET.getUET().getDmg(e.getElement(),this.casing);
+				}
+				if(e.isBase()) {
+					this.bStat[e.getBStat().ordinal()][e.getSVal().ordinal()] += dmg;
+				}
+				else {
+					this.cStat[e.getCStat().ordinal()][e.getSVal().ordinal()] += dmg;
+				}
+			}
+		}
+		
+	}
+	
+	public void defenseEffect(Effect e) {
+		if(!e.isAttack()) { //if it is an attack 
+			if(e.isTemp()) {
+				Effect eff = new Effect(e);
+			}
+			else {
+				
+			}
+		}
+		
+	}
+	
+//Dealing with inventory
 	public boolean equip(Item i) {
 		if(i.getType() == iType.HAND) {
 			if(availHands >= i.getHands()) {
@@ -563,7 +622,6 @@ public class Creature {
 		return this.inventory;
 	}
 
-
 	public String getEquipped(int i){
 		if(i>this.equipped.length || i < 0) return "None";
 		else {
@@ -583,4 +641,5 @@ public class Creature {
 			return getEquipped(n); //get weapons
 		}
 	}
+	
 }

@@ -239,29 +239,4 @@ public final class DungeonMapGenerator {
 			return data - p.data;
 		}
 	}
-
-	public String weakRandomMapGen(String mapPath, int width, int height) {
-		String[] layers = {"floor", "wall", "doors"};
-		int[][][] tiles = new int[layers.length][width][height];
-		Random rand = new Random();
-		// poor implementation
-		for (int x = 0; x < width; ++x) {
-			for (int y = 0; y < height; ++y) {
-				tiles[0][x][y] =  MapUtil.getGID(floorBase.getName());
-				tiles[1][x][y] = MapUtil.getGID("");
-				tiles[2][x][y] = MapUtil.getGID("");
-				if (rand.nextInt(6) == 0) {
-					tiles[1][x][y] = MapUtil.getGID(wallBase.getName());
-				}
-			}
-		}
-		String path = null;
-		try {
-			path = MapWriter.arrayToXML(mapPath, layers, tiles);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.printf("Error generating map at location %s of width %d, height %d\n", mapPath, width, height);
-		}
-		return path;
-	}
 }

@@ -20,6 +20,7 @@ public final class MapUtil {
 	private static int tileWidth;
 	private static int tileHeight;
 	private static String resourceFile; // file name of the .tsx file which labels things
+	private static final String mapFileExtension = ".dm"; // file ending for maps, so that we can have git ignore them
 
 	
 	public static int getGID(String label) {
@@ -30,7 +31,7 @@ public final class MapUtil {
 	}
 	
 	public static String writeMap(String mapName, DungeonMap dm) {
-		String mapPath = String.format("%s\\%s", MapUtil.folderDirectory, mapName);
+		String mapPath = String.format("%s\\%s%s", MapUtil.folderDirectory, mapName, MapUtil.mapFileExtension);
 		try {
 			MapUtil.createPlanetFolder(mapPath);
 		} catch (IOException e) {
@@ -61,6 +62,15 @@ public final class MapUtil {
 	
 	public static DungeonMap readMap(String mapPath) {
 		DungeonMap ret = null;
+		// verify correct file ending
+		int idx = mapPath.lastIndexOf('.');
+		if (idx != -1) {
+			if (!mapPath.substring(idx).equals(MapUtil.mapFileExtension)) {
+				throw new RuntimeException("Bad file extension: " + mapPath + " should end with " + MapUtil.mapFileExtension);
+			}
+		} else {
+			mapPath = mapPath + MapUtil.mapFileExtension;
+		}
 		try {
 			FileInputStream fis = new FileInputStream(mapPath);
 			ObjectInputStream ois = new ObjectInputStream(fis);

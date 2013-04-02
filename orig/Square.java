@@ -32,9 +32,23 @@ public class Square implements Serializable {
 		if (elementTile == null) {
 			elementTile = ImageUtil.getImage(consists.getName());
 		}
-		if(seen){
-			elementTile.draw(row*ImageUtil.getTileWidth(), col*ImageUtil.getTileHeight(), (passable ? Color.white : Color.darkGray));
+		if (seen) {
+			Color transparency = null;
+			if (passable) {
+				transparency = Color.white;
+			} else {
+				transparency = Color.darkGray;
+			}
+			elementTile.draw(row*ImageUtil.getTileWidth(), col*ImageUtil.getTileHeight(), transparency);
 		}
+	}
+
+	public void setCreature(Creature cre) {
+		this.c = cre;
+	}
+
+	public Creature getCreature() {
+		return this.c;
 	}
 	
 	

@@ -11,9 +11,6 @@ import orig.DungeonMap;
 import orig.Element;
 import orig.Planet;
 
-
-
-
 public final class DungeonMapGenerator {
 	Random r = new Random();
 	Element floorBase;
@@ -30,16 +27,21 @@ public final class DungeonMapGenerator {
 		}
 	}
 	
+	public String generateBlankSquareMap(String mapName, int width, int height) {
+		return this.generateBlankSquareMap(mapName, width, height, 15, 20, 3, width/3, 2, 30);
+	}
+	
 	/**
-	 *make a map array that hold double array of booleans which represents where we will place tiles
-	 *initially false = wall, true = tiles
+	 * make a map array that hold double array of booleans which represents where we will place tiles
+	 * initially false = wall, true = tiles
 	 * 
 	 * Returns the mapPath where the map has been generated to.
 	 */
-	public String generateBlankSquareMap(String mapName, int width, int height)
-	{
+	public String generateBlankSquareMap(
+			String mapName, int width, int height, int minRoom, int maxRoom, int minDim, int maxDim, int dimRange,
+			int retryCount)	{
 		boolean map[][] = new boolean[width][height];
-		int numRoom = r.nextInt(6) + 15;
+		int numRoom = r.nextInt(maxRoom - minRoom + 1) + minRoom;
 		
 		//choose random row choose random column
 		int xRand; // location of top left corner of room
@@ -49,14 +51,13 @@ public final class DungeonMapGenerator {
 		int failure;
 		for(int i = 0; i < numRoom; i++)
 		{
-			roomWidth = r.nextInt(width/3-2)+3;
-			//roomHeight = r.nextInt(height/2-1)+2;
-			roomHeight = roomWidth + (r.nextInt(5) - 2);
+			roomWidth = r.nextInt(maxDim - minDim + 1) + minDim;
+			roomHeight = roomWidth + (r.nextInt(dimRange*2 + 1) - dimRange); // [-dimRange, dimRange]
 			xRand = r.nextInt(width - roomWidth - 1);
 			yRand = r.nextInt(height - roomHeight - 1);
 			failure = 0;
 			boolean okay = true;
-			while (okay && failure < 30) {
+			while (okay && failure < retryCount) {
 		OUTER:	for (int xCheck = xRand; xCheck < xRand + roomWidth+2; ++xCheck) {
 					for (int yCheck = yRand; yCheck < yRand + roomHeight+2; ++yCheck) {
 						if (map[xCheck][yCheck]) {

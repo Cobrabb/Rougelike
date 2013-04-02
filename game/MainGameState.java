@@ -110,9 +110,9 @@ public class MainGameState extends BasicGameState{
 		b_examine = new Image("data/tiles/button_examine.png");
 		
 		o1 = new OnScreenChar(enemy, 30, 30, c);
-		dm.put(o1.xPos, o1.yPos, o1.baseCreature);
+		dm.putCreature(o1.xPos, o1.yPos, o1.baseCreature);
 		p1 = new OnScreenChar(player, numXtiles/2, numYtiles/2, c);
-		dm.put(p1.xPos, p1.yPos, p1.baseCreature);
+		dm.putCreature(p1.xPos, p1.yPos, p1.baseCreature);
 		dm.reveal(8, p1.xPos, p1.yPos);
 		Item i = new Item();
 		Item j = new Item();
@@ -128,6 +128,7 @@ public class MainGameState extends BasicGameState{
 		if(!menutime){
 			DungeonMap dm = planet.getCurrentDungeon();
 			dm.render(container, sbg, g, mapX, mapY, numXtiles, numYtiles);
+			// TODO: have it so that the dungeon map will be in control of rendering creatures
 			o1.draw(mapX, mapY);
 			p1.draw(mapX, mapY);
 		}

@@ -71,23 +71,43 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		}
 	}
 	
-	public void put(int x, int y, Creature c){
-		if(validateCoordinates(x,y)){
-			if(squares[x][y].c==null)
-			squares[x][y].c = c;
+	/**
+	 * This method attempts to place a creature in a particular square on the grid
+	 * @param x X coordinate of location to put creature
+	 * @param y Y coordinate of location to put creature
+	 * @param c reference to the Creature
+	 * @return whether the operation was successful or not
+	 */
+	public boolean putCreature(int x, int y, Creature c) {
+		if (validateCoordinates(x, y)) {
+			if (squares[x][y].getCreature() == null) {
+				squares[x][y].setCreature(c);
+				return true;
+			}
 		}
+		return false;
 	}
 	
-	public void remove(int x, int y){
-		if(validateCoordinates(x,y)) squares[x][y].c=null;
+	/**
+	 * This method attempts to remove a creature from a particular square
+	 * @param x X coordinate on the grid
+	 * @param y Y coordinate on the grid
+	 * @return successful - meaning whether the x,y coordinates were valid
+	 */
+	public boolean removeCreature(int x, int y) {
+		if (validateCoordinates(x, y)) {
+			squares[x][y].setCreature(null);
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean isPassable(int xCoor, int yCoor) {
 		// validate coordinates
 		if (!validateCoordinates(xCoor, yCoor))
 			return false; // tell caller they can't move off the grid, maybe throw exception
-		if(squares[xCoor][yCoor].c!=null){
-			return false;
+		if (squares[xCoor][yCoor].getCreature() != null){
+			return false; // cannot walk there if another creature is already there
 		}
 		return squares[xCoor][yCoor].isPassable();
 	}
@@ -97,10 +117,10 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g, int xPos, int yPos, int screenX, int screenY) {
-		int xUpper = (xPos+screenX>squares.length)? squares.length : xPos+screenX;
-		int yUpper = (yPos+screenY>squares[0].length)? squares[0].length : yPos+screenY;
-		int xLower = (xPos<0)? 0 : xPos;
-		int yLower = (yPos<0)? 0 : yPos;
+		int xUpper = (xPos+screenX > squares.length) ? squares.length : xPos+screenX;
+		int yUpper = (yPos+screenY > squares[0].length) ? squares[0].length : yPos+screenY;
+		int xLower = (xPos < 0) ? 0 : xPos;
+		int yLower = (yPos < 0) ? 0 : yPos;
 		for (int row = xLower; row < xUpper; ++row) {
 			for (int col = yLower; col < yUpper; ++col) {
 				squares[row][col].render(row-xPos, col-yPos);

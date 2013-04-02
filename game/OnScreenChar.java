@@ -49,7 +49,7 @@ public class OnScreenChar {
 	
 	public void move(int left, int up, DungeonMap dm){
 		if(left>1||left<-1||up>1||up<-1) return;
-		dm.remove(xPos, yPos);
+		dm.removeCreature(xPos, yPos);
 		if(dm.isPassable(xPos+left*speed, yPos+up*speed)){
 			this.xPos += left*speed;
 			this.yPos += up*speed;
@@ -68,7 +68,7 @@ public class OnScreenChar {
 				}
 			}
 		}
-		dm.put(xPos, yPos, baseCreature);
+		dm.putCreature(xPos, yPos, baseCreature);
 	}
 	
 	public boolean canMove(int left, int up, DungeonMap dm){

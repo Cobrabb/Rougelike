@@ -131,7 +131,7 @@ public class Race {
 			}
 		}
 
-		this.numArms = 2*(int) (Math.random()/.2);
+		this.numArms = 2*(int) (Math.random()/.2)+1;
 		this.numLegs = 2*(int) (Math.random()/.4);
 		this.friendly = new ArrayList<Race>(0);
 	}

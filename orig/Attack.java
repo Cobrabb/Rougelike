@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Attack {
 	public enum AttackPattern {
-		POINT, LINE, CIRCLE, PLUS, WEDGE, OTHER, TOTAL
+		POINT, LINE, PLUS, TOTAL, CIRCLE, WEDGE, OTHER
 	}
 	
 	public enum AttackDirection {
@@ -45,6 +45,7 @@ public class Attack {
 		this.x = x;
 		this.y = y;
 		this.attacker = attacker;
+		this.weapon = item;
 		this.ad = ad;
 		this.attackStrength = attackStrength;
 		//this.attackStrength = item.
@@ -100,16 +101,21 @@ public class Attack {
 			break;
 		case PLUS:
 			this.pattern = new ArrayList<int[]>(4*(attackRadius-1)+1);
+			this.pattern.add(new int[2]);
 			this.pattern.get(0)[0] = this.x;
 			this.pattern.get(0)[1] = this.y;
 			//begin creating the pattern o,pi/2,pi,3pi/2
 			for(int i=1; i<2*attackRadius; i+=4) {
+				this.pattern.add(new int[2]);
 				this.pattern.get(i)[0] = this.x+i;
 				this.pattern.get(i)[1] = this.y;
+				this.pattern.add(new int[2]);
 				this.pattern.get(i+1)[0] = this.x;
 				this.pattern.get(i+1)[1] = this.y+i;
+				this.pattern.add(new int[2]);
 				this.pattern.get(i+2)[0] = this.x-i;
 				this.pattern.get(i+2)[1] = this.y;
+				this.pattern.add(new int[2]);
 				this.pattern.get(i+3)[0] = this.x;
 				this.pattern.get(i+3)[0] = this.y-i;	
 			}	

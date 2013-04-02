@@ -35,7 +35,7 @@ public class Test {
 		Creature c = new Creature(r);
 		Creature c2 = new Creature(r);
 		Creature c3 = new Creature(r);
-		//c2.gain(s[0], sVal.XP, 500000);
+		c.gain(s[0], sVal.XP, 500000);
 		for(int i=0; i<100;i++) {
 			//c.autoLvlPointsBy(10);
 			c2.autoLvlXP(11000);
@@ -150,12 +150,30 @@ public class Test {
 		}
 
 		
-		UET uE = UET.getUET();
-		uE.printDmgTable();
-		
+		//UET uE = UET.getUET();
+		//uE.printDmgTable();
+		for(int i=0; i<10; i++) {
+			c.equip(new Item());
+			c2.equip(new Item());
+		}
+		ArrayList<Attack> att = c.attack(0, 0, AttackDirection.EAST);
+		for(int i=0; i<att.size(); i++) {
+			System.out.println("Attack #" + i);
+			c2.takeAttack(att.get(i));
+			for(int j = 0; j < cStats.TOTAL.ordinal(); j++) {
+				statPrint = s[j] + " : ";
+				for(int k = 0; k < sVal.TOTAL.ordinal(); k++) {
+					statPrint += c2.get(s[j], v[k]) + ", ";
+				}
+				statPrint += c2.decode(s[j]).toString() + ", " + c2.getRaceGain() + ", " + c2.getEffective(s[j], v[sVal.CURRENT.ordinal()]);
+				System.out.println(statPrint);
+			}
+		}
+		/*
 		Attack a0 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.EAST);
 		Attack a1 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.NORTH);
 		Attack a2 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.WEST);
 		Attack a3 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.SOUTH);
+		*/
 	}
 }

@@ -61,6 +61,7 @@ public class Effect {
 		}
 		this.move = (Math.random() < .1); // chooses whether or not to move the affected
 		if(this.move){
+			this.rel = new int[2];
 			this.rel[0] = (int) (Math.random()/Math.random());
 			this.rel[1] = (int) (Math.random()/Math.random());
 		}

@@ -9,8 +9,8 @@ import orig.Item.iType;
 
 public class Creature {
 	public enum cStats {
-		STR_CLIMB, STR_PHYS_ATTACK, STR_JUMP, SPEED_MOVE, SPEED_ATTACK, DETECT_SIGHT,	DETECT_SOUND,
-		STEALTH_SIGHT, STEALTH_SOUND, TECH_WEAPON, TECH_ARMOR, STAM_HEALTH, STAM_ENERGY, TOTAL;
+		STR_PHYS_ATTACK, SPEED_MOVE, SPEED_ATTACK, DETECT_SIGHT, 
+		STEALTH_SIGHT, TECH_WEAPON, TECH_ARMOR, STAM_HEALTH, TOTAL;
 		
 		public String toString() {
 			return this.name();
@@ -38,15 +38,15 @@ public class Creature {
 
 	//from Race
 	//private String name;
-	private int diet;  //How it eats, not what it eats
-	private Element consumes; //what it eats
-	private Element produces; //what it poops
+//	private int diet;  //How it eats, not what it eats
+//	private Element consumes; //what it eats
+//	private Element produces; //what it poops
 	private Element casing; //the flesh
 	private Element fluid; //the blood
 	private Element organs;
-	private boolean genders; //true if the Race is not a hermaphodite
+//	private boolean genders; //true if the Race is not a hermaphodite
 	private int numArms;
-	private int numLegs;
+//	private int numLegs;
 	
 	private int[][] cStat;
 	private int[][] bStat;
@@ -54,7 +54,7 @@ public class Creature {
 	private ArrayList<Item> inventory;
 	private Item[] equipped; // which items (non-hand)
 	private ArrayList<Item> weilding; // which items (hands)
-	private int MaxInventory;
+	private int MaxInventory = 10;
 	private int availHands;
 	private double weight;
 	private ArrayList<Effect> effects;
@@ -71,40 +71,18 @@ public class Creature {
 	private int raceGain;
 	private int initCap = 400;
 	
-	/*public Creature() {
-		//this.name = race.getName();
-		this.inventory = new ArrayList<Item>();
-		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.equipped = new Item[slots];
-		this.weilding = new ArrayList<Item>(0);
-		//set all of stat to 0 and set each level to n
-		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.cStat[i][j] = 0;
-			}
-		}
-		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.bStat[i][j] = 0;
-			}
-		}
-		randomInitXP();
-	}
-	*/
-	
 	public Creature(String name, String rName, int diet, Element consumes, Element produces, Element casing, Element fluid, Element organs, boolean genders, int numArms, int numLegs, int[][] cStat, int[][] bStat, ArrayList<Item> inventory, Item[] equipped, ArrayList<Item> weilding, int MaxInventory, int availHands, double weight, int initCap) {
 		this.name = name;
 		this.rName = rName;
-		this.diet = diet;
-		this.consumes = consumes;
-		this.produces = produces;
+//		this.diet = diet;
+//		this.consumes = consumes;
+//		this.produces = produces;
 		this.casing = casing;
 		this.fluid = fluid;
 		this.organs = organs;
-		this.genders = genders;
+//		this.genders = genders;
 		this.numArms = numArms;
-		this.numLegs = numLegs;
+//		this.numLegs = numLegs;
 		this.cStat = cStat;
 		this.bStat = bStat;
 		if(inventory != null) this.inventory = inventory;
@@ -127,15 +105,15 @@ public class Creature {
 		
 		this.name = r.getName();
 		this.rName = r.getL().generate();
-		this.diet = r.getDiet();
-		this.consumes = r.getConsumes();
-		this.produces = r.getProduces();
+//		this.diet = r.getDiet();
+//		this.consumes = r.getConsumes();
+//		this.produces = r.getProduces();
 		this.casing = r.getCasing();
 		this.fluid = r.getFluid();
 		this.organs = r.getOrgans();
-		this.genders = r.getGenders();
+//		this.genders = r.getGenders();
 		this.numArms = r.getNumArms();
-		this.numLegs = r.getNumLegs();
+//		this.numLegs = r.getNumLegs();
 		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
 		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
@@ -152,7 +130,7 @@ public class Creature {
 		this.inventory = new ArrayList<Item>(0);
 		this.equipped = new Item[slots];
 		this.weilding = new ArrayList<Item>(0);
-		//this.MaxInventory = MaxInventory;
+		this.MaxInventory += 100;
 		this.availHands = this.numArms;
 	}
 	
@@ -470,7 +448,7 @@ public class Creature {
 ////////////////////////////// Attacking ////////////////////////////////////////////////////////////////////
 	public ArrayList<Attack> attack(int x, int y, AttackDirection ad) {//the attacking starts here
 		ArrayList<Attack> att = new ArrayList<Attack>(0);
-		for(int i=0; i<this.getNumArms(); ) {
+		for(int i=0; i<this.getNumArms(); i++) {
 			if(i<this.weilding.size())	att.add(this.weilding.get(i).attack(x, y, ad, this));
 			else {
 				//handle unarmed case
@@ -481,11 +459,12 @@ public class Creature {
 	
 	public void takeAttack(Attack a) {
 		//get resistances from univeral reaction table
-		double atStr = a.getAttackStrength(), fullStr = a.getAttackStrength();
+		double atStr = a.getAttackStrength();
 		ArrayList<Effect> attEff;
 		for(int i=0; i<this.equipped.length; i++) {
+			this.equipped[i].takeAttack(a,atStr);
 			atStr -= this.equipped[i].getAttackSize();
-			this.equipped[i].takeAttack(a);
+			
 			/*
 			attEff = new ArrayList<Effect>(0);
 			for(int j=0; j<this.equipped[i].getEffects().size(); j++){
@@ -529,9 +508,10 @@ public class Creature {
 	
 	public void takeAttackResults(AttackResults ar) {
 		//get resistances from univeral reaction table
-		double atStr = ar.getAttackStrength();
-		
-		ar.getConsists();
+		//double atStr = ar.getAttackStrength();
+		for(Effect e: ar.getEffects()) {
+			attackEffect(e);
+		}
 	}
 
 	

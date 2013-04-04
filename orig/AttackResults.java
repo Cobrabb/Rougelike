@@ -25,10 +25,12 @@ public class AttackResults {
 	public AttackResults(ArrayList<Effect> effects, Item i, double attackStrength) {
 		this.effects = effects;
 		this.attackStrength = attackStrength;
-		this.item = i;
-		this.consists = new ArrayList<Element>(0);
-		for(int j=0; j<i.getConsists().length; j++) {
-			this.consists.add(i.getConsists()[j]);
+		if(i != null) {
+			this.item = i;
+			this.consists = new ArrayList<Element>(0);
+			for(int j=0; j<i.getConsists().length; j++) {
+				this.consists.add(i.getConsists()[j]);
+			}
 		}
 	}
 	

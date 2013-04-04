@@ -105,6 +105,14 @@ public class UET {
 		return this.elementList;
 	}
 	
+	public Element[] getElementArray() {
+		Element[] array = new Element[this.elementList.size()];
+		for(int i=0; i<this.elementList.size(); i++) {
+			array[i] = this.elementList.get(i);
+		}
+		return array;
+	}
+	
 	public double getDmg(Element attack, Element defend) {
 		double dRM, density, gran, mal;
 		dRM = this.dmgRatioMultiplier[this.elementList.indexOf(attack)][this.elementList.indexOf(defend)];

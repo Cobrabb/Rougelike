@@ -71,6 +71,7 @@ public class Creature {
 	private int raceGain;
 	private int initCap = 400;
 	
+	/*
 	public Creature(String name, String rName, int diet, Element consumes, Element produces, Element casing, Element fluid, Element organs, boolean genders, int numArms, int numLegs, int[][] cStat, int[][] bStat, ArrayList<Item> inventory, Item[] equipped, ArrayList<Item> weilding, int MaxInventory, int availHands, double weight, int initCap) {
 		this.name = name;
 		this.rName = rName;
@@ -97,6 +98,7 @@ public class Creature {
 		this.weight = weight;
 		this.initCap = initCap;
 	}
+	*/
 	
 	public Creature(Race r) {
 		cStats[] c = cStats.values();
@@ -132,6 +134,14 @@ public class Creature {
 		this.weilding = new ArrayList<Item>(0);
 		this.MaxInventory += 100;
 		this.availHands = this.numArms;
+		this.friendly = new ArrayList<String>(r.getFriendly().size());
+		for(int i=0; i<r.getFriendly().size(); i++) {
+			this.friendly.add(r.getFriendly().get(i).getName());
+		}
+		this.effects = new ArrayList<Effect>(r.getEffects().size());
+		for(int i=0; i<r.getEffects().size();i++) {
+			this.effects.add(new Effect(r.getEffects().get(i)));
+		}
 	}
 	
 	public String getName() {
@@ -462,8 +472,10 @@ public class Creature {
 		double atStr = a.getAttackStrength();
 		ArrayList<Effect> attEff;
 		for(int i=0; i<this.equipped.length; i++) {
-			this.equipped[i].takeAttack(a,atStr);
-			atStr -= this.equipped[i].getAttackSize();
+			if(this.equipped[i] != null) {
+				this.equipped[i].takeAttack(a,atStr);
+				atStr -= this.equipped[i].getAttackSize();
+			}
 			
 			/*
 			attEff = new ArrayList<Effect>(0);
@@ -495,7 +507,7 @@ public class Creature {
 			attEff.add(new Effect(cStats.STR_PHYS_ATTACK,sVal.XP,(1.0-a.getWeapon().getPhysTech())*dmg,true));
 			attEff.add(new Effect(cStats.TECH_WEAPON,sVal.XP,(1.0-a.getWeapon().getPhysTech())*dmg,true));
 			if(a.getWeapon().getType() == iType.HAND && a.getWeapon().getAttackType() == AttackType.PHYS) {
-				AttackResults ar = new AttackResults(this.effects,null,dmg);
+				AttackResults ar = new AttackResults(attEff,null,dmg);
 				a.getAttacker().takeAttackResults(ar);
 			}
 			
@@ -520,7 +532,7 @@ public class Creature {
 	}
 	
 	public void attackEffect(Effect e) {
-		if(e.isAttack()) { //if it is an attack
+		//if(e.isAttack()) { //if it is an attack
 			double value = e.getValue(), dmg = e.getValue();
 			if(e.isTemp()) {
 				effects.add(new Effect(e));
@@ -538,7 +550,7 @@ public class Creature {
 					this.cStat[e.getCStat().ordinal()][e.getSVal().ordinal()] += dmg;
 				}
 			}
-		}
+		//}
 		
 	}
 	
@@ -586,6 +598,19 @@ public class Creature {
 			equipped[i.getType().ordinal()] = null;
 			return true;
 		}
+	}
+	
+	public boolean unequip(int n) {
+		if(n < 0) return false;
+		else if(n < this.slots){
+			this.equipped[n] = null;
+			return true;
+		}
+		else if(n<this.slots+this.weilding.size()) {
+			this.weilding.remove(n-this.slots);
+			return true;
+		}
+		return false;
 	}
 
 	public void pickup(Item i) {

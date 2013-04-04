@@ -18,7 +18,7 @@ public class Effect {
 	private boolean elemental = false; //whether to consider elements or not
 	private Element element = null; //element it consists of (for damage/healing);
 	private boolean move = false; // whether or not to move position
-	private int rel[];  // new coordinates of creature (relative to current)
+	private int rel[] = {0,0};  // new coordinates of creature (relative to current)
 	
 	public Effect(Effect e) {
 		this.cstat = e.getCStat();

@@ -12,15 +12,7 @@ import orig.Creature.sVal;
 public class Test {
 	public static void main(String[] args){
 		Language L = new Language();
-		Element[] e = new Element[10];
-		e[0] = new Element("Water", 1);
-		e[1] = new Element("Meat", 3);
-		e[2] = new Element("Stone", 10);
-		e[3] = new Element("Fudge", 2);
-		
-		for(int i=4; i<10; i++){
-			e[i] = new Element(L);
-		}
+		Element[] e = UET.getUET().getElementArray();
 		
 	//	Planet pl = new Planet(e);
 	//	System.out.println(pl.toString());
@@ -29,16 +21,16 @@ public class Test {
 		sVal v[] = sVal.values();
 
 		cStats cs = cStats.DETECT_SIGHT;
-		Race r = new Race(e, L);
+		Race r = new Race(e, L), r2 = new Race();
 		//bStats rs = bStats.DETECTION;
 		//ystem.out.println(rs + " ~ " + rs.ordinal());
 		Creature c = new Creature(r);
 		Creature c2 = new Creature(r);
-		Creature c3 = new Creature(r);
+		Creature c3 = new Creature(r2);
 		c.gain(s[0], sVal.XP, 500000);
 		for(int i=0; i<100;i++) {
 			//c.autoLvlPointsBy(10);
-			c2.autoLvlXP(11000);
+			c2.autoLvlXP(100);
 		}
 		String statPrint;
 	/*	
@@ -169,6 +161,18 @@ public class Test {
 				System.out.println(statPrint);
 			}
 		}
+		
+		System.out.println("-----------------------------Get Effective Test--------------------------");
+		for(int i = 0; i < cStats.TOTAL.ordinal(); i++) {
+			statPrint = s[i] + " : ";
+			for(int j = 0; j < sVal.TOTAL.ordinal(); j++) {
+				statPrint += c2.get(s[i], v[j]) + ", ";
+			}
+			statPrint += c2.decode(s[i]).toString() + ", " + c2.getRaceGain() + ", " + c2.getEffective(s[i], v[sVal.CURRENT.ordinal()]);
+			System.out.println(statPrint);
+		}
+
+		
 		/*
 		Attack a0 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.EAST);
 		Attack a1 = new Attack(0,0,AttackPattern.LINE,5, c, AttackDirection.NORTH);

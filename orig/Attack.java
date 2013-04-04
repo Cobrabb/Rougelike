@@ -39,7 +39,7 @@ public class Attack {
 	private ArrayList<Effect> effects;
 	private Creature attacker;
 	private double attackStrength;
-	private AttackDirection ad = AttackDirection.OTHER;
+	private AttackDirection ad;
 	
 	public Attack(int x, int y, double attackStrength, Item item, Creature attacker, AttackDirection ad) {
 		this.x = x;
@@ -48,10 +48,14 @@ public class Attack {
 		this.weapon = item;
 		this.ad = ad;
 		this.attackStrength = attackStrength;
+		this.effects = new ArrayList<Effect>(0);
+		for(int i=0; i<this.weapon.getEffects().size(); i++) {
+			this.effects.add(new Effect(this.weapon.getEffects().get(i)));
+		}
 		//this.attackStrength = item.
 		decodePattern(item.getAttackPattern(), item.getAttackSize());
 	}
-
+/*
 	public Attack(int x, int y, AttackPattern ap, int attackSize, Creature attacker, AttackDirection ad) {
 		this.x = x;
 		this.y = y;
@@ -59,7 +63,7 @@ public class Attack {
 		this.ad = ad;
 		decodePattern(ap, attackSize);
 	}
-	
+*/	
 	public double getAttackStrength() {
 		return this.attackStrength;
 	}

@@ -52,11 +52,10 @@ public class Item {
 		this.consists = new Element[(int) Math.max((1.0/Math.random()),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
 		for(int i=0; i<this.consists.length; i++) {
 			this.consists[i] = UET.getUET().getElementList().get((int) (Math.min((UET.TOTAL)*Math.random(),UET.TOTAL-1)));
-			System.out.println("# =" + Math.min((UET.TOTAL+1)*Math.random(),UET.TOTAL));
 		}
 		this.repairs = new Element[(int) Math.max((1.0/Math.random()),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
 		for(int i=0; i<this.repairs.length; i++) {
-			this.repairs[i] = UET.getUET().getElementList().get((int) ((UET.TOTAL)*Math.random()));
+			this.repairs[i] = UET.getUET().getElementList().get((int) (Math.min((UET.TOTAL)*Math.random(),UET.TOTAL-1)));
 		}
 		this.level = (int) (10*Math.random());
 		if(this.type == iType.HAND) {
@@ -96,15 +95,7 @@ public class Item {
 	}
 	
 
-/*
-	public boolean repair(Element[] elements) {
-		boolean bool = false;
-		for(Element e: elements) {
-			
-		}
-		return bool;
-	}
-*/	
+
 	public iType getType() {
 		return this.type;
 	}

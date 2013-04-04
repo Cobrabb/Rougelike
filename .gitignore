@@ -1,3 +1,9 @@
+###################
+## Project Specific
+
+# Dungeon Map files
+*.dm
+
 #################
 ## Eclipse
 #################

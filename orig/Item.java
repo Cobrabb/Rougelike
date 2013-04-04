@@ -26,6 +26,7 @@ public class Item {
 	private Element[] consists = null; //need to know proportions
 	private Element[] repairs = null; //need to know proportions
 	//private Element[] improve;
+
 	private int level = 1; // item level
 	private int hands = 1; //number of hands required to wield
 	private int techRequired = 1;
@@ -41,6 +42,7 @@ public class Item {
 	private AttackType atype = AttackType.PHYS; // defaults to physical attack
 	private int attackSize = 2; // defaults to attacking 2 spacing (except for point attacks)
 //	private double wearDmg = 0.0;
+
 	
 	public Item() {
 		this.name = new Language().generate();

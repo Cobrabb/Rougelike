@@ -1,19 +1,22 @@
 package orig;
 
+import java.io.Serializable;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
-public class DungeonMap implements TileBasedMap { //extends TiledMap
+import util.MapUtil;
+
+public class DungeonMap implements TileBasedMap, Serializable { 
+	
+	private static final long serialVersionUID = -6764222487499645397L;
 
 	//getting around
 	int mapID;
-	
-	private TiledMap map;
 	
 	//the map's properties
 	Square[][] squares;
@@ -39,15 +42,90 @@ public class DungeonMap implements TileBasedMap { //extends TiledMap
 		}
 	}
 	
-	public DungeonMap(String mapPath, Planet p, boolean outer, boolean generate) throws SlickException {
+	public DungeonMap(String mapPath, Planet p, boolean outer) {
 		this(p, outer);
-		if (generate)
-			mapPath = p.generateMap(mapPath);
-		this.map = new TiledMap(mapPath, "maps");
 	}
 	
-	public void render(GameContainer container, StateBasedGame sbg, Graphics g) {
-		this.map.render(0, 0);
+	public void reveal(int radius, int x, int y){
+		for(int i=(x-radius); i<x+radius; i++ ){
+			for(int j=(y-radius); j<y+radius; j++){
+				if(validateCoordinates(i,j)){
+					squares[i][j].seen = true;
+				}
+			}
+		}
+	}
+	
+	public DungeonMap(boolean[][] wallFloor, Element wbase, Element fbase) {
+		this.wallsbase = wbase;
+		this.floorsbase = fbase;
+		this.squares = new Square[wallFloor.length][wallFloor[0].length];
+		for (int row = 0; row < wallFloor.length; ++row) {
+			for (int col = 0; col < wallFloor[row].length; ++col) {
+				// might want to look into changing this way of initializing squares
+				boolean passable = wallFloor[row][col];
+				Element cons = (wallFloor[row][col] ? fbase : wbase);
+				Square sq = new Square(passable, cons);
+				this.squares[row][col] = sq;
+			}
+		}
+	}
+	
+	/**
+	 * This method attempts to place a creature in a particular square on the grid
+	 * @param x X coordinate of location to put creature
+	 * @param y Y coordinate of location to put creature
+	 * @param c reference to the Creature
+	 * @return whether the operation was successful or not
+	 */
+	public boolean putCreature(int x, int y, Creature c) {
+		if (validateCoordinates(x, y)) {
+			if (squares[x][y].getCreature() == null) {
+				squares[x][y].setCreature(c);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * This method attempts to remove a creature from a particular square
+	 * @param x X coordinate on the grid
+	 * @param y Y coordinate on the grid
+	 * @return successful - meaning whether the x,y coordinates were valid
+	 */
+	public boolean removeCreature(int x, int y) {
+		if (validateCoordinates(x, y)) {
+			squares[x][y].setCreature(null);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isPassable(int xCoor, int yCoor) {
+		// validate coordinates
+		if (!validateCoordinates(xCoor, yCoor))
+			return false; // tell caller they can't move off the grid, maybe throw exception
+		if (squares[xCoor][yCoor].getCreature() != null){
+			return false; // cannot walk there if another creature is already there
+		}
+		return squares[xCoor][yCoor].isPassable();
+	}
+
+	private boolean validateCoordinates(int xCoor, int yCoor) {
+		return (xCoor >= 0 && xCoor < squares.length && yCoor >= 0 && yCoor < squares[0].length);
+	}
+
+	public void render(GameContainer container, StateBasedGame sbg, Graphics g, int xPos, int yPos, int screenX, int screenY) {
+		int xUpper = (xPos+screenX > squares.length) ? squares.length : xPos+screenX;
+		int yUpper = (yPos+screenY > squares[0].length) ? squares[0].length : yPos+screenY;
+		int xLower = (xPos < 0) ? 0 : xPos;
+		int yLower = (yPos < 0) ? 0 : yPos;
+		for (int row = xLower; row < xUpper; ++row) {
+			for (int col = yLower; col < yUpper; ++col) {
+				squares[row][col].render(row-xPos, col-yPos);
+			}
+		}
 	}
 
 	@Override
@@ -63,12 +141,11 @@ public class DungeonMap implements TileBasedMap { //extends TiledMap
 
 	@Override
 	public int getHeightInTiles() {
-		return map.getHeight();
+		return squares[0].length;
 	}
 
-	@Override
 	public int getWidthInTiles() {
-		return map.getWidth();
+		return squares.length;
 	}
 
 	@Override

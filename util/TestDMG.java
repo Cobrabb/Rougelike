@@ -13,7 +13,7 @@ public class TestDMG {
 		DungeonMapGenerator map = new DungeonMapGenerator(p);
 		
 		
-		boolean[][] m = map.generateMap("", 20, 20);
+		boolean[][] m = null;//map.generateBlankSquareMap("", 20, 20);
 		
 		for (int i = 0; i < m.length; ++i) {
 			for (int j = 0; j < m[i].length; ++j) {

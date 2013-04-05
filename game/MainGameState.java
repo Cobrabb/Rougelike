@@ -70,6 +70,9 @@ public class MainGameState extends BasicGameState{
 	boolean menutime = false;
 	boolean inventorytime = false;
 	boolean equippedtime = false;
+	boolean helptime = false;
+	boolean free_mode = false;
+	boolean attacktime = false;
 	int outer = 0;
 	int onscreen=0;
 	boolean scrolldown;
@@ -133,7 +136,11 @@ public class MainGameState extends BasicGameState{
 			p1.draw(mapX, mapY);
 		}
 		else{
-			if(inventorytime){
+			if(helptime){
+				g.drawString("HELP TEXT GOES HERE", 0, header);
+				g.drawString("Back", 0, sizeY-footer-textAllowed);
+			}
+			else if(inventorytime){
 				if(outer>0){
 					g.drawString("Scroll Up", 0, header);
 				}
@@ -147,7 +154,7 @@ public class MainGameState extends BasicGameState{
 					onscreen++;
 					if(i>outer+itemFit){
 						scrolldown=true;
-						g.drawString("Scroll Down", 0, footer-textAllowed);
+						g.drawString("Scroll Down", 0, sizeY-footer-textAllowed);
 						break;
 					}
 				}
@@ -178,7 +185,8 @@ public class MainGameState extends BasicGameState{
 			else{
 				g.drawString("Inventory",0,header);
 				g.drawString("Equipped", 0, header+(1*textAllowed));
-				g.drawString("Return", 0,header+(2*textAllowed));
+				g.drawString("Help", 0, header+(2*textAllowed));
+				g.drawString("Return", 0,header+(3*textAllowed));
 			}
 		}
     }
@@ -244,6 +252,24 @@ public class MainGameState extends BasicGameState{
 		    	else if(input.isKeyDown(Input.KEY_ESCAPE)){
 		    		menutime = true;
 		    	}
+		    	else if(input.isKeyDown(Input.KEY_COMMA)){
+		    		//attempt pickup
+		    	}
+		    	else if(input.isKeyDown(Input.KEY_A)){
+		    		free_mode = true;
+		    		attacktime = true;
+		    	}
+		    	else if(input.isKeyDown(Input.KEY_I)){
+		    		menutime = true;
+		    		inventorytime = true;
+		    	}
+		    	else if(input.isKeyDown(Input.KEY_H)){
+		    		helptime = true;
+		    		menutime= true;
+		    	}
+		    	else if(input.isKeyDown(Input.KEY_X)){
+		    		free_mode = true;
+		    	}
 		    	if(kp){
 		    		dm.reveal(5, p1.xPos, p1.yPos);
 		    		inputDelta=100;
@@ -251,7 +277,14 @@ public class MainGameState extends BasicGameState{
 		    	}
 	    	}
 	    	else{
-	    		if(inventorytime){
+	    		if(helptime){
+	    			int mouseX = input.getMouseX();
+		        	int mouseY = input.getMouseY();
+		        	if(mouseX<100&&mouseY>sizeY-footer-textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
+		        		helptime = false;
+		        	}
+	    		}
+	    		else if(inventorytime){
 	    			int mouseX = input.getMouseX();
 		        	int mouseY = input.getMouseY();
 		        	if(mouseX<150&&mouseY<header+textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&outer>0){
@@ -299,6 +332,9 @@ public class MainGameState extends BasicGameState{
 		        		equippedtime = true;
 		        	}
 		        	else if(mouseX<150&&mouseY<header+(3*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
+		        		helptime = true;
+		        	}
+		        	else if(mouseX<150&&mouseY<header+(4*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		menutime = false;
 		        	}
 	    		}

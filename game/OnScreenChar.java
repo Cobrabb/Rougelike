@@ -15,6 +15,8 @@ public class OnScreenChar {
 	int xPos;
 	int yPos;
 	int speed;
+	double ratioMovement;
+	double stackedMovement;
 	public Creature baseCreature;
 	final int tileSize = 32;
 	
@@ -22,13 +24,19 @@ public class OnScreenChar {
 		looks = used;
 		xPos = X;
 		yPos = Y;
+		baseCreature = c;
 		speed = 1; //baseCreature.get(bStats.SPEED, sVal.LEVEL)
 		looks.draw(xPos, yPos);
-		baseCreature = c;
+		ratioMovement = speed;
+		stackedMovement = 0;
 	}
 	
 	public void draw(int mapX, int mapY){
 		looks.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize);
+	}
+	
+	public void initializeRatio(int playerSpeed){
+		ratioMovement = ((double)speed)/((double)playerSpeed);
 	}
 	
 	//useless
@@ -50,21 +58,26 @@ public class OnScreenChar {
 	public void move(int left, int up, DungeonMap dm){
 		if(left>1||left<-1||up>1||up<-1) return;
 		dm.removeCreature(xPos, yPos);
-		if(dm.isPassable(xPos+left*speed, yPos+up*speed)){
-			this.xPos += left*speed;
-			this.yPos += up*speed;
-		}
-		else{
-			for(int i=left*speed; i!=0; i-=left){
-				if(dm.isPassable(xPos+i,yPos)){
-					this.xPos+=i;
-					break;
-				}
+		stackedMovement = stackedMovement+ratioMovement;
+		int movement = (int)stackedMovement;
+		if(movement>0){
+			stackedMovement = stackedMovement-movement;
+			if(dm.isPassable(xPos+left*movement, yPos+up*movement)){
+				this.xPos += left*movement;
+				this.yPos += up*movement;
 			}
-			for(int i=up*speed; i!=0; i-=up){
-				if(dm.isPassable(xPos, yPos+i)){
-					this.yPos+=i;
-					break;
+			else{
+				for(int i=left*movement; i!=0; i-=left){
+					if(dm.isPassable(xPos+i,yPos)){
+						this.xPos+=i;
+						break;
+					}
+				}
+				for(int i=up*movement; i!=0; i-=up){
+					if(dm.isPassable(xPos, yPos+i)){
+						this.yPos+=i;
+						break;
+					}
 				}
 			}
 		}

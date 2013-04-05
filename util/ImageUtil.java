@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.newdawn.slick.Image;
@@ -15,8 +16,7 @@ public final class ImageUtil {
 	private static boolean loaded = false;
 	private static String relativeFolder;
 	private static String parseFile;
-	private static String tilesetImageFile;
-	private static Image tileset;
+	private static ArrayList<Image> tilesets;
 	private static int tileWidth;
 	private static int tileHeight;
 	
@@ -28,10 +28,12 @@ public final class ImageUtil {
 		int height = -1;
 		int width = -1;
 		int tileCount = -1;
+		int tilesetCount = -1;
 		boolean done = false;
 		ImageUtil.nameToImage = new HashMap<String, Image>();
+		ImageUtil.tilesets = new ArrayList<Image>();
 		try {
-			ImageUtil.tileset = new Image(ImageUtil.getFullTilesetImageFile());
+			Image tileset = null;
 			BufferedReader parseReader = new BufferedReader(new FileReader(new File(ImageUtil.getFullParseFile())));
 			mode = 0;
 			height = -1;
@@ -57,13 +59,25 @@ public final class ImageUtil {
 					height = Integer.parseInt(line);
 					++mode;
 					break;
-				// we are to read in the tileCount
+				// we are to read in the number of tilesets
 				case 2:
+					tilesetCount = Integer.parseInt(line);
+					++mode;
+					break;
+				// we are to read in the image file name
+				case 3:
+					tileset = new Image(ImageUtil.getFullTilesetImageFile(line));
+					tilesets.add(tileset); // keep a reference to the images
+					--tilesetCount;
+					++mode;
+					break;
+				// we are to read in the tileCount
+				case 4:
 					tileCount = Integer.parseInt(line);
 					++mode;
 					break;
 				// we are to read in a tile
-				case 3:
+				case 5:
 					if (tileCount > 0)
 						--tileCount;
 					String[] parts = line.split(" ");
@@ -71,14 +85,18 @@ public final class ImageUtil {
 					int y = ImageUtil.interpret(width, height, parts[1]);
 					// begin at the character after both integer inputs
 					String name = line.substring(parts[0].length() + parts[1].length() + 2);
-					Image subimage = (ImageUtil.tileset).getSubImage(x, y, width, height);
+					Image subimage = (tileset).getSubImage(x, y, width, height);
 					if (ImageUtil.nameToImage.containsKey(name)) {
 						System.err.printf("Warning: There are tile elements with the same name.\n");
 					}
 					ImageUtil.nameToImage.put(name, subimage);
-					// we are done
-					if (tileCount == 0)
-						done = true;
+					if (tileCount == 0) {
+						// are we done?
+						if (tilesetCount == 0)
+							done = true;
+						else
+							mode = 3;
+					}
 					break;
 				}
 			}
@@ -138,18 +156,10 @@ public final class ImageUtil {
 		return ret;
 	}
 
-	private static String getFullTilesetImageFile() {
+	private static String getFullTilesetImageFile(String tilesetFile) {
 		// WINDOWS DEPENDENCY
-		String ret = String.format("%s\\%s", ImageUtil.getRelativeFolder(), ImageUtil.getTilesetImageFile());
+		String ret = String.format("%s\\%s", ImageUtil.getRelativeFolder(), tilesetFile);
 		return ret;
-	}
-
-	public static String getTilesetImageFile() {
-		return ImageUtil.tilesetImageFile;
-	}
-	
-	public static void setTilesetImageFile(String tif) {
-		ImageUtil.tilesetImageFile = tif;
 	}
 	
 	public static String getTPF() {

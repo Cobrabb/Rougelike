@@ -2,16 +2,68 @@ package util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+import org.newdawn.slick.Image;
+
 import orig.DungeonMap;
 import orig.Element;
 import orig.Planet;
+import util.General.Direction;
 
 public final class DungeonMapGenerator {
+	
+	public enum TileType {
+		WALL,
+		FLOOR,
+		DOOR,
+		STAIRS,
+		SPAWNPOINT,
+		TREASURE,
+		TELEPORT,
+		OTHER;
+		
+		public final int flag;
+		
+		TileType() {
+			this.flag = 1 << this.ordinal();
+		}
+	}
+	
+	public class TileData {
+		private Element wall;
+		private Element floor;
+		private HashMap<TileType, Image> map;
+		
+		void setWall(Element e) {
+			this.wall = e;
+		}
+		
+		public Element getWall() {
+			return this.wall;
+		}
+		
+		void setFloor(Element e) {
+			this.floor = e;
+		}
+		
+		public Element getFloor() {
+			return this.floor;
+		}
+		
+		void setMap(HashMap<TileType, Image> hm) {
+			this.map = hm;
+		}
+		
+		public HashMap<TileType, Image> getMap() {
+			return this.map;
+		}
+	}
+	
 	Random r = new Random();
 	Element floorBase;
 	Element wallBase;
@@ -80,10 +132,202 @@ public final class DungeonMapGenerator {
 			}
 		}
 		DungeonMapGenerator.minConnect(map);
-		DungeonMap dm = new DungeonMap(map, this.wallBase, this.floorBase);
+		int[][] mapDetails = this.generateMapDetails(map);
+		//DungeonMap dm = new DungeonMap(map, this.wallBase, this.floorBase);
+		TileData data = this.getTileData();
+		DungeonMap dm = new DungeonMap(mapDetails, data);
 		return MapUtil.writeMap(mapName, dm);
 	}
 	
+	private TileData getTileData() {
+		TileData td = new TileData();
+		HashMap<TileType, Image> map = new HashMap<>();
+		td.setMap(map);
+		
+		td.setFloor(this.floorBase);
+		td.setWall(this.wallBase);
+		map.put(TileType.DOOR, ImageUtil.getImage("door"));
+		
+		return td;
+	}
+
+	/**
+	 * This method generates the additional information for a map
+	 * such as doors, stairs, spawn points, treasures, etc
+	 * @param map
+	 * @return
+	 */
+	// TODO: finish this method
+	private int[][] generateMapDetails(boolean[][] map) {
+		int[][] ret = new int[map.length][map[0].length];
+		this.generateDoors(ret, map);
+		this.generateStairs(ret, map);
+		this.generateSpawnPoints(ret, map);
+		for (int r = 0; r < map.length; ++r) {
+			for (int c = 0; c < map[r].length; ++c) {
+				if (map[r][c]) {
+					ret[r][c] |= TileType.FLOOR.flag;
+				} else {
+					ret[r][c] |= TileType.WALL.flag;
+				}
+			}
+		}
+		return ret;
+	}
+
+	private void generateSpawnPoints(int[][] details, boolean[][] map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void generateStairs(int[][] details, boolean[][] map) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * This method adds to the int[][] details locations of doors
+	 * It arbitrarily decides where to add doors
+	 * @param details The unfinished map details
+	 * @param map The boolean map of walls, floor
+	 */
+	private void generateDoors(int[][] details, boolean[][] map) {
+		// randomly decide:
+		// 1) How many directions there will be doors
+		// 2) How many doors in each direction
+		
+		// 1) How many directions:
+		// 0: 40%, 1: 35%, 2: 15%, 3: 7%, 4: 3%
+		int[] limits = {0, 0, 0, 0, 100};
+		int check = r.nextInt(100);
+		int numDirections = 0;
+		for (int i = 0; i < limits.length; ++i) {
+			if (check < limits[i]) {
+				numDirections = i;
+				break;
+			}
+		}
+		Direction[] dirs = {Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN};
+		for (int i = 0; i < dirs.length; ++i) {
+			int swapIdx = r.nextInt(dirs.length-i) + i;
+			Direction temp = dirs[swapIdx];
+			dirs[swapIdx] = dirs[i];
+			dirs[i] = temp;
+		}
+		
+		// 2.a) How many doors
+		// the first 'numDirections' elements of dirs are the directions that the map will extend.
+		int doorCount = r.nextInt(numDirections+1) + numDirections;
+		
+		// 2.b) Which directions
+		for (int i = 0; i < doorCount; ++i) {
+			if (i < numDirections) {
+				addDoor(details, map, dirs[i]);
+			} else {
+				int randomDir = r.nextInt(numDirections);
+				addDoor(details, map, dirs[randomDir]);
+			}
+		}
+	}
+	
+	/**
+	 * Find the closest point to the wall in that direction, add the door to details,
+	 * and add floor tiles to the map.
+	 * @param details
+	 * @param map
+	 * @param d
+	 */
+	private void addDoor(int[][] details, boolean[][] map, Direction d) {
+		int minDist = Math.max(map.length, map[0].length);
+		ArrayList<Integer> rowcol = new ArrayList<Integer>();
+		int innerStart = 0;
+		int outerMax = 0;
+		int innerChange = 0;
+		int innerMax = 0;
+		int[] reindex = new int[2];
+		// set up general variables.
+		switch (d) {
+		case UP:
+		case DOWN:
+			// setup specific to left, right
+			switch(d) {
+			case UP:
+				innerStart = 1;
+				innerChange = 1;
+				break;
+			case DOWN:
+				innerStart = map[0].length-2;
+				innerChange = -1;
+			}
+			// setup applies to both left and right
+			outerMax = map.length-1;
+			innerMax = map[0].length-1;
+			reindex[0] = 1;
+			reindex[1] = 0;
+			break;
+		case LEFT:
+		case RIGHT:
+			// setup specific to up, down
+			switch (d) {
+			case LEFT:
+				innerStart = 1;
+				innerChange = 1;
+				break;
+			case RIGHT:
+				innerStart = map.length-2;
+				innerChange = -1;
+			}
+			// setup applies to both up and down
+			outerMax = map[0].length-1;
+			innerMax = map.length-1;
+			reindex[0] = 0;
+			reindex[1] = 1;
+			break;
+		default:
+			throw new RuntimeException("The addDoor method was called with an inappropriate direction: " + d.toString());
+		}
+		for (int outer = 1; outer < outerMax ; ++outer) {
+			int tempDist = 0;
+			for (int inner = innerStart; inner < innerMax && inner >= 1; inner += innerChange) {
+				int row = outer*reindex[0] + inner*reindex[1];
+				int col = inner*reindex[0] + outer*reindex[1];
+				if (!map[row][col]) { // wall
+					++tempDist;
+				} else { // floor
+					break;
+				}
+			}
+			// if we've found a row/col that is closer to the wall, reset the minDist
+			// and reset the stored row/cols which are that close to the wall.
+			if (tempDist < minDist) {
+				minDist = tempDist;
+				rowcol.clear();
+				rowcol.add(outer);
+			}
+			// if we are equally close, then add this row/col to the list
+			else if (tempDist == minDist) {
+				rowcol.add(outer);
+			}
+		}
+		
+		// after we have the list, randomly choose one of the rows
+		// TODO: this can "add" a door at a location where
+		// a door already exists.
+		int idx = r.nextInt(rowcol.size());
+		idx = rowcol.get(idx);
+		// now that we have the selected row, add a door there, and floor.
+		int row = idx*reindex[0];
+		int col = idx*reindex[1];
+		details[row][col] |= TileType.DOOR.flag;
+		for (int inner = innerStart - innerChange; inner < innerMax+1 && inner >= 0; inner += innerChange) {
+			row = idx*reindex[0] + inner*reindex[1];
+			col = idx*reindex[1] + inner*reindex[0];
+			if (map[row][col]) // stop once we have reached the rest of the map
+				break;
+			map[row][col] = true;
+		}
+	}
+
 	private static void minConnect(boolean[][] map) {
 		// does minimum spanning tree algo, treating connected map rooms as one location.
 		

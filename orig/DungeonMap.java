@@ -1,15 +1,17 @@
 package orig;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
-import util.MapUtil;
+import util.DungeonMapGenerator.TileData;
+import util.DungeonMapGenerator.TileType;
 
 public class DungeonMap implements TileBasedMap, Serializable { 
 	
@@ -22,16 +24,21 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	Square[][] squares;
 	int level; //the height, above sea level. 0 is usually the surface
 	boolean outside; //true if the ceiling is the sky, false otherwise
+	Planet planet;
 	
 	//these only exist so that a quick description can be given of the room, without iterating through the squares array to find the most commmon elements.
 	Element wallsbase;
 	Element floorsbase;
+	
+	// this image map is for rendering special details, like doors, stairs, etc?
+	HashMap<TileType, Image> extras;
 	
 	public DungeonMap(){ //completely random constructor, probably not necessary.
 	}
 	
 	public DungeonMap(Planet p, boolean outer) {
 		//for now, there is no random generation
+		this.planet = p;
 		floorsbase = p.getLand();
 		outside = outer;
 		if(!outer){
@@ -47,13 +54,46 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	}
 	
 	public void reveal(int radius, int x, int y){
+		for(Square[] sq: squares) {
+			for(Square s: sq) {
+				s.setNonvisible();
+			}
+		}
 		for(int i=(x-radius); i<x+radius; i++ ){
 			for(int j=(y-radius); j<y+radius; j++){
 				if(validateCoordinates(i,j)){
-					squares[i][j].seen = true;
+					squares[i][j].setVisible();
 				}
 			}
 		}
+	}
+	
+	public DungeonMap(int[][] mapDetails, TileData data) {
+		this.wallsbase = data.getWall();
+		this.floorsbase = data.getFloor();
+		this.squares = new Square[mapDetails.length][mapDetails[0].length];
+		for (int row = 0; row < mapDetails.length; ++row) {
+			for (int col = 0; col < mapDetails.length; ++col) {
+				// several checks, to decide which types of squares to initialize
+				if ((mapDetails[row][col] & TileType.WALL.flag) != 0) {
+					// this square is simply a wall.
+					Square sq = new Square(false, this.wallsbase);
+					this.squares[row][col] = sq;
+					continue;
+				} else if ((mapDetails[row][col] & TileType.DOOR.flag) != 0) {
+					// this is a door
+					Door d = new Door(false, this.floorsbase);
+					//d.setImage(data.getMap().get(TileType.DOOR));
+					this.squares[row][col] = d;
+					continue;
+				}
+				// not a wall, so it is a floor. but it could be something special
+				// for now, just a floor
+				Square sq = new Square(true, this.floorsbase);
+				this.squares[row][col] = sq;
+			}
+		}
+		
 	}
 	
 	public DungeonMap(boolean[][] wallFloor, Element wbase, Element fbase) {
@@ -123,7 +163,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		int yLower = (yPos < 0) ? 0 : yPos;
 		for (int row = xLower; row < xUpper; ++row) {
 			for (int col = yLower; col < yUpper; ++col) {
-				squares[row][col].render(row-xPos, col-yPos);
+				squares[row][col].render(row-xPos, col-yPos, xPos, yPos);
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package game;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -17,6 +18,8 @@ import orig.Element;
 import orig.Item;
 import orig.Planet;
 import orig.Race;
+import util.General.Direction;
+import util.General.GridPoint;
 
 public class MainGameState extends BasicGameState{
 	int stateID = -1;
@@ -100,7 +103,17 @@ public class MainGameState extends BasicGameState{
 		
 		o1 = new OnScreenChar(enemy, 30, 30, c);
 		dm.putOnScreenChar(o1.xPos, o1.yPos, o1, false);
-		p1 = new OnScreenChar(player, numXtiles/2, numYtiles/2, c);
+		Iterator<GridPoint> it = dm.getStairList().iterator();
+		int xx = -1, yy = -1;
+		while (it.hasNext()) {
+			GridPoint next = it.next();
+			if (dm.getStairs(next).getDirection() == Direction.HIGHER) {
+				xx = next.getX();
+				yy = next.getY();
+				break;
+			}
+		}
+		p1 = new OnScreenChar(player, xx, yy, c);
 		p1.setAsPlayer();
 		dm.putOnScreenChar(p1.xPos, p1.yPos, p1, false);
 		dm.reveal(8, p1.xPos, p1.yPos);

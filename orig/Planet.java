@@ -228,7 +228,14 @@ public class Planet {
 			// first, we need to look at the maps that are left, right, up down, lower, higher
 			// for the ones that exist, we need to match doors, stairs
 			ArrayList<GridPoint> doorLocs = new ArrayList<GridPoint>();
+			ArrayList<GridPoint> stairLocs = new ArrayList<GridPoint>();
 			Direction[] around = new Direction[] {Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN, Direction.LOWER, Direction.HIGHER};
+			HashSet<Direction> forbidden = new HashSet<Direction>();
+			// we can't have doors that go off the grid.
+			// either that, or we need to wrap around.
+			// TODO: code a choice in here - if we want to have map wrap around for the lolzies
+			// right now, no wrap around.
+			
 			for(Direction cur: around) {
 				// check if this location is a valid square
 				int newFloor = this.dungeonFloor;
@@ -245,8 +252,10 @@ public class Planet {
 					newCol += cur.getX(); // [row][col] == [y][x]
 				}
 				
-				if(!validLocation(newFloor, newRow, newCol))
+				if(!validLocation(newFloor, newRow, newCol)) {
+					forbidden.add(cur);
 					continue; // this isn't even on the map
+				}
 				// it is on the map
 				String nearMapName = planetMap[newFloor][newRow][newCol];
 				// if it is null, ignore it
@@ -256,15 +265,27 @@ public class Planet {
 				//System.err.printf("\tnearmapname = %s\n", nearMapName);
 				DungeonMap dm = MapUtil.readMap(nearMapName);
 				HashSet<GridPoint> doors = dm.getDoorList();
-				Iterator<GridPoint> doorIter = doors.iterator();
-				while (doorIter.hasNext()) {
-					GridPoint nextPt = doorIter.next();
+				Iterator<GridPoint> it = doors.iterator();
+				while (it.hasNext()) {
+					GridPoint nextPt = it.next();
 					Door d = dm.getDoor(nextPt);
 					if (d.getDirection() == cur.opposite()) {
 						// this door is on the appropriate side to matter
 						GridPoint mirror = new GridPoint(nextPt.getX(), nextPt.getY());
 						mirror.mirror(60, 60);
 						doorLocs.add(mirror);
+					}
+				}
+				HashSet<GridPoint> stairs = dm.getStairList();
+				it = stairs.iterator();
+				while (it.hasNext()) {
+					GridPoint nextPt = it.next();
+					Stairs s = dm.getStairs(nextPt);
+					if (s.getDirection() == cur.opposite()) {
+						// this staircase matters.
+						GridPoint cpy = new GridPoint(nextPt.getX(), nextPt.getY());
+						stairLocs.add(cpy);
+						forbidden.add(cur);
 					}
 				}
 			}
@@ -274,8 +295,11 @@ public class Planet {
 				doorLocations[i] = doorLocs.get(i);
 				//System.out.printf("%s ", doorLocations[i]);
 			}
-			
-			String mapPath = this.mapGenerator.generateConnectedSquareMap(mapName, dWidth, dHeight, doorLocations, new GridPoint[0]);
+			GridPoint[] stairLocations = new GridPoint[stairLocs.size()];
+			for (int i = 0; i < stairLocs.size(); ++i) {
+				stairLocations[i] = stairLocs.get(i);
+			}
+			String mapPath = this.mapGenerator.generateConnectedSquareMap(mapName, dWidth, dHeight, doorLocations, forbidden, stairLocations);
 			planetMap[dungeonFloor][dungeonRow][dungeonCol] = mapPath;
 			return mapPath;
 		}

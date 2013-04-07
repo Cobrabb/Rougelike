@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -22,8 +23,10 @@ public final class DungeonMapGenerator implements Serializable {
 		WALL,
 		FLOOR,
 		DOOR,
-		STAIRS,
-		SPAWNPOINT,
+		UPSTAIRS,
+		DOWNSTAIRS,
+		PLAYERSPAWN,
+		MONSTERSPAWN,
 		TREASURE,
 		TELEPORT,
 		OTHER;
@@ -95,35 +98,29 @@ public final class DungeonMapGenerator implements Serializable {
 	 * 				negative coordinates indicate "LOWER" while positive indicate "HIGHER"
 	 * @return The file path of this dungeon
 	 */
-	public String generateConnectedSquareMap(String mapName, int width, int height, GridPoint[] doorLocations, GridPoint[] stairs) {
+	public String generateConnectedSquareMap(String mapName, int width, int height, GridPoint[] doorLocations, HashSet<Direction> forbidden, GridPoint[] stairs) {
 		// May be the case that doors do not connect to the map at all, skipping an area?
 		// Might be hard to generate a map that satisfies all the constraints.  eh, it'll be fine.
 		boolean[][] map = this.generateSquareRooms(width, height, 15, 20, 4, width/4, 3, 30);
 		int[][] details = new int[map.length][map[0].length];
 		// simple solution! yay for code reuse!
 		// for the stair gridpoints, plop a 3x3 block of floors around it
+		this.generateStairs(details, map, forbidden);
 		for (GridPoint s: stairs) {
 			boolean higher = true;
 			if (s.getX() < 0) {
 				s.flipSigns();
 				higher = false;
 			}
-			int xPos = s.getX();
-			int yPos = s.getY();
-			for (int x = xPos-1; x <= xPos+1; ++x) {
-				for (int y = yPos-1; y <= yPos+1; ++y) {
-					map[x][y] = true; // put a floor
-					details[x][y] |= TileType.STAIRS.flag;
-				}
-			}
+			Direction d = (higher ? Direction.HIGHER : Direction.LOWER);
+			addStairs(details, map, s, d);
 			if (!higher)
 				s.flipSigns();
 		}
 		// now connect the map up
 		DungeonMapGenerator.minConnect(map);
-		// for the doors, we need to go through, find the directions they represent and create a
-		// forbidden hashset
-		HashSet<Direction> forbidden = new HashSet<Direction>();
+		// for the doors, we need to go through, find the directions they represent and create add to
+		// the forbidden hashset
 		for (GridPoint d: doorLocations) {
 			Direction dir = Direction.getDirection(d);
 			forbidden.add(dir);
@@ -220,6 +217,8 @@ public final class DungeonMapGenerator implements Serializable {
 		td.setFloor(this.floorBase);
 		td.setWall(this.wallBase);
 		map.put(TileType.DOOR, "door");
+		map.put(TileType.UPSTAIRS, "upstairs");
+		map.put(TileType.DOWNSTAIRS, "downstairs");
 		
 		return td;
 	}
@@ -234,7 +233,7 @@ public final class DungeonMapGenerator implements Serializable {
 	private int[][] generateMapDetails(boolean[][] map) {
 		int[][] ret = new int[map.length][map[0].length];
 		this.generateDoors(ret, map, new HashSet<Direction>());
-		this.generateStairs(ret, map);
+		this.generateStairs(ret, map, new HashSet<Direction>());
 		this.generateSpawnPoints(ret, map);
 		DungeonMapGenerator.convertToDetail(ret, map);
 		return ret;
@@ -258,14 +257,131 @@ public final class DungeonMapGenerator implements Serializable {
 		}*/
 	}
 
+	/**
+	 * This method will generate 
+	 * @param details
+	 * @param map
+	 */
 	private void generateSpawnPoints(int[][] details, boolean[][] map) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void generateStairs(int[][] details, boolean[][] map) {
-		// TODO Auto-generated method stub
+	private void generateStairs(int[][] details, boolean[][] map, HashSet<Direction> forbidden) {
+		HashSet<Direction> possible = new HashSet<Direction>();
+		if (!forbidden.contains(Direction.HIGHER))
+			possible.add(Direction.HIGHER);
+		if (!forbidden.contains(Direction.LOWER))
+			possible.add(Direction.LOWER);
 		
+		int[] limits = {0, 0, 100};
+		// int[] limits = {90, 95, 100};
+		int stairTypes = 0;
+		int check = r.nextInt(100);
+		for (int i = 0; i < limits.length; ++i) {
+			if (check < limits[i]) {
+				stairTypes = i;
+				break;
+			}
+		}
+		
+		stairTypes = Math.min(stairTypes, possible.size());
+		if (stairTypes == 0)
+			return; // nothing to generate.
+		
+
+		int[] count = new int[stairTypes];
+		for (int i = 0; i < stairTypes; ++i)
+			count[i] = r.nextInt(2) + 1; // 1-2
+		Direction[] dirs = new Direction[possible.size()];
+		int idx = 0;
+		Iterator<Direction> it = possible.iterator();
+		while (it.hasNext()) {
+			dirs[idx++] = it.next();
+		}
+		if (r.nextBoolean() && dirs.length == 2) {
+			Direction t = dirs[0];
+			dirs[0] = dirs[1];
+			dirs[1] = t;
+		}
+		for (int i = 0; i < count.length; ++i) {
+			for (int j = 0; j < count[i]; ++j) {
+				addStairs(details, map, null, dirs[i]);
+			}
+		}
+	}
+	
+	/**
+	 * This method will add a staircase to the given map
+	 * If loc != null, it will add the staircase at loc
+	 * The staircase will be within a 3x3 block of floor, at least
+	 * @param details The map details
+	 * @param map The map wall/floor plans
+	 * @param loc A possible requested location
+	 * @param upDown The direction the stair goes: HIGHER or LOWER
+	 */
+	private void addStairs(int[][] details, boolean[][] map, GridPoint loc, Direction upDown) {
+		TileType type = null;
+		switch (upDown) {
+		case HIGHER:
+			type = TileType.UPSTAIRS;
+			break;
+		case LOWER:
+			type = TileType.DOWNSTAIRS;
+			break;
+		default:
+			throw new RuntimeException("Bad direction " + upDown + " passed to addStairs method.");
+		}
+		// if loc is not null, our job is easy, otherwise we need to find a good place
+		if (loc == null) {
+			// since loc was null, we need to determine a good place to put the staircase
+			// algo: randomly choose x, y on grid, then iterate right, down until we find a
+			// place with at least 3 nearby squares are floor tiles
+			// choose a place that is at least 2 squares from the wall
+			int randX = r.nextInt(map.length-4)+2;
+			int randY = r.nextInt(map[0].length-4)+2;
+			boolean done = false;
+			while (!done) {
+				// check location
+				int count = 0; // count adjacent free spaces
+				int badCount = 0; // count nearby stairs
+				for (int x = randX-1; x <= randX+1; ++x) {
+					for (int y = randY-1; y <= randY+1; ++y) {
+						if (map[x][y])
+							++count;
+						if ((details[x][y] & (TileType.UPSTAIRS.flag + TileType.DOWNSTAIRS.flag)) != 0)  {
+							++badCount;
+						}
+					}
+				}
+				if (map[randX][randY])
+					--count;
+				if (count >= 3 && badCount == 0) { // good location
+					done = true;
+				} else {
+					// not good
+					++randX;
+					if (randX == map.length-2) {
+						randX = 2;
+						++randY;
+						if (randY == map[0].length-2) {
+							randY = 2;
+						}
+					}
+				}
+			}
+			loc = new GridPoint(randX, randY);
+		}
+		int xCen = loc.getX();
+		int yCen = loc.getY();
+		details[xCen][yCen] |= type.flag;
+		// at least make sure it is passable
+		for (int x = xCen-1; x <= xCen+1; ++x) {
+			for (int y = yCen-1; y <= yCen+1; ++y) {
+				//details[x][y] |= TileType.FLOOR.flag;
+				map[x][y] = true;
+			}
+		}
 	}
 	
 	/**

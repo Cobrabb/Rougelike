@@ -38,6 +38,8 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	HashMap<TileType, String> extras;
 	
 	HashSet<GridPoint> doorList;
+
+	private HashSet<GridPoint> stairList;
 	
 	public DungeonMap(){ //completely random constructor, probably not necessary.
 	}
@@ -79,15 +81,12 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		this.floorsbase = data.getFloor();
 		this.squares = new Square[mapDetails.length][mapDetails[0].length];
 		this.doorList = new HashSet<GridPoint>();
+		this.stairList = new HashSet<GridPoint>();
 		
 		for (int x = 0; x < mapDetails.length; ++x) {
 			for (int y = 0; y < mapDetails.length; ++y) {
 				// several checks, to decide which types of squares to initialize
-				if ((mapDetails[x][y] & TileType.WALL.flag) != 0) {
-					// this square is simply a wall.
-					Square sq = new Square(false, this.wallsbase);
-					this.squares[x][y] = sq;
-				} else if ((mapDetails[x][y] & TileType.DOOR.flag) != 0) {
+				if ((mapDetails[x][y] & TileType.DOOR.flag) != 0) {
 					// this is a door
 					Door d = new Door(true, this.floorsbase);
 					d.setImageName(data.getMap().get(TileType.DOOR));
@@ -95,10 +94,26 @@ public class DungeonMap implements TileBasedMap, Serializable {
 					d.setDirection(Direction.getDirection(x, y));
 					this.doorList.add(new GridPoint(x, y));
 					this.squares[x][y] = d;
-				} else {
-					// not a wall, so it is a floor. but it could be something special
-					// for now, just a floor
+				} else if ((mapDetails[x][y] & (TileType.UPSTAIRS.flag + TileType.DOWNSTAIRS.flag)) != 0) {
+					// there is a stair case here.
+					Stairs s = new Stairs(true, this.floorsbase);
+					if ((mapDetails[x][y] & TileType.UPSTAIRS.flag) != 0) {
+						s.setDirection(Direction.HIGHER);
+						s.setImageName(data.getMap().get(TileType.UPSTAIRS));
+					} else {
+						s.setDirection(Direction.LOWER);
+						s.setImageName(data.getMap().get(TileType.DOWNSTAIRS));
+					}
+					this.stairList.add(new GridPoint(x, y));
+					this.squares[x][y] = s;
+				} else if ((mapDetails[x][y] & TileType.FLOOR.flag) != 0) {
+					// this square is simply a floor.
+					// this ordering also means that if a detail location has both FLOOR and WALL flags, it will be a floor
 					Square sq = new Square(true, this.floorsbase);
+					this.squares[x][y] = sq;
+				} else  {
+					// this is not anything special, so it must be a wall
+					Square sq = new Square(false, this.wallsbase);
 					this.squares[x][y] = sq;
 				}
 			}
@@ -137,6 +152,10 @@ public class DungeonMap implements TileBasedMap, Serializable {
 				Door door = this.getDoor(gp);
 				gp.mirror(squares.length, squares[0].length);
 				planet.moveMap(door.getDirection(), c, gp);
+				return true;
+			} else if (stairList.contains(gp) && c.isPlayer() && walking) {
+				Stairs stairs = this.getStairs(gp);
+				planet.moveMap(stairs.getDirection(), c, gp);
 				return true;
 			}
 			if (squares[x][y].getOnScreenChar() == null) {
@@ -229,5 +248,16 @@ public class DungeonMap implements TileBasedMap, Serializable {
 
 	public void setPlanet(Planet plan) {
 		this.planet = plan;
+	}
+
+	public HashSet<GridPoint> getStairList() {
+		return this.stairList;
+	}
+
+	public Stairs getStairs(GridPoint nextPt) {
+		Square s = this.squares[nextPt.getX()][nextPt.getY()];
+		if (s instanceof Stairs)
+			return (Stairs)s;
+		return null;
 	}
 }

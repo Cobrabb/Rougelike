@@ -59,9 +59,11 @@ W*6+0 H*3+0 dark brown rock
 nethack_tileset.png
 
 # Tile count
-1
+3
 
 w*4+0 h*21+0 door
+w*11+0 h*21+0 upstairs
+w*12+0 h*21+0 downstairs
 
 # Third
 enemy.png

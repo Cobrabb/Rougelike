@@ -95,8 +95,14 @@ public class MainGameState extends BasicGameState{
 		//String path = planet.generateMap("map1");
 		//planet.setCurrentDungeon(path);
 		dm = planet.getCurrentDungeon();
-		
 
+//		floor = new Image("data/tiles/stone_floor.png");
+//		wall1 = new Image("data/tiles/stone_wall_updown.png");
+//		wall2 = new Image("data/tiles/stone_wall_leftright.png");
+//		wall3 = new Image("data/tiles/stone_wall_leftdown.png");
+//		wall4 = new Image("data/tiles/stone_wall_leftup.png");
+//		wall5 = new Image("data/tiles/stone_wall_rightdown.png");
+//		wall6 = new Image("data/tiles/stone_wall_rightup.png");
 		player = "stickhero";
 		enemy = "stickenemy";
 		
@@ -107,7 +113,6 @@ public class MainGameState extends BasicGameState{
 		b_examine = new Image("data/tiles/button_examine.png");
 		
 		o1 = new OnScreenChar(enemy, 30, 30, c);
-
 		dm.putOnScreenChar(o1.xPos, o1.yPos, o1, false);
 		p1 = new OnScreenChar(player, numXtiles/2, numYtiles/2, c);
 		p1.setAsPlayer();

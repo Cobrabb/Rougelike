@@ -1,10 +1,10 @@
 package orig;
 
-import orig.Creature.cStats;
-import orig.Creature.bStats;
-import orig.Creature.sVal;
-
 import java.util.ArrayList;
+
+import orig.Creature.bStats;
+import orig.Creature.cStats;
+import orig.Creature.sVal;
 
 public class Race {
 

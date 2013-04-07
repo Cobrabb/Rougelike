@@ -1,9 +1,11 @@
 package orig;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
 import orig.Attack.AttackPattern;
 
-public class Item {
+public class Item implements Serializable {
 	
 	public enum iType {
 		HEAD, ARMOR, BOOTS, HAND, TOTAL;

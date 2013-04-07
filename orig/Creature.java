@@ -1,10 +1,12 @@
 package orig;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
 import orig.Item.iType;
 
 
-public class Creature {
+public class Creature implements Serializable {
 	public enum cStats {
 		STR_CLIMB, STR_PHYS_ATTACK, STR_JUMP, SPEED_MOVE, SPEED_ATTACK, DETECT_SIGHT,	DETECT_SOUND,
 		STEALTH_SIGHT, STEALTH_SOUND, TECH_WEAPON, TECH_ARMOR, STAM_HEALTH, STAM_ENERGY, TOTAL;

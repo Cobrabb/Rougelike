@@ -15,7 +15,6 @@ public class Square implements Serializable {
 	protected boolean passable; //true if this square is floor type, false if it is wall type
 	protected Element consists; //the element that this square is made of
 	//MapObject[] contains - It may be useful to store what is "here" in the square class, but I'm thinking not. If it is, we can fill this in later
-
 	protected transient Image img;
 	protected OnScreenChar c; //at most one creature may be on a square
 	protected boolean seen;
@@ -61,7 +60,6 @@ public class Square implements Serializable {
 	public void setNonvisible() {
 		this.visible = false;
 	}
-
 
 	public void setOnScreenChar(OnScreenChar cre) {
 		this.c = cre;

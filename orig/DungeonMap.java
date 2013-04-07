@@ -131,7 +131,10 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	 * @param walking Whether or not we walked onto this square, or were simply placed there.
 	 * @return whether the operation was successful or not
 	 */
+<<<<<<< HEAD
 
+=======
+>>>>>>> c9a73f10421688222ffec3787fe9cbef18f11548
 	public boolean putOnScreenChar(int x, int y, OnScreenChar c, boolean walking) {
 		if (validateCoordinates(x, y)) {
 			GridPoint gp = new GridPoint(x, y);

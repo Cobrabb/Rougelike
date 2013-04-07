@@ -81,7 +81,7 @@ public class OnScreenChar {
 				}
 			}
 		}
-		dm.putCreature(xPos, yPos, baseCreature);
+		dm.putCreature(xPos, yPos, this);
 	}
 	
 	public boolean canMove(int left, int up, DungeonMap dm){

@@ -21,13 +21,6 @@ import orig.Race;
 
 public class MainGameState extends BasicGameState{
 	int stateID = -1;
-//	Image floor = null;
-//	Image wall1 = null;
-//	Image wall2 = null;
-//	Image wall3 = null;
-//	Image wall4 = null;
-//	Image wall5 = null;
-//	Image wall6 = null;
 	Image player = null;
 	Image enemy = null;
 	Image b_equip = null;
@@ -96,13 +89,6 @@ public class MainGameState extends BasicGameState{
 		planet.setCurrentDungeon(path);
 		dm = planet.getCurrentDungeon();
 		
-//		floor = new Image("data/tiles/stone_floor.png");
-//		wall1 = new Image("data/tiles/stone_wall_updown.png");
-//		wall2 = new Image("data/tiles/stone_wall_leftright.png");
-//		wall3 = new Image("data/tiles/stone_wall_leftdown.png");
-//		wall4 = new Image("data/tiles/stone_wall_leftup.png");
-//		wall5 = new Image("data/tiles/stone_wall_rightdown.png");
-//		wall6 = new Image("data/tiles/stone_wall_rightup.png");
 		player = new Image("data/tiles/player.png");
 		enemy = new Image("data/tiles/enemy.png");
 		
@@ -113,9 +99,9 @@ public class MainGameState extends BasicGameState{
 		b_examine = new Image("data/tiles/button_examine.png");
 		
 		o1 = new OnScreenChar(enemy, 30, 30, c);
-		dm.putCreature(o1.xPos, o1.yPos, o1.baseCreature);
+		dm.putCreature(o1.xPos, o1.yPos, o1);
 		p1 = new OnScreenChar(player, numXtiles/2, numYtiles/2, c);
-		dm.putCreature(p1.xPos, p1.yPos, p1.baseCreature);
+		dm.putCreature(p1.xPos, p1.yPos, p1);
 		dm.reveal(8, p1.xPos, p1.yPos);
 		Item i = new Item();
 		Item j = new Item();
@@ -132,8 +118,8 @@ public class MainGameState extends BasicGameState{
 			DungeonMap dm = planet.getCurrentDungeon();
 			dm.render(container, sbg, g, mapX, mapY, numXtiles, numYtiles);
 			// TODO: have it so that the dungeon map will be in control of rendering creatures
-			o1.draw(mapX, mapY);
-			p1.draw(mapX, mapY);
+			//o1.draw(mapX, mapY);
+			//p1.draw(mapX, mapY);
 		}
 		else{
 			if(helptime){

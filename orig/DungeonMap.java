@@ -1,5 +1,7 @@
 package orig;
 
+import game.OnScreenChar;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -118,7 +120,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	 * @param c reference to the Creature
 	 * @return whether the operation was successful or not
 	 */
-	public boolean putCreature(int x, int y, Creature c) {
+	public boolean putCreature(int x, int y, OnScreenChar c) {
 		if (validateCoordinates(x, y)) {
 			if (squares[x][y].getCreature() == null) {
 				squares[x][y].setCreature(c);

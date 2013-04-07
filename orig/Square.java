@@ -1,5 +1,7 @@
 package orig;
 
+import game.OnScreenChar;
+
 import java.io.Serializable;
 
 import org.newdawn.slick.Color;
@@ -14,7 +16,7 @@ public class Square implements Serializable {
 	private Element consists; //the element that this square is made of
 	//MapObject[] contains - It may be useful to store what is "here" in the square class, but I'm thinking not. If it is, we can fill this in later
 	protected Image img;
-	public Creature c; //at most one creature may be on a square
+	public OnScreenChar c; //at most one creature may be on a square
 	public boolean seen;
 	public boolean visible;
 	
@@ -44,6 +46,9 @@ public class Square implements Serializable {
 				transparency = transparency.darker(0.50f);
 			}
 			img.draw(row*ImageUtil.getTileWidth(), col*ImageUtil.getTileHeight(), transparency);
+			if (visible && c != null) {
+				c.draw(px, py);
+			}
 		}
 	}
 	
@@ -56,11 +61,11 @@ public class Square implements Serializable {
 		this.visible = false;
 	}
 
-	public void setCreature(Creature cre) {
+	public void setCreature(OnScreenChar cre) {
 		this.c = cre;
 	}
 
-	public Creature getCreature() {
+	public OnScreenChar getCreature() {
 		return this.c;
 	}
 

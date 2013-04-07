@@ -123,6 +123,8 @@ public class MainGameState extends BasicGameState{
 			else{
 				DungeonMap dm = planet.getCurrentDungeon();
 				dm.render(container, sbg, g, p1.getX() - numXtiles/2, p1.getY() - numYtiles/2, numXtiles, numYtiles);
+				mapX = p1.getX() - numXtiles/2;
+				mapY = p1.getY() - numYtiles/2;
 			}
 		}
 		else{
@@ -248,7 +250,8 @@ public class MainGameState extends BasicGameState{
 			    	if(kp){
 			    		dm.reveal(5, p1.xPos, p1.yPos);
 			    		inputDelta=100;
-			    		o1.step(p1.xPos, p1.yPos, dm);
+			    		// monsters should not move while you are in free_mode
+			    		//o1.step(p1.xPos, p1.yPos, dm);
 			    	}
 	    		}
 	    		else{ //normal hotkets

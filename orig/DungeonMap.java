@@ -65,8 +65,8 @@ public class DungeonMap implements TileBasedMap, Serializable {
 				s.setNonvisible();
 			}
 		}
-		for(int i=(x-radius); i<x+radius; i++ ){
-			for(int j=(y-radius); j<y+radius; j++){
+		for(int i=(x-radius); i<= x+radius; i++ ){
+			for(int j=(y-radius); j<= y+radius; j++){
 				if(validateCoordinates(i,j)){
 					squares[i][j].setVisible();
 				}

@@ -8,7 +8,6 @@ public class Teleporter extends Square {
 
 	private static final long serialVersionUID = 8210150193412212325L;
 	private int[] toLoc;
-	private Image img;
 	
 	public Teleporter(boolean pass, Element cons) {
 		super(pass, cons);

@@ -7,7 +7,7 @@ import orig.DungeonMap;
 
 public class Player extends OnScreenChar{
 
-	public Player(Image used, int X, int Y, Creature c) {
+	public Player(String used, int X, int Y, Creature c) {
 		super(used, X, Y, c);
 	}
 	

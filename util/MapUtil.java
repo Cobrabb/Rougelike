@@ -31,7 +31,11 @@ public final class MapUtil {
 	}
 	
 	public static String writeMap(String mapName, DungeonMap dm) {
-		String mapPath = String.format("%s\\%s%s", MapUtil.folderDirectory, mapName, MapUtil.mapFileExtension);
+		// check if this name already includes a file extension
+		int idx = mapName.lastIndexOf('.');
+		String mapPath = mapName;
+		if (idx == -1)
+			mapPath = String.format("%s\\%s%s", MapUtil.folderDirectory, mapName, MapUtil.mapFileExtension);
 		try {
 			MapUtil.createPlanetFolder(mapPath);
 		} catch (IOException e) {
@@ -54,9 +58,11 @@ public final class MapUtil {
  		String[] parts = mapPath.split("\\\\");
  		String first = mapPath.substring(0, mapPath.length() - parts[parts.length-1].length() - 1);
 		File planetFolder = new File(first);
- 		boolean success = planetFolder.mkdirs();
+ 		boolean success = planetFolder.exists();
  		if (!success)
- 			throw new IOException("Failed to create the planet directory for dungeon map " + mapPath);
+ 			success = planetFolder.mkdirs();
+ 		if (!success)
+ 			throw new IOException("Failed to create the planet directory for dungeon map " + mapPath + "\n tried with " + first);
  	}
 
 	

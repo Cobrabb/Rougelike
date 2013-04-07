@@ -1,5 +1,6 @@
 package game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Image;
@@ -7,11 +8,11 @@ import org.newdawn.slick.Image;
 import orig.Creature;
 import orig.DungeonMap;
 import orig.Item;
-import orig.Creature.bStats;
-import orig.Creature.sVal;
+import util.ImageUtil;
 
-public class OnScreenChar {
-	Image looks;
+public class OnScreenChar implements Serializable {
+	transient Image looks;
+	String imgName;
 	int xPos;
 	int yPos;
 	int speed;
@@ -19,19 +20,23 @@ public class OnScreenChar {
 	double stackedMovement;
 	public Creature baseCreature;
 	final int tileSize = 32;
+	boolean isPlayer;
 	
-	public OnScreenChar(Image used, int X, int Y, Creature c){
-		looks = used;
+	public OnScreenChar(String imgName, int X, int Y, Creature c){
+		this.imgName = imgName;
 		xPos = X;
 		yPos = Y;
 		baseCreature = c;
 		speed = 1; //baseCreature.get(bStats.SPEED, sVal.LEVEL)
-		looks.draw(xPos, yPos);
+		draw(xPos, yPos);
 		ratioMovement = speed;
 		stackedMovement = 0;
+		isPlayer = false;
 	}
 	
 	public void draw(int mapX, int mapY){
+		if (looks == null)
+			looks = ImageUtil.getImage(this.imgName);
 		looks.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize);
 	}
 	
@@ -57,7 +62,7 @@ public class OnScreenChar {
 	
 	public void move(int left, int up, DungeonMap dm){
 		if(left>1||left<-1||up>1||up<-1) return;
-		dm.removeCreature(xPos, yPos);
+		dm.removeOnScreenChar(xPos, yPos);
 		stackedMovement = stackedMovement+ratioMovement;
 		int movement = (int)stackedMovement;
 		if(movement>0){
@@ -81,7 +86,18 @@ public class OnScreenChar {
 				}
 			}
 		}
-		dm.putCreature(xPos, yPos, baseCreature);
+		dm.putOnScreenChar(xPos, yPos, this, true);
+	}
+	
+	/**
+	 * ONLY DUNGEONMAP SHOULD USE THIS
+	 * This is used when the player steps on a door/stairs, to re-adjust their position
+	 * @param newX
+	 * @param newY
+	 */
+	public void setPosition(int newX, int newY) {
+		this.xPos = newX;
+		this.yPos = newY;
 	}
 	
 	public boolean canMove(int left, int up, DungeonMap dm){
@@ -114,6 +130,22 @@ public class OnScreenChar {
 	
 	public void drop(Item i){
 		baseCreature.drop(i);
+	}
+
+	public boolean isPlayer() {
+		return isPlayer;
+	}
+	
+	public void setAsPlayer() {
+		isPlayer = true;
+	}
+
+	public int getX() {
+		return this.xPos;
+	}
+	
+	public int getY() {
+		return this.yPos;
 	}
 	
 	//attack, move, etc, will call the creature's attach stuff, I'll probably also do the same abstraction for inventory at some point...

@@ -28,8 +28,8 @@ public class MainGameState extends BasicGameState{
 //	Image wall4 = null;
 //	Image wall5 = null;
 //	Image wall6 = null;
-	Image player = null;
-	Image enemy = null;
+	String player = null;
+	String enemy = null;
 	Image b_equip = null;
 	Image b_unequip = null;
 	Image b_drop = null;
@@ -91,9 +91,9 @@ public class MainGameState extends BasicGameState{
 		Element elem1 = new Element("ice", 1.0);
 		Element elem2 = new Element("silver brick", 2.0);
 		Element elem3 = new Element("cobblestone", 2.0);
-		planet = new Planet(new Element[] {elem1, elem2, elem3});
-		String path = planet.generateMap("map1");
-		planet.setCurrentDungeon(path);
+		planet = new Planet(new Element[] {elem1, elem2, elem3}, new int[]{5, 3, 3} );
+		//String path = planet.generateMap("map1");
+		//planet.setCurrentDungeon(path);
 		dm = planet.getCurrentDungeon();
 		
 //		floor = new Image("data/tiles/stone_floor.png");
@@ -103,8 +103,8 @@ public class MainGameState extends BasicGameState{
 //		wall4 = new Image("data/tiles/stone_wall_leftup.png");
 //		wall5 = new Image("data/tiles/stone_wall_rightdown.png");
 //		wall6 = new Image("data/tiles/stone_wall_rightup.png");
-		player = new Image("data/tiles/player.png");
-		enemy = new Image("data/tiles/enemy.png");
+		player = "stickhero";
+		enemy = "stickenemy";
 		
 		//buttons
 		b_equip = new Image("data/tiles/button_equip.png");
@@ -113,9 +113,10 @@ public class MainGameState extends BasicGameState{
 		b_examine = new Image("data/tiles/button_examine.png");
 		
 		o1 = new OnScreenChar(enemy, 30, 30, c);
-		dm.putCreature(o1.xPos, o1.yPos, o1.baseCreature);
+		dm.putOnScreenChar(o1.xPos, o1.yPos, o1, false);
 		p1 = new OnScreenChar(player, numXtiles/2, numYtiles/2, c);
-		dm.putCreature(p1.xPos, p1.yPos, p1.baseCreature);
+		p1.setAsPlayer();
+		dm.putOnScreenChar(p1.xPos, p1.yPos, p1, false);
 		dm.reveal(8, p1.xPos, p1.yPos);
 		Item i = new Item();
 		Item j = new Item();
@@ -130,10 +131,7 @@ public class MainGameState extends BasicGameState{
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 		if(!menutime){
 			DungeonMap dm = planet.getCurrentDungeon();
-			dm.render(container, sbg, g, mapX, mapY, numXtiles, numYtiles);
-			// TODO: have it so that the dungeon map will be in control of rendering creatures
-			o1.draw(mapX, mapY);
-			p1.draw(mapX, mapY);
+			dm.render(container, sbg, g, p1.getX() - numXtiles/2, p1.getY() - numYtiles/2, numXtiles, numYtiles);
 		}
 		else{
 			if(helptime){
@@ -197,6 +195,7 @@ public class MainGameState extends BasicGameState{
     	inputDelta-=delta;
     	if(inputDelta<0){
 	    	if(!menutime){
+	    		dm = planet.getCurrentDungeon();
 		    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
 		    		kp = true;
 		    		if(p1.canMove(-1, 1, dm)){

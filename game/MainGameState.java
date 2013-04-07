@@ -96,17 +96,7 @@ public class MainGameState extends BasicGameState{
 		//planet.setCurrentDungeon(path);
 		dm = planet.getCurrentDungeon();
 		
-<<<<<<< HEAD
 
-=======
-//		floor = new Image("data/tiles/stone_floor.png");
-//		wall1 = new Image("data/tiles/stone_wall_updown.png");
-//		wall2 = new Image("data/tiles/stone_wall_leftright.png");
-//		wall3 = new Image("data/tiles/stone_wall_leftdown.png");
-//		wall4 = new Image("data/tiles/stone_wall_leftup.png");
-//		wall5 = new Image("data/tiles/stone_wall_rightdown.png");
-//		wall6 = new Image("data/tiles/stone_wall_rightup.png");
->>>>>>> c9a73f10421688222ffec3787fe9cbef18f11548
 		player = "stickhero";
 		enemy = "stickenemy";
 		
@@ -117,10 +107,7 @@ public class MainGameState extends BasicGameState{
 		b_examine = new Image("data/tiles/button_examine.png");
 		
 		o1 = new OnScreenChar(enemy, 30, 30, c);
-<<<<<<< HEAD
 
-=======
->>>>>>> c9a73f10421688222ffec3787fe9cbef18f11548
 		dm.putOnScreenChar(o1.xPos, o1.yPos, o1, false);
 		p1 = new OnScreenChar(player, numXtiles/2, numYtiles/2, c);
 		p1.setAsPlayer();
@@ -139,13 +126,7 @@ public class MainGameState extends BasicGameState{
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 		if(!menutime){
 			DungeonMap dm = planet.getCurrentDungeon();
-<<<<<<< HEAD
-
 			dm.render(container, sbg, g, p1.getX() - numXtiles/2, p1.getY() - numYtiles/2, numXtiles, numYtiles);
-
-=======
-			dm.render(container, sbg, g, p1.getX() - numXtiles/2, p1.getY() - numYtiles/2, numXtiles, numYtiles);
->>>>>>> c9a73f10421688222ffec3787fe9cbef18f11548
 		}
 		else{
 			if(helptime){

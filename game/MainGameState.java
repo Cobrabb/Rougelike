@@ -8,7 +8,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -21,13 +20,6 @@ import orig.Race;
 
 public class MainGameState extends BasicGameState{
 	int stateID = -1;
-//	Image floor = null;
-//	Image wall1 = null;
-//	Image wall2 = null;
-//	Image wall3 = null;
-//	Image wall4 = null;
-//	Image wall5 = null;
-//	Image wall6 = null;
 	String player = null;
 	String enemy = null;
 	Image b_equip = null;
@@ -57,6 +49,8 @@ public class MainGameState extends BasicGameState{
 	//dungeon stuff
 	int mapX = 0;
 	int mapY = 0;
+	int storeX = 0;
+	int storeY = 0;
 	
 	//menu variables, can be tweaked to change the menus
 	final int textAllowed = 32; //How much vertical space is allowed for text
@@ -95,14 +89,6 @@ public class MainGameState extends BasicGameState{
 		//String path = planet.generateMap("map1");
 		//planet.setCurrentDungeon(path);
 		dm = planet.getCurrentDungeon();
-
-//		floor = new Image("data/tiles/stone_floor.png");
-//		wall1 = new Image("data/tiles/stone_wall_updown.png");
-//		wall2 = new Image("data/tiles/stone_wall_leftright.png");
-//		wall3 = new Image("data/tiles/stone_wall_leftdown.png");
-//		wall4 = new Image("data/tiles/stone_wall_leftup.png");
-//		wall5 = new Image("data/tiles/stone_wall_rightdown.png");
-//		wall6 = new Image("data/tiles/stone_wall_rightup.png");
 		player = "stickhero";
 		enemy = "stickenemy";
 		
@@ -130,8 +116,14 @@ public class MainGameState extends BasicGameState{
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 		if(!menutime){
-			DungeonMap dm = planet.getCurrentDungeon();
-			dm.render(container, sbg, g, p1.getX() - numXtiles/2, p1.getY() - numYtiles/2, numXtiles, numYtiles);
+			if(free_mode){
+				DungeonMap dm = planet.getCurrentDungeon();
+				dm.render(container, sbg, g, mapX, mapY, numXtiles, numYtiles);
+			}
+			else{
+				DungeonMap dm = planet.getCurrentDungeon();
+				dm.render(container, sbg, g, p1.getX() - numXtiles/2, p1.getY() - numYtiles/2, numXtiles, numYtiles);
+			}
 		}
 		else{
 			if(helptime){
@@ -195,87 +187,159 @@ public class MainGameState extends BasicGameState{
     	inputDelta-=delta;
     	if(inputDelta<0){
 	    	if(!menutime){
-	    		dm = planet.getCurrentDungeon();
-		    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
-		    		kp = true;
-		    		if(p1.canMove(-1, 1, dm)){
-		    			mapX--;
-		    			mapY++;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
-		    		kp = true;
-		    		if(p1.canMove(0, 1, dm)){
-		    			mapY++;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
-		    		kp = true;
-		    		if(p1.canMove(1, 1, dm)){
-		    			mapX++;
-		    			mapY++;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
-		    		kp = true;
-		    		if(p1.canMove(1, 0, dm)){
-		    			mapX++;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
-		    		kp = true;
-		    		if(p1.canMove(1, -1, dm)){
-		    			mapX++;
-		    			mapY--;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
-		    		kp = true;
-		    		if(p1.canMove(0, -1, dm)){
-		    			mapY--;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
-		    		kp = true;
-		    		if(p1.canMove(-1, -1, dm)){
-		    			mapX--;
-		    			mapY--;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
-		    		kp = true;
-		    		if(p1.canMove(-1, 0, dm)){
-		    			mapX--;
-		    		}
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_ESCAPE)){
-		    		menutime = true;
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_COMMA)){
-		    		//attempt pickup
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_A)){
-		    		free_mode = true;
-		    		attacktime = true;
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_I)){
-		    		menutime = true;
-		    		inventorytime = true;
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_H)){
-		    		helptime = true;
-		    		menutime= true;
-		    	}
-		    	else if(input.isKeyDown(Input.KEY_X)){
-		    		free_mode = true;
-		    	}
-		    	if(kp){
-		    		dm.reveal(5, p1.xPos, p1.yPos);
-		    		inputDelta=100;
-		    		o1.step(p1.xPos, p1.yPos, dm);
-		    	}
+	    		if(free_mode){ //keypresses for free camera mode
+	    			dm = planet.getCurrentDungeon();
+			    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
+			    		kp = true;
+			    		mapX--;
+			    		mapY++;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
+			    		kp = true;
+			    		mapY++;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
+			    		kp = true;
+			    		mapX++;
+			    		mapY++;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
+			    		kp = true;
+			    		mapX++;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
+			    		kp = true;
+			    		mapX++;
+			    		mapY--;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
+			    		kp = true;
+			    		mapY--;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
+			    		kp = true;
+			    		mapX--;
+			    		mapY--;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
+			    		kp = true;
+			    		mapX--;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_ESCAPE)){
+			    		inputDelta = 200;
+			    		free_mode = false;
+			    		mapX = storeX;
+			    		mapY = storeY;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_A)&&attacktime){
+			    		inputDelta = 100;
+			    		free_mode = false;
+			    		attacktime = false;
+			    		mapX = storeX;
+			    		mapY = storeY;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_X)&&(!attacktime)){
+			    		inputDelta = 100;
+			    		free_mode = false;
+			    		attacktime = false;
+			    		mapX = storeX;
+			    		mapY = storeY;
+			    	}
+			    	if(kp){
+			    		dm.reveal(5, p1.xPos, p1.yPos);
+			    		inputDelta=100;
+			    		o1.step(p1.xPos, p1.yPos, dm);
+			    	}
+	    		}
+	    		else{ //normal hotkets
+		    		dm = planet.getCurrentDungeon();
+			    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
+			    		kp = true;
+			    		if(p1.canMove(-1, 1, dm)){
+			    			mapX--;
+			    			mapY++;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
+			    		kp = true;
+			    		if(p1.canMove(0, 1, dm)){
+			    			mapY++;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
+			    		kp = true;
+			    		if(p1.canMove(1, 1, dm)){
+			    			mapX++;
+			    			mapY++;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
+			    		kp = true;
+			    		if(p1.canMove(1, 0, dm)){
+			    			mapX++;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
+			    		kp = true;
+			    		if(p1.canMove(1, -1, dm)){
+			    			mapX++;
+			    			mapY--;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
+			    		kp = true;
+			    		if(p1.canMove(0, -1, dm)){
+			    			mapY--;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
+			    		kp = true;
+			    		if(p1.canMove(-1, -1, dm)){
+			    			mapX--;
+			    			mapY--;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
+			    		kp = true;
+			    		if(p1.canMove(-1, 0, dm)){
+			    			mapX--;
+			    		}
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_ESCAPE)){
+			    		menutime = true;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_COMMA)){
+			    		//attempt pickup
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_A)){
+			    		free_mode = true;
+			    		attacktime = true;
+			    		inputDelta = 200;
+			    		storeX = mapX;
+			    		storeY = mapY;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_I)){
+			    		menutime = true;
+			    		inventorytime = true;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_H)){
+			    		helptime = true;
+			    		menutime= true;
+			    	}
+			    	else if(input.isKeyDown(Input.KEY_X)){
+			    		free_mode = true;
+			    		inputDelta = 200;
+			    		storeX = mapX;
+			    		storeY = mapY;
+			    	}
+			    	if(kp){
+			    		dm.reveal(5, p1.xPos, p1.yPos);
+			    		inputDelta=100;
+			    		o1.step(p1.xPos, p1.yPos, dm);
+			    	}
+	    		}
 	    	}
-	    	else{
+	    	else{ //these are clickable menus
 	    		if(helptime){
 	    			int mouseX = input.getMouseX();
 		        	int mouseY = input.getMouseY();

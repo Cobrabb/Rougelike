@@ -1,10 +1,12 @@
 package orig;
 
-import orig.Creature.cStats;
+import java.io.Serializable;
+
 import orig.Creature.bStats;
+import orig.Creature.cStats;
 import orig.Creature.sVal;
 
-public class Effect {
+public class Effect implements Serializable {
 
 	private cStats cstat = null; //which cStat to affect
 	private bStats bstat = null; // which bStat to affect

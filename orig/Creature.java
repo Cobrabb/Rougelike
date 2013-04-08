@@ -1,13 +1,16 @@
 package orig;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
 
 import orig.Attack.AttackDirection;
 import orig.Item.AttackType;
+
 import orig.Item.iType;
 
 
-public class Creature {
+public class Creature implements Serializable {
 	public enum cStats {
 		STR_PHYS_ATTACK, SPEED_MOVE, SPEED_ATTACK, DETECT_SIGHT, 
 		STEALTH_SIGHT, TECH_WEAPON, TECH_ARMOR, STAM_HEALTH, TOTAL;

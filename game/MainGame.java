@@ -26,7 +26,6 @@ public class MainGame extends StateBasedGame{
 	   MapUtil.setFolderDirectory("maps");
 		ImageUtil.setRelativeFolder("maps");
 		ImageUtil.setTPF("tileset_parse.tpf");
-		ImageUtil.setTilesetImageFile("ccrgeek_ground_tileset.png");
         try {
             AppGameContainer app = new AppGameContainer(new MainGame());
             app.setDisplayMode(sizeX, sizeY, false);

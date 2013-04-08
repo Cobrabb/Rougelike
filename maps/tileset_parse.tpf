@@ -11,7 +11,11 @@
 # 
 # First line:  Width of tiles (W)
 # Second line: Height of tiles (H)
-# Third line:  Number of tiles to read, create (N)
+# Third line: Number of image files used for the game
+#
+# For each image file set:
+# First line: image file name, relative to this file
+# Second line:  Number of tiles to read, create (N)
 # 
 # The next N lines contain 2 numbers each, separated by a space, followed by a space, followed by the name of this tile
 # Format: x y <name>
@@ -33,6 +37,12 @@
 # Tile height
 32
 
+# Number of image files
+4
+
+# First Image filename
+ccrgeek_ground_tileset.png
+
 # Tile count
 8
 
@@ -45,5 +55,29 @@ W*2+0 H*3+0 cobblestone
 W*4+0 H*3+0 sandstone
 W*6+0 H*3+0 dark brown rock
 
+# Second Image filename
+nethack_tileset.png
+
+# Tile count
+3
+
+w*4+0 h*21+0 door
+w*11+0 h*21+0 upstairs
+w*12+0 h*21+0 downstairs
+
+# Third
+enemy.png
+
+# Tile count
+1
+
+0 0 stickenemy
+
+# Fourth File
+player.png
+
+# Tile Count
+1
+0 0 stickhero
 # all further lines are ignored
 # the last line could have been 192 96 dark brown rock, or 32*6+0 3*32+0 dark brown rock

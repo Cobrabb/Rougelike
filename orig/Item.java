@@ -1,13 +1,15 @@
 package orig;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
 
 import orig.Attack.AttackDirection;
 import orig.Attack.AttackPattern;
 import orig.Creature.cStats;
 import orig.Creature.sVal;
 
-public class Item {
+public class Item implements Serializable {
 	
 	public enum iType {
 		HEAD, ARMOR, BOOTS, HAND, TOTAL;

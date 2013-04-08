@@ -9,7 +9,7 @@ public class TestDMG {
 		Element elem1 = new Element("stone_floor", 1.0);
 		Element elem2 = new Element("stone_wall_updown", 2.0);
 		Element elem3 = new Element("stone_wall_leftright", 2.0);
-		Planet p = new Planet(new Element[] {elem1, elem2, elem3});
+		Planet p = new Planet(new Element[] {elem1, elem2, elem3}, new int[]{5, 3, 3});
 		DungeonMapGenerator map = new DungeonMapGenerator(p);
 		
 		

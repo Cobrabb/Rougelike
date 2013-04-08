@@ -9,7 +9,6 @@ public class TestImageUtil {
 		// into one of the game states for it to do it properly
 		// probably should get around to setting up a testing enviro
 		ImageUtil.setRelativeFolder("maps");
-		ImageUtil.setTilesetImageFile("ccrgeek_ground_tileset.png");
 		ImageUtil.setTPF("tileset_parse.tpf");
 		ImageUtil.loadImages();
 		String[] images = {"gray stone", "ice", "silver brick", "light brown rock", "light cobblestone", "cobblestone", "sandstone", "dark brown rock"};

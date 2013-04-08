@@ -130,7 +130,7 @@ public class Attack {
 			break;
 		case TOTAL:
 		case OTHER:
-			this.pattern = new ArrayList<int[]>(1); //must add points manually
+			this.pattern = new ArrayList<int[]>(); //must add points manually
 		}
 	}
 	

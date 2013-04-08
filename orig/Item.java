@@ -31,7 +31,7 @@ public class Item {
 	private int hands = 1; //number of hands required to wield
 	private int techRequired = 1;
 	private double phys_tech_ratio = 0; //0 is pure physical, 1 is pure tech (projectile)
-	private int baseDmg = 0; //base value for attacking/defending
+	private double baseDmg = 0; //base value for attacking/defending
 	private iType type = null;
 	private String name = "";
 	private double weight = 0.0;
@@ -41,6 +41,7 @@ public class Item {
 	private AttackPattern pattern = AttackPattern.POINT; // how does this item attack, defaults to a point
 	private AttackType atype = AttackType.PHYS; // defaults to physical attack
 	private int attackSize = 2; // defaults to attacking 2 spacing (except for point attacks)
+	private boolean equipped = false;
 //	private double wearDmg = 0.0;
 
 	
@@ -60,30 +61,30 @@ public class Item {
 		this.level = (int) (10*Math.random());
 		if(this.type == iType.HAND) {
 			this.attack = (Math.random() < .85); // 85% chance of being weapon (as opposed to shield)
-			this.hands = (int) Math.min((this.level/Math.random()),1); //generate random number of hands (at least 1 hand though)
-			this.baseDmg = (int) (this.level/Math.random())*this.hands; //generate random damage (assuming more hands means a more powerful weapon)
+			this.hands = (int) Math.max((4*Math.random()),1); //generate random number of hands (at least 1 hand though)
+			this.baseDmg = ((this.level/(Math.random()+.3)))/100.0*this.hands; //generate random damage (assuming more hands means a more powerful weapon)
 		}
 		else {
 			this.attack = false;
 			this.hands = 0;
-			this.baseDmg = (int) (this.level/Math.random()); //generate random damage
+			this.baseDmg = this.level/(Math.random()+.1); //generate random damage
 		}
 		this.techRequired = (int) (100*Math.random()); //generate tech level required
 		this.phys_tech_ratio = Math.random(); //generate random ratio of physical and tech
-		this.weight = 1/Math.random();
-		this.health = 1/Math.random();
+		this.weight = 1/(.7*Math.random()+.2);
+		this.health = 5/Math.random();
 		this.effects = new ArrayList<Effect>(0);
-		for(int i=0;Math.random() < .7; i++) {
+		while(Math.random() < .7) {
 			this.effects.add(new Effect());
 		}
 		AttackPattern ap[] = AttackPattern.values();
 		this.pattern = ap[(int) (AttackPattern.OTHER.ordinal()*Math.random())];
 		AttackType at[] = AttackType.values();
 		this.atype = at[(int) (AttackType.NONE.ordinal()*Math.random())];
-		this.attackSize = (int) (1/Math.random());
+		this.attackSize = (int) Math.max((1/(Math.random()+.1)),1);
 	}
 	
-	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, int baseDmg, iType type, double weight) {
+	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, double baseDmg, iType type, double weight) {
 		this.consists = consists;
 		this.repairs = repairs;
 		this.hands = hands;
@@ -92,8 +93,29 @@ public class Item {
 		this.baseDmg = baseDmg;
 		this.type = type;
 		this.weight = weight;
+		this.effects = new ArrayList<Effect>();
+		while(Math.random() < .3) this.effects.add(new Effect());
 	}
 	
+	public static Item unarmed(Creature c) {
+		Item i = new Item(c.getConsists(), null, 1, 0, 0.0,.01,iType.HAND,0);
+		i.attack = true;
+		i.attackSize = 1;
+		i.atype = AttackType.PHYS;
+		i.health = 9999999; //your hands shouldn't break
+		i.name = "Bare Hand";
+		i.pattern = AttackPattern.POINT;
+		i.effects = new ArrayList<Effect>(); //no effects
+		return i;
+	}
+	
+	public static Item healthPotion(double strength) {
+		Item i = new Item(null, null,0,0,0.0,0,iType.HAND,.1);
+		i.attack = false;
+		i.effects = new ArrayList<Effect>();
+		i.effects.add(new Effect(cStats.STAM_HEALTH,sVal.CURRENT,strength,1,true));
+		return i;
+	}
 
 
 	public iType getType() {
@@ -101,7 +123,13 @@ public class Item {
 	}
 	
 	public String getName(){
-		return this.name;
+		String str = this.name;
+		if(this.hands > 1) str += "(" + this.hands + " hands)";
+		if(!this.equipped)	return str;
+		if(this.type == iType.HAND) {
+			if(this.hands > 1) return str+ "<WIELDING>";
+		}
+		return str+ "<" + this.type + ">";
 	}
 	
 	public int getHands() {
@@ -196,6 +224,14 @@ public class Item {
 		else {//need to figure out how much firing damage it should take
 			//damage should be proportional to damage dealt, but inversely to skill (know how to take care of weapon)
 		}
+	}
+	
+	public void equip() {
+		this.equipped = true;
+	}
+	
+	public void unequip() {
+		this.equipped = false;
 	}
 	
 

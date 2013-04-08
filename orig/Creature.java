@@ -152,6 +152,11 @@ public class Creature {
 		return this.rName;
 	}
 	
+	public Element[] getConsists() {
+		Element consists[] = {this.casing, this.fluid, this.organs};
+		return consists;
+	}
+	
 	public int get(cStats s, sVal v) {
 		return cStat[s.ordinal()][v.ordinal()];//[n];
 	}
@@ -496,6 +501,7 @@ public class Creature {
 				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.organs);
 			}
 			dmg /= a.getWeapon().getConsists().length*3;
+			dmg = Math.min(dmg, this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()]);
 			this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] -= dmg;
 			attEff = new ArrayList<Effect>(0);
 			for(int i=0; i<this.effects.size(); i++) {
@@ -567,11 +573,25 @@ public class Creature {
 	}
 	
 //Dealing with inventory
+	/*
+	public boolean isEquipped(Item i) {
+		for(int n=0; n<equipped.length; n++) {
+			if(i == equipped[n]) return true;
+		}
+		for(int n=0; n<weilding.size(); n++) {
+			if(i == weilding.get(n)) return true;
+		}
+		return false;
+	}
+	*/
+	
+	
 	public boolean equip(Item i) {
 		if(i.getType() == iType.HAND) {
 			if(availHands >= i.getHands()) {
 				weilding.add(i);
 				availHands -= i.getHands();
+				i.equip();
 				return true;
 			}
 			else {
@@ -579,7 +599,9 @@ public class Creature {
 			}
 		}
 		else {
+			if(equipped[i.getType().ordinal()] != null) equipped[i.getType().ordinal()].unequip();
 			equipped[i.getType().ordinal()] = i;
+			i.equip();
 			return true;
 		}
 	}
@@ -588,6 +610,7 @@ public class Creature {
 		if(i.getType() == iType.HAND) {
 			if(weilding.remove(i)) {
 				availHands += i.getHands();
+				i.unequip();
 				return true;
 			}
 			else {
@@ -596,6 +619,7 @@ public class Creature {
 		}
 		else {
 			equipped[i.getType().ordinal()] = null;
+			i.unequip();
 			return true;
 		}
 	}
@@ -603,10 +627,12 @@ public class Creature {
 	public boolean unequip(int n) {
 		if(n < 0) return false;
 		else if(n < this.slots){
+			this.equipped[n].unequip();
 			this.equipped[n] = null;
 			return true;
 		}
 		else if(n<this.slots+this.weilding.size()) {
+			this.weilding.get(n-this.slots).unequip();
 			this.weilding.remove(n-this.slots);
 			return true;
 		}
@@ -620,6 +646,7 @@ public class Creature {
 	
 	public void drop(Item i) {
 		this.inventory.remove(i);
+		unequip(i);
 		weight -= i.getWeight();
 	}
 	
@@ -628,13 +655,16 @@ public class Creature {
 	}
 
 	public String getEquipped(int i){
-		if(i>this.equipped.length || i < 0) return "None";
-		else {
+		if(i>=(this.equipped.length+this.weilding.size()) || i < 0) return "None";
+		else if(i < this.equipped.length) {
 			if(equipped[i] == null) return "None";			
 			return equipped[i].getName();
 		}
+		else {
+			return this.weilding.get(i-this.equipped.length).getName();
+		}
 	}
-	
+	/*
 	public String getEquipped(iType i, int n) {
 		if(i != iType.HAND) {
 			if(i == iType.TOTAL) return "Don't pass TOTAL to this";
@@ -646,5 +676,12 @@ public class Creature {
 			return getEquipped(n); //get weapons
 		}
 	}
-	
+	*/
+/*
+	public String getItemName(int n) {
+		if(n < 0 || n >= this.inventory.size()) return "None";
+		if(isEquipped(this.inventory.get(n))) return this.inventory.get(n).getName() + "<E>";
+		return this.inventory.get(n).getName();
+	}
+	*/
 }

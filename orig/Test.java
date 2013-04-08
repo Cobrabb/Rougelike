@@ -145,7 +145,9 @@ public class Test {
 		//UET uE = UET.getUET();
 		//uE.printDmgTable();
 		for(int i=0; i<10; i++) {
-			c.equip(new Item());
+			c.pickup(new Item());
+			c.equip(c.getInventory().get(i));
+			System.out.println(c.getInventory().get(i).getName());
 			c2.equip(new Item());
 		}
 		ArrayList<Attack> att = c.attack(0, 0, AttackDirection.EAST);

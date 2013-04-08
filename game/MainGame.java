@@ -11,6 +11,8 @@ import util.MapUtil;
 public class MainGame extends StateBasedGame{
 	public static final int MENUSTATE = 0;
 	public static final int MAINGAMESTATE = 1;
+	public static final int CHARACTERCREATESTATE = 2;
+	
 	public static final int sizeX = 1024;
 	public static final int sizeY = 672;
 
@@ -21,6 +23,7 @@ public class MainGame extends StateBasedGame{
     public void initStatesList(GameContainer gc){
     	this.addState(new MenuState(MENUSTATE));
     	this.addState(new MainGameState(MAINGAMESTATE));
+    	this.addState(new CreateCharacterState(CHARACTERCREATESTATE));
     }
    public static void main(String[] args) {
 	   MapUtil.setFolderDirectory("maps");

@@ -1,14 +1,17 @@
 package game;
 
 
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -36,6 +39,7 @@ public class MainGameState extends BasicGameState{
 	OnScreenChar o1;
 	Planet planet = null;
 	DungeonMap dm = null;
+	
 	
 	//variables related to the size of screen and tiles
 	public static final int sizeX = 1024-1;
@@ -123,6 +127,7 @@ public class MainGameState extends BasicGameState{
 		p1.pickup(i);
 		p1.pickup(j);
 		p1.pickup(k);
+	
 	}
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
@@ -130,6 +135,7 @@ public class MainGameState extends BasicGameState{
 			if(free_mode){
 				DungeonMap dm = planet.getCurrentDungeon();
 				dm.render(container, sbg, g, mapX, mapY, numXtiles, numYtiles);
+				
 			}
 			else{
 				DungeonMap dm = planet.getCurrentDungeon();
@@ -168,20 +174,16 @@ public class MainGameState extends BasicGameState{
 				g.drawString("Head: "+p1.getEquipped(0), 0, header+textAllowed);
 				b_unequip.draw(itemMax, header+(1*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(1*textAllowed));
-				b_drop.draw(itemMax+(tileSize*2),header+(1*textAllowed));
 				g.drawString("Body: "+p1.getEquipped(1), 0, header+(2*textAllowed));
 				b_unequip.draw(itemMax, header+(2*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(2*textAllowed));
-				b_drop.draw(itemMax+(tileSize*2),header+(2*textAllowed));
 				g.drawString("Legs: "+p1.getEquipped(2), 0, header+(3*textAllowed));
 				b_unequip.draw(itemMax, header+(3*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(3*textAllowed));
-				b_drop.draw(itemMax+(tileSize*2),header+(3*textAllowed));
 				for(int i=3;i<p1.getNumArms()+3;i++){
 					g.drawString("Hands: "+p1.getEquipped(i), 0, header+(i+1)*textAllowed);
 					b_unequip.draw(itemMax, header+((i+1)*textAllowed));
 					b_examine.draw(itemMax+tileSize,header+((i+1)*textAllowed));
-					b_drop.draw(itemMax+(tileSize*2),header+((i+1)*textAllowed));
 				}
 				g.drawString("Back", 0, sizeY-footer-textAllowed);
 			}
@@ -189,7 +191,8 @@ public class MainGameState extends BasicGameState{
 				g.drawString("Inventory",0,header);
 				g.drawString("Equipped", 0, header+(1*textAllowed));
 				g.drawString("Help", 0, header+(2*textAllowed));
-				g.drawString("Return", 0,header+(3*textAllowed));
+				g.drawString("Save Game", 0, header+(3*textAllowed));
+				g.drawString("Return", 0,header+(4*textAllowed));
 			}
 		}
     }
@@ -265,7 +268,7 @@ public class MainGameState extends BasicGameState{
 			    		//o1.step(p1.xPos, p1.yPos, dm);
 			    	}
 	    		}
-	    		else{ //normal hotkets
+	    		else{ //normal hotkeys
 		    		dm = planet.getCurrentDungeon();
 			    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
 			    		kp = true;
@@ -389,14 +392,11 @@ public class MainGameState extends BasicGameState{
 	    			if(mouseX<150&&mouseY>sizeY-footer-textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 	    				equippedtime=false;
 	    			}
-	    			else if(mouseX>itemMax&&mouseX<=itemMax+tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		//p1.unequip(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+	    			else if(mouseX>itemMax&&mouseX<=itemMax+tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(p1.baseCreature.getNumArms()+4)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
+		        		p1.baseCreature.unequip((mouseY-(header+textAllowed))/textAllowed);
 		        	}
-		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+2*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
+		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+2*tileSize&&mouseY>(header+textAllowed)&&mouseY<(p1.baseCreature.getNumArms()+4)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		//examine
-		        	}
-		        	else if(mouseX>itemMax+2*tileSize&&mouseX<=itemMax+3*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		//p1.drop(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        	}
 	    		}
 	    		else{
@@ -412,6 +412,9 @@ public class MainGameState extends BasicGameState{
 		        		helptime = true;
 		        	}
 		        	else if(mouseX<150&&mouseY<header+(4*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
+		        		//SAVE GAME
+		        	}
+		        	else if(mouseX<150&&mouseY<header+(5*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		menutime = false;
 		        	}
 	    		}

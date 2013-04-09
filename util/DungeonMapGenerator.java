@@ -211,7 +211,7 @@ public final class DungeonMapGenerator implements Serializable {
 
 	private TileData getTileData() {
 		TileData td = new TileData();
-		HashMap<TileType, String> map = new HashMap<>();
+		HashMap<TileType, String> map = new HashMap<TileType, String>();
 		td.setMap(map);
 		
 		td.setFloor(this.floorBase);

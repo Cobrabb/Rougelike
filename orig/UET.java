@@ -1,6 +1,7 @@
 package orig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import orig.Element;
 import orig.Language;

@@ -102,14 +102,17 @@ public class Creature implements Serializable {
 		this.initCap = initCap;
 	}
 	*/
+	public Creature (Race r) {
+		this(r, r.getL().generate());
+	}
 	
-	public Creature(Race r) {
+	public Creature(Race r, String pName) {
 		cStats[] c = cStats.values();
 		bStats[] b = bStats.values();
 		sVal[] v = sVal.values();
 		
-		this.name = r.getName();
-		this.rName = r.getL().generate();
+		this.name = pName;
+		this.rName = r.getName();
 //		this.diet = r.getDiet();
 //		this.consumes = r.getConsumes();
 //		this.produces = r.getProduces();

@@ -25,6 +25,7 @@ import util.General.Direction;
 import util.General.GridPoint;
 
 public class MainGameState extends BasicGameState{
+	public static Creature loadedCreature;
 	int stateID = -1;
 	String player = null;
 	String enemy = null;
@@ -115,7 +116,11 @@ public class MainGameState extends BasicGameState{
 			yy = next.getY();
 			break;
 		}
-		p1 = new OnScreenChar(player, xx, yy, c);
+		System.err.println(loadedCreature);
+		if (loadedCreature != null)
+			p1 = new OnScreenChar(xx, yy, loadedCreature);
+		else
+			p1 = new OnScreenChar(player, xx, yy, c);
 		p1.setAsPlayer();
 		dm.putOnScreenChar(p1.xPos, p1.yPos, p1, false);
 		dm.reveal(8, p1.xPos, p1.yPos);
@@ -200,6 +205,14 @@ public class MainGameState extends BasicGameState{
     	boolean kp = false;
     	inputDelta-=delta;
     	if(inputDelta<0){
+    		if (loadedCreature != null) {
+    			OnScreenChar temp = p1;
+    			p1 = new OnScreenChar(p1.getX(), p1.getY(), loadedCreature);
+    			p1.setAsPlayer();
+    			dm.removeOnScreenChar(p1.getX(), p1.getY());
+    			dm.putOnScreenChar(p1.getX(), p1.getY(), p1, false);
+    			loadedCreature = null;
+    		}
 	    	if(!menutime){
 	    		if(free_mode){ //keypresses for free camera mode
 	    			dm = planet.getCurrentDungeon();

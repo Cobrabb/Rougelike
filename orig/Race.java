@@ -128,6 +128,9 @@ public class Race {
 
 	public Race(String name, int diet, Element produces, Element consumes, Element casing, Element fluid, Element organs, int numArms, int numLegs, ArrayList<Race> friendly){
 		this.name = name;
+		
+		L =new Language();
+		this.effects = new ArrayList<Effect>(0);
 		if(diet>numdiets||diet<=0){
 			this.diet = 1;
 		}

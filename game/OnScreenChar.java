@@ -22,6 +22,10 @@ public class OnScreenChar implements Serializable {
 	final int tileSize = 32;
 	boolean isPlayer;
 	
+	public OnScreenChar(int X, int Y, Creature c) {
+		this(c.getRName(), X, Y, c);
+	}
+	
 	public OnScreenChar(String imgName, int X, int Y, Creature c){
 		this.imgName = imgName;
 		xPos = X;

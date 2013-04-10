@@ -25,14 +25,6 @@ public class Door extends Square {
 		super.render(row, col, px, py);
 	}
 	
-	public void setImageName(String name) {
-		this.imgName = name;
-	}
-	
-	public String getImageName() {
-		return this.imgName;
-	}
-	
 	public void setDirection(Direction d) {
 		this.d = d;
 	}

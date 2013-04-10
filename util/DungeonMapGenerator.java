@@ -235,8 +235,27 @@ public final class DungeonMapGenerator implements Serializable {
 		this.generateDoors(ret, map, new HashSet<Direction>());
 		this.generateStairs(ret, map, new HashSet<Direction>());
 		this.generateSpawnPoints(ret, map);
+		DungeonMapGenerator.convertUpstairsToPlayerSpawn(ret, map);
 		DungeonMapGenerator.convertToDetail(ret, map);
 		return ret;
+	}
+	
+	/**
+	 * Warning: This should only really be used by the blank map generator
+	 * Or, don't call it when you need things to be connected.
+	 * @param ret
+	 * @param map
+	 */
+	private static void convertUpstairsToPlayerSpawn(int[][] ret, boolean[][] map) {
+		for (int x = 0; x < ret.length; ++x) {
+			for (int y = 0; y < ret[x].length; ++y) {
+				if ( (ret[x][y] & TileType.UPSTAIRS.flag) != 0 ) {
+					ret[x][y] -= TileType.UPSTAIRS.flag;
+					ret[x][y] |= TileType.PLAYERSPAWN.flag;
+				}
+			}
+		}
+		
 	}
 
 	private static void convertToDetail(int[][] ret, boolean[][] map) {

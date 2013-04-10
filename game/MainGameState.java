@@ -107,15 +107,13 @@ public class MainGameState extends BasicGameState{
 		
 		o1 = new OnScreenChar(enemy, 30, 30, c);
 		dm.putOnScreenChar(o1.xPos, o1.yPos, o1, false);
-		Iterator<GridPoint> it = dm.getStairList().iterator();
+		Iterator<GridPoint> it = dm.getPlayerSpawnPoints().iterator();
 		int xx = -1, yy = -1;
 		while (it.hasNext()) {
 			GridPoint next = it.next();
-			if (dm.getStairs(next).getDirection() == Direction.HIGHER) {
-				xx = next.getX();
-				yy = next.getY();
-				break;
-			}
+			xx = next.getX();
+			yy = next.getY();
+			break;
 		}
 		p1 = new OnScreenChar(player, xx, yy, c);
 		p1.setAsPlayer();

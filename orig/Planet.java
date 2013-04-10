@@ -284,6 +284,11 @@ public class Planet {
 					if (s.getDirection() == cur.opposite()) {
 						// this staircase matters.
 						GridPoint cpy = new GridPoint(nextPt.getX(), nextPt.getY());
+						// if the staircase goes up, we need to indicate this
+						// I have done it in a hacky way -- by making the coordinates negative
+						// then I detect this in DungeonMapGenerator and make the appropriate decisions
+						if (cur == Direction.LOWER)
+							cpy.flipSigns();
 						stairLocs.add(cpy);
 						forbidden.add(cur);
 					}

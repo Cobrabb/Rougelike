@@ -16,14 +16,18 @@ public class Square implements Serializable {
 	protected Element consists; //the element that this square is made of
 	//MapObject[] contains - It may be useful to store what is "here" in the square class, but I'm thinking not. If it is, we can fill this in later
 	protected transient Image img;
+	protected String imgName;
 	protected OnScreenChar c; //at most one creature may be on a square
 	protected boolean seen;
 	protected boolean visible;
+	protected boolean seeThrough;
 	
 	public Square(boolean pass, Element cons) {
 		this.passable = pass;
 		this.consists = cons;
-		seen = false;
+		this.imgName = consists.getName();
+		this.seen = false;
+		this.seeThrough = pass;
 	}
 	
 	public boolean isPassable() {
@@ -33,7 +37,11 @@ public class Square implements Serializable {
 	public void render(int x, int y, int px, int py) {
 		// TODO Auto-generated method stub
 		if (noImage()) {
-			img = ImageUtil.getImage(consists.getName());
+			if (imgName != null) {
+				img = ImageUtil.getImage(imgName);
+			} else {
+				img = ImageUtil.getImage(consists.getName());
+			}
 		}
 		Color transparency = null;
 		if (seen) {
@@ -50,6 +58,22 @@ public class Square implements Serializable {
 		if (visible && c != null) {
 			c.draw(px,  py);
 		}
+	}
+	
+	public String getImageName() {
+		return this.imgName;
+	}
+	
+	public void setImageName(String name) {
+		this.imgName = name;
+	}
+	
+	public void setSeeThrough() {
+		this.seeThrough = true;
+	}
+	
+	public void setOpaque() {
+		this.seeThrough = false;
 	}
 	
 	public void setVisible() {
@@ -75,5 +99,11 @@ public class Square implements Serializable {
 
 	public boolean noImage() {
 		return this.img == null;
+	}
+
+	public boolean isSeeThrough() {
+		if (c != null)
+			return false;
+		return this.seeThrough;
 	}
 }

@@ -56,7 +56,7 @@ public class Creature implements Serializable {
 	
 	private ArrayList<Item> inventory;
 	private Item[] equipped; // which items (non-hand)
-	private ArrayList<Item> weilding; // which items (hands)
+	private Item[] weilding; // which items (hands)
 	private int MaxInventory = 10;
 	private int availHands;
 	private double weight;
@@ -142,7 +142,7 @@ public class Creature implements Serializable {
 		
 		this.inventory = new ArrayList<Item>(0);
 		this.equipped = new Item[slots];
-		this.weilding = new ArrayList<Item>(0);
+		this.weilding = new Item[this.numArms];
 		this.MaxInventory += 100;
 		this.availHands = this.numArms;
 		this.friendly = new ArrayList<String>(r.getFriendly().size());
@@ -519,7 +519,7 @@ public class Creature implements Serializable {
 	public ArrayList<Attack> attack(int x, int y, AttackDirection ad) {//the attacking starts here
 		ArrayList<Attack> att = new ArrayList<Attack>(0);
 		for(int i=0; i<this.getNumArms(); i++) {
-			if(i<this.weilding.size())	att.add(this.weilding.get(i).attack(x, y, ad, this));
+			if(i<this.weilding.length)	att.add(this.weilding[i].attack(x, y, ad, this));
 			else {
 				//handle unarmed case
 			}
@@ -644,8 +644,17 @@ public class Creature implements Serializable {
 	public boolean equip(Item i) {
 		//equip if has required tech and enough hands (if applicable)
 		if(i.getType() == iType.HAND) {
-			if(availHands >= i.getHands() && getEffective(cStats.TECH_WEAPON,sVal.CURRENT) >= i.getTechRequired()) {
-				weilding.add(i);
+			if(availHands >= i.getHands()) {
+			//if(availHands >= i.getHands() && getEffective(cStats.TECH_WEAPON,sVal.CURRENT) >= i.getTechRequired()) {
+				for(int j=0; j<weilding.length; j++) {
+					if(weilding[j] == null) {
+						weilding[j] = i;
+						//if i is a multiple hand weapon, store the offHand holder in next spots
+						for(int k=1; k<i.getHands(); k++) {
+							weilding[j+k] = Item.offHand(i);
+						}
+					}
+				}
 				availHands -= i.getHands();
 				i.equip();
 				return true;
@@ -654,25 +663,33 @@ public class Creature implements Serializable {
 				return false;
 			}
 		}
-		else if(getEffective(cStats.TECH_ARMOR,sVal.CURRENT) >= i.getTechRequired()){
+		else {
+		//else if(getEffective(cStats.TECH_ARMOR,sVal.CURRENT) >= i.getTechRequired()){
 			if(equipped[i.getType().ordinal()] != null) equipped[i.getType().ordinal()].unequip();
 			equipped[i.getType().ordinal()] = i;
 			i.equip();
 			return true;
 		}
-		return false;
+		//return false;
 	}
-
+	
 	public boolean unequip(Item i) {
 		if(i.getType() == iType.HAND) {
-			if(weilding.remove(i)) {
-				availHands += i.getHands();
-				i.unequip();
-				return true;
+			for(int j=0; j<weilding.length; j++) {
+				if(weilding[j] == i) {
+					weilding[j] = null;
+					int hands = i.getHands();
+					availHands += hands;
+					i.unequip();
+					//remove offhand versions
+					for(int k=1; k<hands; k++) {
+						weilding[j+k] = null;
+					}
+					consolidateWeilding();
+					return true;
+				}
 			}
-			else {
-				return false;
-			}
+			return false;
 		}
 		else {
 			equipped[i.getType().ordinal()] = null;
@@ -684,14 +701,24 @@ public class Creature implements Serializable {
 	public boolean unequip(int n) {
 		if(n < 0) return false;
 		else if(n < this.slots){
-			this.equipped[n].unequip();
-			this.equipped[n] = null;
-			return true;
+			if(this.equipped[n] != null) {
+				this.equipped[n].unequip();
+				this.equipped[n] = null;
+				return true;
+			}
 		}
-		else if(n<this.slots+this.weilding.size()) {
-			this.weilding.get(n-this.slots).unequip();
-			this.weilding.remove(n-this.slots);
-			return true;
+		else if(n<this.slots+this.weilding.length) {
+			if(this.weilding[n-this.slots] != null) {
+				int hands = this.weilding[n-this.slots].getHands();
+				this.weilding[n-this.slots].unequip();
+				this.weilding[n-this.slots] = null;
+				//unequip all offhand items linked to this item
+				for(int j=1; j<hands; j++) {
+					this.weilding[n-this.slots + j] = null;
+				}
+				consolidateWeilding();
+				return true;
+			}
 		}
 		return false;
 	}
@@ -712,13 +739,25 @@ public class Creature implements Serializable {
 	}
 
 	public String getEquipped(int i){
-		if(i>=(this.equipped.length+this.weilding.size()) || i < 0) return "None";
+		if(i>=(this.equipped.length+this.weilding.length) || i < 0) return "None";
 		else if(i < this.equipped.length) {
 			if(equipped[i] == null) return "None";			
 			return equipped[i].getName();
 		}
 		else {
-			return this.weilding.get(i-this.equipped.length).getName();
+			if(weilding[i-this.equipped.length] == null) return "None";
+			return this.weilding[i-this.equipped.length].getName();
+		}
+	}
+	
+	private void consolidateWeilding() {
+		int offset = 0;
+		for(int i=0; i<weilding.length; i++) {
+			if(this.weilding[i] == null) offset++;
+			else if(offset > 0) {
+				this.weilding[i-offset] = this.weilding[i];
+				this.weilding[i] = null;
+			}
 		}
 	}
 	/*

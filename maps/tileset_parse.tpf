@@ -1,0 +1,85 @@
+# Tileset Parsing File (tpf)
+#
+# This is the data file used to parse the tileset file
+#
+# The parser will ignore all lines that begin with a #
+# Blank lines are also ignored.
+#
+# This file will need to be modified if/when the tilset changes
+#
+# Format to use for this file:
+# 
+# First line:  Width of tiles (W)
+# Second line: Height of tiles (H)
+# Third line: Number of image files used for the game
+#
+# For each image file set:
+# First line: image file name, relative to this file
+# Second line:  Number of tiles to read, create (N)
+# 
+# The next N lines contain 2 numbers each, separated by a space, followed by a space, followed by the name of this tile
+# Format: x y <name>
+# x is the x coordinate of the tile
+# y is the y coordinate of the tile
+# <name> is the system name for the tile
+# <name> may contain any manner of characters, except for new lines.  Try to keep it reasonable though...
+#
+# The system can understand if instead of entering a number for x or y, you enter an equation of the form
+# a*b+c (it must contain both a * and a +, in that order)
+# you may use H or W to signify usage of the tile height or width
+# This is so that you can take steps of H or W without having to resort to using a calculator.
+#
+# The tile will be cut from x to x+W-1, y to y+H-1
+#
+
+# Tile width
+32
+# Tile height
+32
+
+# Number of image files
+4
+
+# First Image filename
+ccrgeek_ground_tileset.png
+
+# Tile count
+8
+
+0 0 gray stone
+W*2+0 0 ice
+W*4+0 0 silver brick
+W*6+0 0 light brown rock
+0 H*3+0 light cobblestone
+W*2+0 H*3+0 cobblestone
+W*4+0 H*3+0 sandstone
+W*6+0 H*3+0 dark brown rock
+
+# Second Image filename
+nethack_tileset.png
+
+# Tile count
+4
+
+w*4+0 h*21+0 door
+w*11+0 h*21+0 upstairs
+w*12+0 h*21+0 downstairs
+w*0+0 h*7+0 human
+
+# Third
+enemy.png
+
+# Tile count
+1
+
+0 0 stickenemy
+
+
+# Fourth File
+player.png
+
+# Tile Count
+1
+0 0 stickhero
+# all further lines are ignored
+# the last line could have been 192 96 dark brown rock, or 32*6+0 3*32+0 dark brown rock

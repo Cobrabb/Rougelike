@@ -1,0 +1,10 @@
+9
+enemy=1
+player=2
+stone_floor=3
+stone_wall_leftdown=4
+stone_wall_leftright=5
+stone_wall_updown=6
+stone_wall_leftup=7
+stone_wall_rightdown=8
+stone_wall_rightup=9

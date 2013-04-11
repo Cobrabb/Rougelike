@@ -1,7 +1,9 @@
 package orig;
 
-import orig.Creature.cStats;
+import java.util.ArrayList;
+
 import orig.Creature.bStats;
+import orig.Creature.cStats;
 import orig.Creature.sVal;
 
 public class Race {
@@ -18,36 +20,26 @@ public class Race {
 	private boolean genders; //true if the Race is not a hermaphodite
 	private int numArms;
 	private int numLegs;
-	
+	private ArrayList<Effect> effects;
+	private ArrayList<Race> friendly;
 
 	private int cStat[][];
 	private int bStat[][];
 	
-	//behind the scenes
+	// behind the scenes
+	final double base_creat_ratio = .2; //race stats * .2 + creat stats = effective
 	final double mul = 10;
 	final double rate = 1.15;
-	final int lvlGain = 1;
 	final int numdiets = 4; //the possible diet options
+	final int slots = 3;
+	final int lvlGain = 1;
 	private int baseGain;
 	private int initCap = 5*cStats.TOTAL.ordinal();
 	private int maxLvl = 100;
 	
 	public Race(){ //completely random, probably not necessary.
-		this.L = new Language();
-		this.name = L.generate();
-		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.cStat[i][j] = 0;
-			}
-		}
-		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.bStat[i][j] = 0;
-			}
-		}
-		numArms = 4;
+		this(UET.getUET().getElementArray(),new Language());//makes a new race from all elements and a new language
+		autoLvlXP(500*cStats.TOTAL.ordinal()); // allocate 500 per stat, not allocated evenly
 	}
 
 	public Race(Element[] e, Language L){ //semi random
@@ -124,12 +116,20 @@ public class Race {
 			}
 		}
 
-		this.numArms = 2*(int) (Math.random()/.2);
+		this.numArms = 2*(int) (Math.random()/.2)+1;
 		this.numLegs = 2*(int) (Math.random()/.4);
+		this.friendly = new ArrayList<Race>(0);
+		this.effects = new ArrayList<Effect>(0);
+		while(Math.random() < .3) {
+			this.effects.add(new Effect());
+		}
 	}
 
-	public Race(String name, int diet, Element produces, Element consumes, Element casing, Element fluid, Element organs, int numArms, int numLegs){
+	public Race(String name, int diet, Element produces, Element consumes, Element casing, Element fluid, Element organs, int numArms, int numLegs, ArrayList<Race> friendly){
 		this.name = name;
+		
+		L =new Language();
+		this.effects = new ArrayList<Effect>(0);
 		if(diet>numdiets||diet<=0){
 			this.diet = 1;
 		}
@@ -156,6 +156,35 @@ public class Race {
 			}
 		}
 		
+		this.friendly = new ArrayList<Race>(0);
+		for(int i=0; i<friendly.size();i++){
+			this.friendly.add(friendly.get(i));
+		}
+	}
+	
+	public boolean isFriendly(Race r) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i) == r) return true;
+		}
+		return false;
+	}
+	
+	public void addFriendly(Race r) {
+		for(int i=0; i<this.friendly.size();i++) {
+			if(this.friendly.get(i) == r) return;
+		}
+		this.friendly.add(r);
+	}
+	public ArrayList<Effect> getEffects() {
+		return this.effects;
+	}
+	
+	public void addEffect(Effect e) {
+		this.effects.add(e);
+	}
+	
+	public ArrayList<Race> getFriendly() {
+		return this.friendly;
 	}
 	
 	public String getName(){
@@ -442,11 +471,12 @@ public bStats decode(cStats s) {
 public int getBaseGain() {
 	return this.baseGain;
 }
+/*
 	public Creature spawn() {
 		Creature c = new Creature(name, L.generate(),diet,consumes,produces,casing,fluid,organs,genders,numArms,numLegs,cStat,bStat,null,null,null,bStat[bStats.STAMINA.ordinal()][sVal.CURRENT.ordinal()],numArms,0,0);
 		return c;
 	}
-	
+*/	
 	public String toString(){
 		String str = "This is the Race "+name+". Its flesh is "+casing.getName()+". Its blood is "+fluid.getName()+". Its organs are "+organs.getName()+". It consumes ";
 		if(consumes==null){
@@ -471,6 +501,10 @@ public int getBaseGain() {
 		}
 		str+=" species.";
 		return str;
+	}
+
+	public Language getL() {
+		return this.L;
 	}
 
 }

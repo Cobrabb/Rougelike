@@ -41,6 +41,7 @@ public class CreateCharacterState extends BasicGameState{
 	transient Image ihuman;
 	transient Image iargok;
 	transient Image iwonka;
+	String savedText;
 	CreateCharacterState( int stateID ) 
     {
        this.stateID = stateID;
@@ -126,7 +127,10 @@ public class CreateCharacterState extends BasicGameState{
 		int posY = Mouse.getY(); 
     	int mouseX = input.getMouseX();
     	int mouseY = input.getMouseY();
-    	font2.loadGlyphs();
+    	if (!name.getText().equals(savedText)) {
+    		font2.loadGlyphs();
+    		savedText = name.getText();
+    	}
     	
     	boolean next = false;
     	if(state == 0)

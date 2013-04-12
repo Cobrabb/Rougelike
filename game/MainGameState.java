@@ -53,6 +53,7 @@ public class MainGameState extends BasicGameState{
 	
 	//player stuff
 	OnScreenChar p1;
+	int sightRadius;
 	
 	//dungeon stuff
 	int mapX = 0;
@@ -107,7 +108,10 @@ public class MainGameState extends BasicGameState{
 		b_examine = new Image("data/tiles/button_examine.png");
 		
 		o1 = new OnScreenChar(30, 30, c, true);
-		dm.putOnScreenChar(o1.xPos, o1.yPos, o1, false);
+		dm.addOnScreenchar(o1);
+
+
+	
 		Iterator<GridPoint> it = dm.getPlayerSpawnPoints().iterator();
 		int xx = -1, yy = -1;
 		while (it.hasNext()) {
@@ -116,14 +120,11 @@ public class MainGameState extends BasicGameState{
 			yy = next.getY();
 			break;
 		}
-		System.err.println(loadedCreature);
-		if (loadedCreature != null)
-			p1 = new OnScreenChar(xx, yy, loadedCreature);
-		else
-			p1 = new OnScreenChar(player, xx, yy, c);
+		p1 = new OnScreenChar(player, xx, yy, c);
 		p1.setAsPlayer();
 		dm.putOnScreenChar(p1.xPos, p1.yPos, p1, false);
-		dm.reveal(8, p1.xPos, p1.yPos);
+		sightRadius = 5;
+		dm.reveal(sightRadius, p1.xPos, p1.yPos);
 		Item i = new Item();
 		Item j = new Item();
 		Item k = new Item();
@@ -276,7 +277,7 @@ public class MainGameState extends BasicGameState{
 			    		mapY = storeY;
 			    	}
 			    	if(kp){
-			    		dm.reveal(5, p1.xPos, p1.yPos);
+			    		dm.reveal(sightRadius, p1.xPos, p1.yPos);
 			    		inputDelta=100;
 			    		// monsters should not move while you are in free_mode
 			    		//o1.step(p1.xPos, p1.yPos, dm);
@@ -364,9 +365,10 @@ public class MainGameState extends BasicGameState{
 			    		storeY = mapY;
 			    	}
 			    	if(kp){
-			    		dm.reveal(5, p1.xPos, p1.yPos);
+			    		//dm.reveal(sightRadius, p1.xPos, p1.yPos);
 			    		inputDelta=100;
-			    		o1.step(p1.xPos, p1.yPos, dm);
+			    		//o1.step(p1.xPos, p1.yPos, dm);
+			    		dm.update(sightRadius, p1.xPos, p1.yPos);
 			    	}
 	    		}
 	    	}

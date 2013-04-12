@@ -109,7 +109,7 @@ public class Race {
 		//initialize stat to 0's
 		for(int j=0; j<cStats.TOTAL.ordinal(); j++) {
 			for(int k=0; k<sVal.TOTAL.ordinal(); k++) {
-				this.cStat[j][k] = 0;
+				this.cStat[j][k] = 1;
 			}
 		}		
 		for(int j=0; j<bStats.TOTAL.ordinal(); j++) {
@@ -147,10 +147,10 @@ public class Race {
 		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
 		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
 		
-		//initialize stat to 0's
+		//initialize stat to 1's
 		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.cStat[i][j] = 0;
+				this.cStat[i][j] = 1;
 			}
 		}
 		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {

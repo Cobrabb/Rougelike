@@ -372,7 +372,8 @@ public class Planet {
 			c.setPosition(gp.getX(), gp.getY());
 			dm.putOnScreenChar(gp.getX(), gp.getY(), c, false);
 			//System.err.printf("placed char at %s\n", gp);
-			dm.reveal(8, gp.getX(), gp.getY());
+			int pSightRadius = 5;
+			dm.reveal(pSightRadius, gp.getX(), gp.getY());
 			return true;
 		}
 }

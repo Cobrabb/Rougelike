@@ -2,12 +2,14 @@ package game;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import org.newdawn.slick.Image;
 
 import orig.Creature;
 import orig.DungeonMap;
 import orig.Item;
+import util.General.GridPoint;
 import util.ImageUtil;
 
 public class OnScreenChar implements Serializable {
@@ -15,12 +17,14 @@ public class OnScreenChar implements Serializable {
 	String imgName;
 	int xPos;
 	int yPos;
+	// the location the monster intends to move to
 	int speed;
 	double ratioMovement;
 	double stackedMovement;
 	public Creature baseCreature;
 	final int tileSize = 32;
 	boolean isPlayer;
+	Stack<GridPoint> pathPlan;
 	
 	public OnScreenChar(int X, int Y, Creature c) {
 		this(c.getRName(), X, Y, c);
@@ -65,6 +69,76 @@ public class OnScreenChar implements Serializable {
 		}
 		else if(yPos<y){
 			move(0, 1, dm);
+		}
+	}
+	
+	/**
+	 * This method tells the OnScreenChar to ask the dmap for information about
+	 * the area around itself, particularly if there is treasure or a player
+	 * SMART:
+	 * If a player is detected, set the current 'target loc' to be the player's sq
+	 * ask the dmap to send it on the best path
+	 * SMART:
+	 * If a player *was* detected, and we haven't reached the last known loc,
+	 * keep moving toward the last known loc.
+	 * GREEDY:
+	 * If nothing about the player is known, was there treasure? Move toward treasure
+	 * DEFAULT:
+	 * Nothing at all? Random.
+	 * @param radius The area around the monster which it can see
+	 * @param dm The current map
+	 */
+	public void move(int radius, DungeonMap dm) {
+		// find targets of interest:
+		ArrayList<ArrayList<GridPoint>> targets = dm.detectArea(radius, this);
+		ArrayList<GridPoint> enemies = targets.get(0);
+		ArrayList<GridPoint> treasure = targets.get(1);
+		int totalTargets = enemies.size() + treasure.size();
+		// if nothing interesting around
+		if (totalTargets == 0) {
+			if (pathPlan != null && !pathPlan.isEmpty()) {
+				// we had a plan, so we'll follow it cause nothing else to do
+				// assuming that the plan has no invalid moves
+				GridPoint next = pathPlan.pop();
+				dm.attackMove(xPos, yPos, next.getX(), next.getY(), true);
+				return; // exit method
+			} else {
+				// no plan, or nowhere else to go according to plan
+				// random move
+				// assuming for now that creature can move any direction
+				boolean notFound = true;
+				while (notFound) {
+					int dx = (int)(Math.random() * 3) - 1;
+					int dy = (int)(Math.random() * 3) - 1;
+					if (dm.isPassable(dx+xPos, dy+yPos)) {
+						dm.attackMove(xPos, yPos, dx+xPos, dy+yPos, true);
+						notFound = false;
+					}
+				}
+				return;
+			}
+		} else {
+			if (enemies.size() != 0) {
+				// there is an enemy that we can see.
+				// charge!
+				GridPoint enemy = enemies.get(0);
+				dm.moveOSC(xPos, yPos, enemy.getX(), enemy.getY());
+				// there should always be a move, if there is a pathPlan
+				// if no pathPlan, bad data was passed into moveOSC call
+				if (pathPlan != null) {
+					enemy = pathPlan.pop();
+					dm.attackMove(xPos, yPos, enemy.getX(), enemy.getY(), true);
+				}
+			} else if (treasure.size() != 0) {
+				// there is a treasure we can see.
+				// walk over there, you love treasure
+				GridPoint item = treasure.get(0);
+				dm.moveOSC(xPos, yPos, item.getX(), item.getY());
+				if (pathPlan != null) {
+					item = pathPlan.pop();
+					dm.attackMove(xPos, yPos, item.getX(), item.getY(), true);
+				}
+			}
 		}
 	}
 	
@@ -162,6 +236,10 @@ public class OnScreenChar implements Serializable {
 	
 	public int getY() {
 		return this.yPos;
+	}
+
+	public void setPathPlan(Stack<GridPoint> path) {
+		this.pathPlan = path;
 	}
 	
 	public boolean detects(OnScreenChar osc) {

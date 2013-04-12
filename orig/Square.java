@@ -3,6 +3,7 @@ package orig;
 import game.OnScreenChar;
 
 import java.io.Serializable;
+import java.util.Stack;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -21,6 +22,7 @@ public class Square implements Serializable {
 	protected boolean seen;
 	protected boolean visible;
 	protected boolean seeThrough;
+	protected Stack<Item> itemStack;
 	
 	public Square(boolean pass, Element cons) {
 		this.passable = pass;
@@ -28,6 +30,21 @@ public class Square implements Serializable {
 		this.imgName = consists.getName();
 		this.seen = false;
 		this.seeThrough = pass;
+		itemStack = new Stack<Item>();
+	}
+	
+	public void dropItem(Item i) {
+		itemStack.push(i);
+	}
+	
+	public boolean containsItem() {
+		return !itemStack.isEmpty();
+	}
+	
+	public Item pickUpItem() {
+		if (containsItem())
+			return itemStack.pop();
+		return null;
 	}
 	
 	public boolean isPassable() {

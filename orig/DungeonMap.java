@@ -3,8 +3,14 @@ package orig;
 import game.OnScreenChar;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.StateBasedGame;
@@ -41,6 +47,9 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	private HashSet<GridPoint> stairList;
 	private HashSet<GridPoint> playerSpawns;
 	
+	// List of creatures active on the map, not including player?
+	HashSet<OnScreenChar> monsters;
+	
 	public DungeonMap(){ //completely random constructor, probably not necessary.
 	}
 	
@@ -70,98 +79,103 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		// for added detail, we'll only illuminate walls that are next to floor tiles
 		for(int i=(x-radius); i<= x+radius; i++ ){
 			for(int j=(y-radius); j<= y+radius; j++){
-				int dx = Math.abs(i-x);
-				int dy = Math.abs(j-y);
-				// 4 is just something random I chose to make it work
-				// This way, it doesn't look as deformed (try changing it to 0 and seeing for yourself)
-				if (Math.sqrt(dx*dx + dy*dy + 4) > radius)
-					continue;
-				// ok, for funsies, lets do this
-				// we need to "draw a line" from (i, j) to (x, y)
-				// check if it hits any squares that are impassable
-				// if so, then don't set visible
-				// else, set visible.
-				if (!validCoordinates(i, j))
-					continue; // not on the map.
-				boolean chanceToSee = false;
-				//squares[i][j].setVisible();
-				if (isPassable(i, j) || (dx <= 1 && dy <= 1)) {
-					chanceToSee = true;
-				} else {
-			OUT:	for (int k = i-1; k <= i+1; ++k) {
-						for (int m = j-1; m <= j+1; ++m) {
-							if (validCoordinates(k, m) && isSeeThrough(k, m)) {
-								chanceToSee = true;
-								break OUT;
-							}
-						}
-					}
-				}
-				
-				if(chanceToSee) {
-					int interferenceLimit = 0; // okay if XXX things in the way
-					int interferenceCount = 0;
-					//System.out.printf("\tThere is a chance we can see (%d, %d) from (%d, %d)!\n", i, j, x, y);
-					// we'll need to do the line thing.
-					// I'll say that square (i, j) is visible from square (x, y)
-					// if on the line between their centers, all the squares that are hit are "see through"
-					// for now, "passable" will be used to mean "see through"
-					// but we can easily add a property to square, so "glass" walls and such can be "see through"
-					double curX = i + 0.5;
-					double curY = j + 0.5;
-					double m = radius*1000.0*(y - j);
-					if (x - i != 0)
-						m = (double)(y - j)/(double)(x - i);
-					// if we move X enough to hit the next square, has the Y coord past a boundary?
-					int xChange = (x - i < 0 ? -1 : 1);
-					int yChange = (y - j < 0 ? -1 : 1);
-					double xBound = curX + 0.5 * xChange;
-					double yBound = curY + 0.5 * yChange;
-					int sqX = i;
-					int sqY = j;
-					// to deal with m = inf
-					while (!(sqX == x && sqY == y)) {
-						// verify that square[sqX][sqY] is "see through"
-						//System.err.printf("\tcurX=%.3f, curY=%.3f, m=%.3f, xBound=%.3f, yBound=%.3f\n", curX, curY, m, xBound, yBound);
-						//System.err.printf("\t\tChecking that %d, %d is passable\n", sqX, sqY);
-						if (!(sqX == i && sqY == j) && !isSeeThrough(sqX, sqY)) {
-							//System.err.printf("\t\tIt is not...\n");
-							++interferenceCount;
-							if (interferenceCount > interferenceLimit) {
-								chanceToSee = false; 
-								break;
-							}
-						}
-						// if we move curX to reach xBound, has curY surpassed yBound?
-						double movement = xBound - curX;
-						double yTemp = curY + m*movement;
-						if (yTemp*yChange < yBound*yChange) {
-							// we moved the xcoord.
-							curX = xBound;
-							curY = yTemp;
-							sqX += xChange;
-							xBound += xChange;
-						} else if (Math.abs(yTemp - yBound) < 0.0000001) {
-							// they are pretty much equal, so assume we go through corner here
-							sqX += xChange;
-							sqY += yChange;
-							curX = xBound;
-							curY = yBound;
-							xBound += xChange;
-							yBound += yChange;
-						} else { // yTemp far surpassed the bound
-							movement = yBound - curY;
-							curX = curX + movement/m;
-							curY = yBound;
-							sqY += yChange;
-							yBound += yChange;
-						}
-					}
-					if (chanceToSee)
-						this.squares[i][j].setVisible();
+				if (isVisible(i, j, x, y, radius)) {
+					squares[i][j].setVisible();
 				}
 			}
 		}
+	}
+	
+	public boolean isVisible(int i, int j, int x, int y, int radius) {
+		int dx = Math.abs(i-x);
+		int dy = Math.abs(j-y);
+		// 4 is just something random I chose to make it work
+		// This way, it doesn't look as deformed (try changing it to 0 and seeing for yourself)
+		if (Math.sqrt(dx*dx + dy*dy + 4) > radius)
+			return false;
+		// ok, for funsies, lets do this
+		// we need to "draw a line" from (i, j) to (x, y)
+		// check if it hits any squares that are impassable
+		// if so, then don't set visible
+		// else, set visible.
+		if (!validCoordinates(i, j))
+			return false; // not on the map.
+		boolean chanceToSee = false;
+		//squares[i][j].setVisible();
+		if (isPassable(i, j) || (dx <= 1 && dy <= 1)) {
+			chanceToSee = true;
+		} else {
+	OUT:	for (int k = i-1; k <= i+1; ++k) {
+				for (int m = j-1; m <= j+1; ++m) {
+					if (validCoordinates(k, m) && isSeeThrough(k, m)) {
+						chanceToSee = true;
+						break OUT;
+					}
+				}
+			}
+		}
+		
+		if(chanceToSee) {
+			int interferenceLimit = 0; // okay if XXX things in the way
+			int interferenceCount = 0;
+			//System.out.printf("\tThere is a chance we can see (%d, %d) from (%d, %d)!\n", i, j, x, y);
+			// we'll need to do the line thing.
+			// I'll say that square (i, j) is visible from square (x, y)
+			// if on the line between their centers, all the squares that are hit are "see through"
+			// for now, "passable" will be used to mean "see through"
+			// but we can easily add a property to square, so "glass" walls and such can be "see through"
+			double curX = i + 0.5;
+			double curY = j + 0.5;
+			double m = radius*1000.0*(y - j);
+			if (x - i != 0)
+				m = (double)(y - j)/(double)(x - i);
+			// if we move X enough to hit the next square, has the Y coord past a boundary?
+			int xChange = (x - i < 0 ? -1 : 1);
+			int yChange = (y - j < 0 ? -1 : 1);
+			double xBound = curX + 0.5 * xChange;
+			double yBound = curY + 0.5 * yChange;
+			int sqX = i;
+			int sqY = j;
+			// to deal with m = inf
+			while (!(sqX == x && sqY == y)) {
+				// verify that square[sqX][sqY] is "see through"
+				//System.err.printf("\tcurX=%.3f, curY=%.3f, m=%.3f, xBound=%.3f, yBound=%.3f\n", curX, curY, m, xBound, yBound);
+				//System.err.printf("\t\tChecking that %d, %d is passable\n", sqX, sqY);
+				if (!(sqX == i && sqY == j) && !isSeeThrough(sqX, sqY)) {
+					//System.err.printf("\t\tIt is not...\n");
+					++interferenceCount;
+					if (interferenceCount > interferenceLimit) {
+						chanceToSee = false; 
+						break;
+					}
+				}
+				// if we move curX to reach xBound, has curY surpassed yBound?
+				double movement = xBound - curX;
+				double yTemp = curY + m*movement;
+				if (yTemp*yChange < yBound*yChange) {
+					// we moved the xcoord.
+					curX = xBound;
+					curY = yTemp;
+					sqX += xChange;
+					xBound += xChange;
+				} else if (Math.abs(yTemp - yBound) < 0.0000001) {
+					// they are pretty much equal, so assume we go through corner here
+					sqX += xChange;
+					sqY += yChange;
+					curX = xBound;
+					curY = yBound;
+					xBound += xChange;
+					yBound += yChange;
+				} else { // yTemp far surpassed the bound
+					movement = yBound - curY;
+					curX = curX + movement/m;
+					curY = yBound;
+					sqY += yChange;
+					yBound += yChange;
+				}
+			}
+		}
+		return chanceToSee;
 	}
 	
 	private boolean isSeeThrough(int x, int y) {
@@ -175,6 +189,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		this.doorList = new HashSet<GridPoint>();
 		this.stairList = new HashSet<GridPoint>();
 		this.playerSpawns = new HashSet<GridPoint>();
+		this.monsters = new HashSet<OnScreenChar>();
 		
 		for (int x = 0; x < mapDetails.length; ++x) {
 			for (int y = 0; y < mapDetails.length; ++y) {
@@ -262,6 +277,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 			}
 			if (squares[x][y].getOnScreenChar() == null) {
 				squares[x][y].setOnScreenChar(c);
+				c.setPosition(x, y);
 				return true;
 			}
 		}
@@ -294,6 +310,17 @@ public class DungeonMap implements TileBasedMap, Serializable {
 
 	private boolean validCoordinates(int xCoor, int yCoor) {
 		return (xCoor >= 0 && xCoor < squares.length && yCoor >= 0 && yCoor < squares[0].length);
+	}
+	
+	public void update(int sightRadius, int xPos, int yPos) {
+		Iterator<OnScreenChar> it = monsters.iterator();
+		while (it.hasNext()) {
+			OnScreenChar osc = it.next();
+			if (!osc.isPlayer()) {
+				osc.move(sightRadius, this);
+			}
+		}
+		this.reveal(sightRadius+3, xPos, yPos);
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g, int xPos, int yPos, int screenX, int screenY) {
@@ -366,5 +393,149 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	
 	public HashSet<GridPoint> getPlayerSpawnPoints() {
 		return this.playerSpawns;
+	}
+	
+	/**
+	 * This method encapsulates moving a creature from one square to the next
+	 * However, if the to location contains a creature, this method will
+	 * invoke an attack.
+	 * @param fromX
+	 * @param fromY
+	 * @param toX
+	 * @param toY
+	 * @param aggressive Indicates whether the monster is intending to attack
+	 */
+	public void attackMove(int fromX, int fromY, int toX, int toY, boolean aggressive) {
+		if (isCreature(toX, toY) && isCreature(fromX, fromY)) {
+			if (aggressive) {
+				// do attack stuff
+				System.err.printf("Aha! I have you now!\n");
+			}
+		} else if(isCreature(fromX, fromY)){
+			OnScreenChar osc = this.squares[fromX][fromY].c;
+			removeOnScreenChar(fromX, fromY);
+			putOnScreenChar(toX, toY, osc, true);
+		}
+	}
+	
+	/**
+	 * This method is what an OSC calls to tell the map to move it to the
+	 * location it desires, in the best way possible?
+	 * This method ignores checks such as, should the monster get the shortest
+	 * path? Does the monster forget? Etc.
+	 * Does not ignore bound checks.
+	 * @param startX
+	 * @param startY
+	 * @param targetX
+	 * @param targetY
+	 */
+	public void moveOSC(int startX, int startY, int targetX, int targetY) {
+		if (!validCoordinates(startX, startY) || !validCoordinates(targetX, targetY))
+			return; // invalid coords
+		OnScreenChar osc = squares[startX][startY].getOnScreenChar();
+		//System.out.printf("start:(%d,%d), target:(%d,%d)\n", startX, startY, targetX, targetY);
+		// currently only 1 strategy: smart
+		HashMap<GridPoint, GridPoint> prev = new HashMap<GridPoint, GridPoint>();
+		Direction[] dirs = {Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN, Direction.UPLEFT, Direction.UPRIGHT, Direction.DOWNLEFT, Direction.DOWNRIGHT};
+		Queue<GridPoint> queue = new LinkedList<GridPoint>();
+		queue.add(new GridPoint(startX, startY));
+OUT:	while (!queue.isEmpty()) {
+			GridPoint cur = queue.poll();
+			//System.err.printf("Checking %s\n", cur);
+			for (int i = 0; i < dirs.length; ++i) {
+				int nextX = cur.getX() + dirs[i].getX();
+				int nextY = cur.getY() + dirs[i].getY();
+				GridPoint next = new GridPoint(nextX, nextY);
+				if (validCoordinates(nextX, nextY)) {
+					if (isPassable(nextX, nextY)) {
+						if (!prev.containsKey(next)) {
+							prev.put(next, cur);
+							queue.add(next);
+						}
+					} else if (nextX == targetX && nextY == targetY) {
+						prev.put(next, cur);
+						break OUT;
+					}
+				}
+			}
+		}
+		GridPoint target = new GridPoint(targetX, targetY);
+		if (!prev.containsKey(target)) {
+			//System.err.printf("Prev did not contain target\n");
+			// uhh, impossible to reach target from start
+			return;
+		}
+		GridPoint curPoint = target;
+		Stack<GridPoint> path = new Stack<GridPoint>();
+		while (prev.containsKey(curPoint)) {
+			path.push(curPoint);
+			curPoint = prev.get(curPoint);
+		}
+		osc.setPathPlan(path);
+		return;
+	}
+
+	/**
+	 * This method identifies the squares around the given position and checks
+	 * what can be identified. Currently only gets the enemies and items
+	 * @param radius How far around the creature that it can detect
+	 * @param onScreenChar The creature
+	 * @return
+	 */
+	// TODO: include Michael's detects(OSC) method
+	public ArrayList<ArrayList<GridPoint>> detectArea(int radius, OnScreenChar onScreenChar) {
+		int xPos = onScreenChar.getX();
+		int yPos = onScreenChar.getY();
+		ArrayList<GridPoint> enemies = new ArrayList<GridPoint>();
+		ArrayList<GridPoint> items = new ArrayList<GridPoint>();
+		for (int x = xPos - radius; x <= xPos + radius; ++x) {
+			for (int y = yPos - radius; y <= yPos + radius; ++y) {
+				if (x == xPos && y == yPos)
+					continue; // ignore self.
+				if (isVisible(x, y, xPos, yPos, radius)) {
+					if (isCreature(x, y) && isPlayer(x, y)) { //TODO: and can detect creature, enemy check
+						enemies.add(new GridPoint(x, y));
+					}
+					if (containsItem(x, y)) {
+						items.add(new GridPoint(x, y));
+					}
+				}
+			}
+		}
+		ArrayList<ArrayList<GridPoint>> ret = new ArrayList<ArrayList<GridPoint>>();
+		ret.add(enemies);
+		ret.add(items);
+		return ret;
+	}
+	
+	private boolean containsItem(int x, int y) {
+		return validCoordinates(x, y) && this.squares[x][y].containsItem();
+	}
+
+	private boolean isPlayer(int x, int y) {
+		return isCreature(x, y) && this.squares[x][y].c.isPlayer();
+	}
+
+	private boolean isCreature(int x, int y) {
+		return validCoordinates(x, y) && this.squares[x][y].c != null;
+	}
+	
+	/**
+	 * This method takes an OSC and finds some place on the map to add it.
+	 * Not really something I expect to use a lot, mainly for testing?
+	 * @param osc
+	 */
+	public void addOnScreenchar(OnScreenChar osc) {
+		boolean done = false;
+		while (!done) {
+			int x = (int)(Math.random()*this.squares.length);
+			int y = (int)(Math.random()*this.squares[0].length);
+			if (isPassable(x, y)) {
+				this.monsters.add(osc);
+				putOnScreenChar(x, y, osc, false);
+				done = true;
+			}
+		}
+		
 	}
 }

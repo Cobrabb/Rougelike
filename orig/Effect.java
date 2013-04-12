@@ -8,6 +8,10 @@ import orig.Creature.sVal;
 
 public class Effect implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5918442250342605542L;
 	private cStats cstat = null; //which cStat to affect
 	private bStats bstat = null; // which bStat to affect
 	private boolean attack = true; //whether harms others or help self
@@ -202,5 +206,18 @@ public class Effect implements Serializable {
 	public void update() {
 		this.steps--;
 		this.value *= this.repeatRate;
+	}
+	
+	public String toString() {
+		String str = "";
+		if(this.permanent) str += "Permanently modifies ";
+		else str += "Temporarily modifies ";
+		if(this.base) str += this.bstat + " by ";
+		else str += this.cstat + " by ";
+		if(this.elemental) {
+			str += " of " + this.element;
+		}
+		str += " for " + this.steps + " moves.";
+		return str;
 	}
 }

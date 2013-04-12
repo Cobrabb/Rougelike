@@ -709,7 +709,7 @@ public class Creature implements Serializable {
 			}
 		}
 		else if(n<this.slots+this.weilding.length) {
-			if(this.weilding[n-this.slots] != null) {
+			if(this.weilding[n-this.slots] != null && this.weilding[n-this.slots].getHands() > 0) {
 				int hands = this.weilding[n-this.slots].getHands();
 				this.weilding[n-this.slots].unequip();
 				this.weilding[n-this.slots] = null;
@@ -717,6 +717,7 @@ public class Creature implements Serializable {
 				for(int j=1; j<hands; j++) {
 					this.weilding[n-this.slots + j] = null;
 				}
+				availHands += hands;
 				consolidateWeilding();
 				return true;
 			}

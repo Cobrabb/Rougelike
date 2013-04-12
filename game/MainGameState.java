@@ -130,6 +130,9 @@ public class MainGameState extends BasicGameState{
 		p1.pickup(i);
 		p1.pickup(j);
 		p1.pickup(k);
+		for(int numItems=0; numItems<10; numItems++) {
+			p1.pickup(new Item());
+		}
 	
 	}
  

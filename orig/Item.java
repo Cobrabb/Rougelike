@@ -87,8 +87,14 @@ public class Item implements Serializable {
 	}
 	
 	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, double baseDmg, iType type, double weight) {
-		this.consists = consists;
-		this.repairs = repairs;
+		if(consists != null) {
+			this.consists = consists;
+		}
+		else this.consists = new Element[0];
+		if(repairs != null) {
+			this.repairs = repairs;
+		}
+		else this.repairs = new Element[0];
 		this.hands = hands;
 		this.techRequired = techRequired;
 		this.phys_tech_ratio = phys_tech_ratio;
@@ -145,6 +151,8 @@ public class Item implements Serializable {
 	
 	public static Item offHand(Item i) {
 		Item newItem = new Item(null, null, 0,0,0.0,0,i.getType(),0);
+		String temp[] = i.getName().split("[()<>]");
+		newItem.name = temp[0];
 		newItem.attack = false;
 		newItem.effects = new ArrayList<Effect>(0);
 		return newItem;
@@ -159,7 +167,7 @@ public class Item implements Serializable {
 		if(this.hands > 1) str += "(" + this.hands + " hands)";
 		if(!this.equipped)	return str;
 		if(this.type == iType.HAND) {
-			if(this.hands > 1) return str+ "<WIELDING>";
+			return str+ "<WIELDING>";
 		}
 		return str+ "<" + this.type + ">";
 	}

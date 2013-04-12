@@ -200,9 +200,7 @@ public class Effect implements Serializable {
 	}
 	
 	public void update() {
-		if(!this.permanent) {
-			this.steps--;
-		}
+		this.steps--;
 		this.value *= this.repeatRate;
 	}
 }

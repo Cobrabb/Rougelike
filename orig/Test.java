@@ -75,6 +75,8 @@ public class Test {
 		for(int i=0; i<att.size(); i++) {
 			System.out.println("Attack #" + i);
 			c2.takeAttack(att.get(i));
+			c2.update();
+			c.update();
 			for(int j = 0; j < cStats.TOTAL.ordinal(); j++) {
 				statPrint = s[j] + " : ";
 				for(int k = 0; k < sVal.TOTAL.ordinal(); k++) {

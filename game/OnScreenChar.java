@@ -152,5 +152,9 @@ public class OnScreenChar implements Serializable {
 		return this.yPos;
 	}
 	
+	public boolean detects(OnScreenChar osc) {
+		return this.baseCreature.detects(this.xPos,this.yPos,osc.getX(),osc.getY(),osc.baseCreature);
+	}
+	
 	//attack, move, etc, will call the creature's attach stuff, I'll probably also do the same abstraction for inventory at some point...
 }

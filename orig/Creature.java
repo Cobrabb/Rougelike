@@ -243,10 +243,29 @@ public class Creature implements Serializable {
 	
 //Decrement and remove Effects
 	public void update() {
+		Effect e;
 		for(int i=0; i<effects.size(); i++) {
+			e = effects.get(i);
+			double value = e.getValue(), dmg = e.getValue();
+			if(e.isElemental()) {
+				dmg = value*UET.getUET().getDmg(e.getElement(),this.casing);
+				dmg += value*UET.getUET().getDmg(e.getElement(),this.fluid);
+				dmg += value*UET.getUET().getDmg(e.getElement(),this.organs);
+			}
+			if(e.isTemp()) {
+				//do nothing, just leave in effects and it modifies effective value
+			}
+			else {
+				if(e.isBase()) {
+					this.bStat[e.getBStat().ordinal()][e.getSVal().ordinal()] += dmg;
+				}
+				else {
+					this.cStat[e.getCStat().ordinal()][e.getSVal().ordinal()] += dmg;
+				}
+			}
 			//decrements steps remaining
 			effects.get(i).update();
-			//removes expired effects
+			//removes expired effects and stays at current count (effect was deleted, therefore everything shifted)
 			if(effects.get(i).getSteps() <= 0) {
 				effects.remove(i);
 				i--;
@@ -519,7 +538,7 @@ public class Creature implements Serializable {
 	public ArrayList<Attack> attack(int x, int y, AttackDirection ad) {//the attacking starts here
 		ArrayList<Attack> att = new ArrayList<Attack>(0);
 		for(int i=0; i<this.getNumArms(); i++) {
-			if(i<this.weilding.length)	att.add(this.weilding[i].attack(x, y, ad, this));
+			if(this.weilding[i] != null && i<this.weilding.length)	att.add(this.weilding[i].attack(x, y, ad, this));
 			else {
 				//handle unarmed case
 			}
@@ -593,36 +612,14 @@ public class Creature implements Serializable {
 	}
 	
 	public void attackEffect(Effect e) {
-		//if(e.isAttack()) { //if it is an attack
-			double value = e.getValue(), dmg = e.getValue();
-			if(e.isTemp()) {
-				effects.add(new Effect(e));
-			}
-			else {
-				if(e.isElemental()) {
-					dmg = value*UET.getUET().getDmg(e.getElement(),this.casing);
-					dmg += value*UET.getUET().getDmg(e.getElement(),this.casing);
-					dmg += value*UET.getUET().getDmg(e.getElement(),this.casing);
-				}
-				if(e.isBase()) {
-					this.bStat[e.getBStat().ordinal()][e.getSVal().ordinal()] += dmg;
-				}
-				else {
-					this.cStat[e.getCStat().ordinal()][e.getSVal().ordinal()] += dmg;
-				}
-			}
-		//}
-		
+		if(e != null && e.isAttack()) { //if it is an attack
+			effects.add(new Effect(e));
+		}
 	}
 	
 	public void defenseEffect(Effect e) {
-		if(!e.isAttack()) { //if it is an attack 
-			if(e.isTemp()) {
-				Effect eff = new Effect(e);
-			}
-			else {
-				
-			}
+		if(e != null && !e.isAttack()) { //if it is an attack 
+			effects.add(new Effect(e));
 		}
 		
 	}
@@ -653,11 +650,15 @@ public class Creature implements Serializable {
 						for(int k=1; k<i.getHands(); k++) {
 							weilding[j+k] = Item.offHand(i);
 						}
+						availHands -= i.getHands();
+						i.equip();
+						return true;
+					}
+					else if(weilding[j] == i) {
+						return true;
 					}
 				}
-				availHands -= i.getHands();
-				i.equip();
-				return true;
+				return false;
 			}
 			else {
 				return false;
@@ -780,4 +781,22 @@ public class Creature implements Serializable {
 		return this.inventory.get(n).getName();
 	}
 	*/
+	
+	public boolean detects(int myX, int myY, int x, int y, Creature c) {
+		double distance = Math.sqrt(Math.pow((myX-x),2) + Math.pow((myY-y),2));
+		double stealthScore = this.getEffective(cStats.STEALTH_SIGHT,sVal.CURRENT);
+		double detectScore = c.getEffective(cStats.DETECT_SIGHT,sVal.CURRENT);
+		//stealth increases with distance 
+		// stealth and detect both get 50% of their value plus up to 50% (random)
+		if(stealthScore*Math.pow(distance, 1.25)*(.5+.5*Math.random()) > detectScore*(.5+.5*Math.random())) {
+			// not detected 
+			this.gain(cStats.STEALTH_SIGHT,sVal.XP,(int) Math.floor(detectScore/distance));
+			return false;
+		}
+		else {
+			//detected
+			c.gain(cStats.DETECT_SIGHT,sVal.XP,(int) Math.floor(stealthScore*distance));
+			return true;
+		}
+	}
 }

@@ -21,6 +21,7 @@ import org.newdawn.slick.Image;
 import orig.Creature;
 import orig.Element;
 import orig.Race;
+import orig.UET;
 import util.ImageUtil;
 
 
@@ -122,14 +123,15 @@ public class CreateCharacterState extends BasicGameState{
     	boolean race = false;
     	if(state == 1)
     	{
+    		UET e = UET.getUET();
     		if( ( mouseX >= 300 && mouseX <= 330) &&
         		    ( mouseY >= 375 && mouseY <= 3955 + 50) ){
         		    race = true;
     		{
     			//System.out.println(Math.pow((Math.random()*200),.5));
     			if (race&& input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
-    					//TODO:ALEX
-    					Race human = new Race("human", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), new Element(/*"Casing",13,11,12*/), new Element(/*"Fluid",4,4,4*/), new Element(/*"Organs",6,8,10*/), 2, 2, new ArrayList<Race>());
+    					//TODO:ALEX																										//casing							//fluid						//organs
+    					Race human = new Race("human", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.MEAT), e.getElementList().get(e.WATER), e.getElementList().get(e.MEAT), 2, 2, new ArrayList<Race>());
     					Creature c = new Creature(human, name.getText());
     					
     					MainGameState.loadedCreature = c;

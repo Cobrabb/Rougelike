@@ -35,6 +35,10 @@ public class CreateCharacterState extends BasicGameState{
 	private String mouse = "No input yet!";
 	TextField name;
 	UnicodeFont font2;
+	UET e = null;
+	transient Image ihuman;
+	transient Image iargok;
+	transient Image iwonka;
 	CreateCharacterState( int stateID ) 
     {
        this.stateID = stateID;
@@ -47,11 +51,12 @@ public class CreateCharacterState extends BasicGameState{
  
     public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
     	//fx = new Sound("data/ding.wav");
-    	
+    	 e = UET.getUET();
     	font2 = getNewFont("Arial" , 16);
     	
-    	
-    	
+    	ihuman = ImageUtil.getImage("human");
+    	iargok = ImageUtil.getImage("argok");
+    	iwonka = ImageUtil.getImage("oompa");
     	font2.loadGlyphs();
     }
  
@@ -73,6 +78,8 @@ public class CreateCharacterState extends BasicGameState{
     	gp.drawString("inputMouse x " + inputMouse.getMouseX() + " y " + inputMouse.getMouseY(), 100, 420);
     	gp.drawString(mouse, 100, 400);
     	
+    	
+    	
     	if(state == 0)
     	{
     		gp.drawString("Welcome to Character Creation", 300, 250);
@@ -84,9 +91,24 @@ public class CreateCharacterState extends BasicGameState{
     	if(state == 1)
     	{
     		name.setLocation(2000, 2000);
-    		gp.drawString("Choose Your Race", 300, 350);
     		
-    		gp.drawString("HUMAN", 300, 400);
+    		ihuman.draw(80, 130);
+    		iargok.draw(80,200);
+    		iwonka.draw(80,270);
+    		
+    		gp.drawString("Choose Your Race", 300, 115);
+    		
+    		gp.drawString("HUMAN", 130, 130);
+    		gp.drawString("The Human race is a young adventurous race with 2 arms and 2 legs\nand eager to explore the universe.", 200, 130);
+    		
+    		gp.drawString("ARGOK", 130, 200);
+    		gp.drawString("The Argok race is an old primative race who devolved into stone-like creatures.\nThey have 4 arms and 2 legs.", 200, 200);
+    		
+    		gp.drawString("WONKA", 130, 270);
+    		gp.drawString("The Wonka race is a superior advanced race and is the only race to ever reach \nthe final evolution stage of fudge.Their entire body " +
+    					  "is made of fudge and have\n2 arms and 2 legs", 200, 270);
+    		
+    		
     		
     	}
     	
@@ -120,17 +142,17 @@ public class CreateCharacterState extends BasicGameState{
     		}
     	}
     }
-    	boolean race = false;
+    	
     	if(state == 1)
     	{
-    		UET e = UET.getUET();
-    		if( ( mouseX >= 300 && mouseX <= 330) &&
-        		    ( mouseY >= 375 && mouseY <= 3955 + 50) ){
-        		    race = true;
+    		
+    		if( ( mouseX >= 130 && mouseX <= 200) &&
+        		    ( mouseY >= 130 && mouseY <= 130 + 20) ){
+        		   
     		{
-    			//System.out.println(Math.pow((Math.random()*200),.5));
-    			if (race&& input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
-    					//TODO:ALEX																										//casing							//fluid						//organs
+    			System.out.println(Math.pow((Math.random()*200),.5));
+    			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
+    																																	//casing							//fluid						//organs
     					Race human = new Race("human", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.MEAT), e.getElementList().get(e.WATER), e.getElementList().get(e.MEAT), 2, 2, new ArrayList<Race>());
     					Creature c = new Creature(human, name.getText());
     					
@@ -141,6 +163,48 @@ public class CreateCharacterState extends BasicGameState{
     	    	}
     		}
     	}
+    		
+    		
+    		if( ( mouseX >= 130 && mouseX <= 180) &&
+        		    ( mouseY >= 180 && mouseY <= 190+50) ){// +50 because game does  not start at 0,0 have to offset it by 50
+        		    
+    		{
+    			System.out.println("***********************************************************************");
+    			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
+    																																				//casing							//fluid						//organs
+    					Race argok = new Race("argok", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.STONE), e.getElementList().get(e.DIRT), e.getElementList().get(e.WOOD), 4, 2, new ArrayList<Race>());
+    					Creature c = new Creature(argok, name.getText());
+    					
+    					MainGameState.loadedCreature = c;
+    					sbg.enterState(MainGame.MAINGAMESTATE);
+    					
+    	    		
+    	    	}
+    		}
+    	}
+    		
+    		
+    		
+
+    		if( ( mouseX >= 130 && mouseX <= 180) && //WONKAS!
+        		    ( mouseY >= 270 && mouseY <= 270+50) ){// +50 because game does  not start at 0,0 have to offset it by 50
+        		    
+    		{
+    			
+    			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
+    																																				//casing							//fluid						//organs
+    					Race wanka = new Race("oompa", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.FUDGE), e.getElementList().get(e.WATER), e.getElementList().get(e.FUDGE), 4, 2, new ArrayList<Race>());
+    					Creature c = new Creature(wanka, name.getText());
+    					
+    					MainGameState.loadedCreature = c;
+    					sbg.enterState(MainGame.MAINGAMESTATE);
+    					
+    	    		
+    	    	}
+    		}
+    	}
+    		
+    		
     	}
     	
     	

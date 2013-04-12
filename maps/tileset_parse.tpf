@@ -38,7 +38,7 @@
 32
 
 # Number of image files
-4
+5
 
 # First Image filename
 ccrgeek_ground_tileset.png
@@ -59,12 +59,13 @@ W*6+0 H*3+0 dark brown rock
 nethack_tileset.png
 
 # Tile count
-4
+5
 
 w*4+0 h*21+0 door
 w*11+0 h*21+0 upstairs
 w*12+0 h*21+0 downstairs
 w*39+0 h*8+0 human
+w*2+0 h*1+0 argok
 
 # Third
 enemy.png
@@ -81,5 +82,14 @@ player.png
 # Tile Count
 1
 0 0 stickhero
+
+
+# Fith File
+oompa.png
+
+#Tile count
+1
+
+0 0 oompa
 # all further lines are ignored
 # the last line could have been 192 96 dark brown rock, or 32*6+0 3*32+0 dark brown rock

@@ -110,8 +110,6 @@ public class MainGameState extends BasicGameState{
 		o1 = new OnScreenChar(30, 30, c, true);
 		dm.addOnScreenchar(o1);
 
-
-	
 		Iterator<GridPoint> it = dm.getPlayerSpawnPoints().iterator();
 		int xx = -1, yy = -1;
 		while (it.hasNext()) {

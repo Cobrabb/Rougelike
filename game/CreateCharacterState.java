@@ -19,6 +19,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.Image;
 
 import orig.Creature;
+import orig.Creature.cStats;
+import orig.Creature.sVal;
 import orig.Element;
 import orig.Race;
 import orig.UET;
@@ -102,7 +104,7 @@ public class CreateCharacterState extends BasicGameState{
     		gp.drawString("The Human race is a young adventurous race with 2 arms and 2 legs\nand eager to explore the universe.", 200, 130);
     		
     		gp.drawString("ARGOK", 130, 200);
-    		gp.drawString("The Argok race is an old primative race who devolved into stone-like creatures.\nThey have 4 arms and 2 legs.", 200, 200);
+    		gp.drawString("The Argok race is an old primative race who devolved into a floating collection\n of stone-like creatures.They have 4 arms and 2 legs.", 200, 200);
     		
     		gp.drawString("WONKA", 130, 270);
     		gp.drawString("The Wonka race is a superior advanced race and is the only race to ever reach \nthe final evolution stage of fudge.Their entire body " +
@@ -154,8 +156,13 @@ public class CreateCharacterState extends BasicGameState{
     			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
     																																	//casing							//fluid						//organs
     					Race human = new Race("human", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.MEAT), e.getElementList().get(e.WATER), e.getElementList().get(e.MEAT), 2, 2, new ArrayList<Race>());
-    					Creature c = new Creature(human, name.getText());
+    					human.gain(cStats.DETECT_SIGHT, sVal.XP, 11);
+    					human.gain(cStats.SPEED_ATTACK, sVal.XP, 11);
+    					human.gain(cStats.TECH_WEAPON, sVal.XP, 11);
+
     					
+    					Creature c = new Creature(human, name.getText());
+    				
     					MainGameState.loadedCreature = c;
     					sbg.enterState(MainGame.MAINGAMESTATE);
     					
@@ -173,6 +180,11 @@ public class CreateCharacterState extends BasicGameState{
     			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
     																																				//casing							//fluid						//organs
     					Race argok = new Race("argok", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.STONE), e.getElementList().get(e.DIRT), e.getElementList().get(e.WOOD), 4, 2, new ArrayList<Race>());
+    					argok.gain(cStats.STAM_HEALTH, sVal.XP, 11);
+    					argok.gain(cStats.STR_PHYS_ATTACK, sVal.XP, 11);
+    					
+    					
+    					
     					Creature c = new Creature(argok, name.getText());
     					
     					MainGameState.loadedCreature = c;
@@ -193,8 +205,15 @@ public class CreateCharacterState extends BasicGameState{
     			
     			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
     																																				//casing							//fluid						//organs
-    					Race wanka = new Race("oompa", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.FUDGE), e.getElementList().get(e.WATER), e.getElementList().get(e.FUDGE), 4, 2, new ArrayList<Race>());
-    					Creature c = new Creature(wanka, name.getText());
+    					Race wonka = new Race("oompa", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.FUDGE), e.getElementList().get(e.WATER), e.getElementList().get(e.FUDGE), 4, 2, new ArrayList<Race>());
+    					wonka.gain(cStats.TECH_WEAPON, sVal.XP, 11);
+    					wonka.gain(cStats.TECH_ARMOR, sVal.XP, 11);
+    					wonka.gain(cStats.STEALTH_SIGHT, sVal.XP, 11);
+    					wonka.gain(cStats.DETECT_SIGHT, sVal.XP, 11);
+    					wonka.gain(cStats.SPEED_MOVE, sVal.XP, 11);
+    					
+    					
+    					Creature c = new Creature(wonka, name.getText());
     					
     					MainGameState.loadedCreature = c;
     					sbg.enterState(MainGame.MAINGAMESTATE);

@@ -106,7 +106,7 @@ public class MainGameState extends BasicGameState{
 		b_drop = new Image("data/tiles/button_drop.png");
 		b_examine = new Image("data/tiles/button_examine.png");
 		
-		o1 = new OnScreenChar(enemy, 30, 30, c);
+		o1 = new OnScreenChar(30, 30, c, true);
 		dm.putOnScreenChar(o1.xPos, o1.yPos, o1, false);
 		Iterator<GridPoint> it = dm.getPlayerSpawnPoints().iterator();
 		int xx = -1, yy = -1;

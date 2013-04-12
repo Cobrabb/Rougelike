@@ -27,15 +27,19 @@ public class OnScreenChar implements Serializable {
 	}
 	
 	public OnScreenChar(String imgName, int X, int Y, Creature c){
-		this.imgName = imgName;
 		xPos = X;
 		yPos = Y;
 		baseCreature = c;
+		this.imgName = imgName;
 		speed = 1; //baseCreature.get(bStats.SPEED, sVal.LEVEL)
 		draw(xPos, yPos);
 		ratioMovement = speed;
 		stackedMovement = 0;
 		isPlayer = false;
+	}
+	
+	public OnScreenChar(int X, int Y, Creature c, boolean b){
+		this(initializeSprite(c), X, Y, c);
 	}
 	
 	public void draw(int mapX, int mapY){
@@ -144,6 +148,14 @@ public class OnScreenChar implements Serializable {
 		isPlayer = true;
 	}
 
+	public static String initializeSprite(Creature c){
+		String str="";
+		str+=c.getNumArms()<=4 ? c.getNumArms() : 6;
+		str+=c.getNumLegs()<=4 ? c.getNumLegs() : 6; 
+		str+=c.getRaceKey()%10;
+		return str;
+	}
+	
 	public int getX() {
 		return this.xPos;
 	}

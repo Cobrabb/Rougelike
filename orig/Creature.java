@@ -49,7 +49,8 @@ public class Creature implements Serializable {
 	private Element organs;
 //	private boolean genders; //true if the Race is not a hermaphodite
 	private int numArms;
-//	private int numLegs;
+    private int numLegs;
+    private int raceKey;
 	
 	private int[][] cStat;
 	private int[][] bStat;
@@ -127,6 +128,8 @@ public class Creature implements Serializable {
 		this.fluid = r.getFluid();
 		this.organs = r.getOrgans();
 		this.numArms = r.getNumArms();
+		this.numLegs = r.getNumLegs();
+		this.raceKey = r.getRaceKey();
 		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
 		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
@@ -200,6 +203,10 @@ public class Creature implements Serializable {
 		this.name = name;
 	}
 	
+	public int getRaceKey(){
+		return this.raceKey;
+	}
+	
 	public String getRName() {
 		return this.rName;
 	}
@@ -210,6 +217,10 @@ public class Creature implements Serializable {
 	
 	public int getNumArms() {
 		return this.numArms;
+	}
+	
+	public int getNumLegs(){
+		return numLegs;
 	}
 	
 	public void setNumArms(int n) {

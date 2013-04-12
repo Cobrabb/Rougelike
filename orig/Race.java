@@ -20,6 +20,7 @@ public class Race {
 	private boolean genders; //true if the Race is not a hermaphodite
 	private int numArms;
 	private int numLegs;
+	private int raceKey;
 	private ArrayList<Effect> effects;
 	private ArrayList<Race> friendly;
 
@@ -40,6 +41,7 @@ public class Race {
 	public Race(){ //completely random, probably not necessary.
 		this(UET.getUET().getElementArray(),new Language());//makes a new race from all elements and a new language
 		autoLvlXP(500*cStats.TOTAL.ordinal()); // allocate 500 per stat, not allocated evenly
+		this.raceKey = (int)(Math.random()*500);
 	}
 
 	public Race(Element[] e, Language L){ //semi random
@@ -116,13 +118,14 @@ public class Race {
 			}
 		}
 
-		this.numArms = 2*(int) (Math.random()/.2)+1;
-		this.numLegs = 2*(int) (Math.random()/.4);
+		this.numArms = 2*((int) (Math.random()/.2)+1);
+		this.numLegs = 2*((int) (Math.random()/.4)+1);
 		this.friendly = new ArrayList<Race>(0);
 		this.effects = new ArrayList<Effect>(0);
 		while(Math.random() < .3) {
 			this.effects.add(new Effect());
 		}
+		this.raceKey = (int)(Math.random()*500);
 	}
 
 	public Race(String name, int diet, Element produces, Element consumes, Element casing, Element fluid, Element organs, int numArms, int numLegs, ArrayList<Race> friendly){
@@ -160,6 +163,7 @@ public class Race {
 		for(int i=0; i<friendly.size();i++){
 			this.friendly.add(friendly.get(i));
 		}
+		this.raceKey = (int)(Math.random()*500);
 	}
 	
 	public boolean isFriendly(Race r) {
@@ -229,6 +233,10 @@ public class Race {
 	
 	public int getNumLegs() {
 		return this.numLegs;
+	}
+	
+	public int getRaceKey(){
+		return this.raceKey;
 	}
 	
 	public void setNumLegs(int n) {

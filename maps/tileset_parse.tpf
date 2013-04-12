@@ -56,7 +56,7 @@ W*4+0 H*3+0 sandstone
 W*6+0 H*3+0 dark brown rock
 
 # Second Image filename
-nethack_tileset.png
+nethack_tileset.gif
 
 # Tile count
 5
@@ -85,7 +85,7 @@ player.png
 
 
 # Fith File
-oompa.png
+wonka.gif
 
 #Tile count
 1

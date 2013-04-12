@@ -56,23 +56,20 @@ W*4+0 H*3+0 sandstone
 W*6+0 H*3+0 dark brown rock
 
 # Second Image filename
-nethack_tileset.png
+nethack_tileset.gif
 
 # Tile count
-4
+6
 
 w*4+0 h*21+0 door
 w*11+0 h*21+0 upstairs
 w*12+0 h*21+0 downstairs
 w*39+0 h*8+0 human
+w*2+0 h*1+0 argok
+w*18+0 h*4+0 stickenemy
 
-# Third
-enemy.png
 
-# Tile count
-1
 
-0 0 stickenemy
 
 
 # Fourth File
@@ -81,5 +78,14 @@ player.png
 # Tile Count
 1
 0 0 stickhero
+
+
+# Fith File
+wonka.gif
+
+#Tile count
+1
+
+0 0 oompa
 # all further lines are ignored
 # the last line could have been 192 96 dark brown rock, or 32*6+0 3*32+0 dark brown rock

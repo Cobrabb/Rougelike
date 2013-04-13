@@ -13,7 +13,10 @@ import util.General.GridPoint;
 import util.ImageUtil;
 
 public class OnScreenChar implements Serializable {
+	static final int TICKLIMIT = 180;
+	int tickCounter = 0;
 	transient Image looks;
+	transient Image looksFlipped;
 	String imgName;
 	int xPos;
 	int yPos;
@@ -47,9 +50,18 @@ public class OnScreenChar implements Serializable {
 	}
 	
 	public void draw(int mapX, int mapY){
-		if (looks == null)
+		if (looks == null) {
 			looks = ImageUtil.getImage(this.imgName);
-		looks.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize);
+			looksFlipped = looks.getFlippedCopy(true, false);
+		}
+		if (tickCounter < TICKLIMIT)
+			looks.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize);
+		else
+			looksFlipped.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize);
+		
+		++tickCounter;
+		if (tickCounter == TICKLIMIT*2)
+			tickCounter = 0;
 	}
 	
 	public void initializeRatio(int playerSpeed){

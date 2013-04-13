@@ -1,6 +1,6 @@
 package orig;
 
-import org.newdawn.slick.Image;
+import org.newdawn.slick.Graphics;
 
 import util.ImageUtil;
 
@@ -22,11 +22,11 @@ public class Teleporter extends Square {
 		return this.toLoc;
 	}
 	
-	public void render(int row, int col, int px, int py) {
+	public void render(int row, int col, int px, int py, Graphics g) {
 		if (img == null) {
 			img = ImageUtil.getImage("teleporter");
 		}
-		super.render(row,  col, px, py);
+		super.render(row,  col, px, py, g);
 		if (visible) {
 			img.draw(row*ImageUtil.getTileWidth(), col*ImageUtil.getTileHeight());
 		}

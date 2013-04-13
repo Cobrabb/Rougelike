@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Stack;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import util.ImageUtil;
@@ -51,7 +52,7 @@ public class Square implements Serializable {
 		return (this.passable && (c == null));
 	}
 	
-	public void render(int x, int y, int px, int py) {
+	public void render(int x, int y, int px, int py, Graphics g) {
 		// TODO Auto-generated method stub
 		if (noImage()) {
 			if (imgName != null) {
@@ -73,7 +74,7 @@ public class Square implements Serializable {
 			img.draw(x*ImageUtil.getTileWidth(), y*ImageUtil.getTileHeight(), transparency);
 		}
 		if (visible && c != null) {
-			c.draw(px,  py);
+			c.draw(px,  py, g);
 		}
 	}
 	

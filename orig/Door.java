@@ -1,6 +1,6 @@
 package orig;
 
-import org.newdawn.slick.Image;
+import org.newdawn.slick.Graphics;
 
 import util.General.Direction;
 import util.ImageUtil;
@@ -15,14 +15,14 @@ public class Door extends Square {
 		super(pass, cons);
 	}
 	
-	public void render(int row, int col, int px, int py) {
+	public void render(int row, int col, int px, int py, Graphics g) {
 		if (super.noImage()) {
 			if (imgName == null)
 				super.setImage(ImageUtil.getImage("door"));
 			else
 				super.setImage(ImageUtil.getImage(imgName));
 		}
-		super.render(row, col, px, py);
+		super.render(row, col, px, py, g);
 	}
 	
 	public void setDirection(Direction d) {

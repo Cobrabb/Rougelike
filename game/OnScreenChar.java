@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import orig.Creature;
@@ -39,7 +41,6 @@ public class OnScreenChar implements Serializable {
 		baseCreature = c;
 		this.imgName = imgName;
 		speed = 1; //baseCreature.get(bStats.SPEED, sVal.LEVEL)
-		draw(xPos, yPos);
 		ratioMovement = speed;
 		stackedMovement = 0;
 		isPlayer = false;
@@ -49,7 +50,8 @@ public class OnScreenChar implements Serializable {
 		this(initializeSprite(c), X, Y, c);
 	}
 	
-	public void draw(int mapX, int mapY){
+	public void draw(int mapX, int mapY, Graphics g){
+		// draw sprite image
 		if (looks == null) {
 			looks = ImageUtil.getImage(this.imgName);
 			looksFlipped = looks.getFlippedCopy(true, false);
@@ -62,6 +64,12 @@ public class OnScreenChar implements Serializable {
 		++tickCounter;
 		if (tickCounter == TICKLIMIT*2)
 			tickCounter = 0;
+		
+		// if player, put the name
+		if (isPlayer()) {
+			g.drawString(baseCreature.getName(), (xPos-mapX-1)*tileSize, (yPos-mapY-1)*tileSize);
+			g.setColor(Color.black);
+		}
 	}
 	
 	public void initializeRatio(int playerSpeed){
@@ -108,13 +116,16 @@ public class OnScreenChar implements Serializable {
 		int totalTargets = enemies.size() + treasure.size();
 		// if nothing interesting around
 		if (totalTargets == 0) {
+			System.out.printf("TotalTargets = 0!\n");
 			if (pathPlan != null && !pathPlan.isEmpty()) {
+				System.out.printf("\tWe have a plan!\n");
 				// we had a plan, so we'll follow it cause nothing else to do
 				// assuming that the plan has no invalid moves
 				GridPoint next = pathPlan.pop();
+				System.out.printf("\tAttackmove from (%d, %d) to %s\n", xPos, yPos, next);
 				dm.attackMove(xPos, yPos, next.getX(), next.getY(), true);
-				return; // exit method
 			} else {
+				System.out.printf("\tWe have no plan...\n");
 				// no plan, or nowhere else to go according to plan
 				// random move
 				// assuming for now that creature can move any direction
@@ -127,18 +138,19 @@ public class OnScreenChar implements Serializable {
 						notFound = false;
 					}
 				}
-				return;
 			}
 		} else {
 			if (enemies.size() != 0) {
 				// there is an enemy that we can see.
 				// charge!
 				GridPoint enemy = enemies.get(0);
+				System.out.printf("There is an enemy at %s\n", enemy);
 				dm.moveOSC(xPos, yPos, enemy.getX(), enemy.getY());
 				// there should always be a move, if there is a pathPlan
 				// if no pathPlan, bad data was passed into moveOSC call
 				if (pathPlan != null) {
 					enemy = pathPlan.pop();
+					System.out.printf("\tWe formulated a plan, to move to %s\n", enemy);
 					dm.attackMove(xPos, yPos, enemy.getX(), enemy.getY(), true);
 				}
 			} else if (treasure.size() != 0) {
@@ -152,6 +164,16 @@ public class OnScreenChar implements Serializable {
 				}
 			}
 		}
+		// lastly, after moving, see if it can detect any enemies and come up with a plan.
+		targets = dm.detectArea(radius, this);
+		enemies = targets.get(0);
+		System.out.printf("After moving, try to detect enemies");
+		if (enemies.size() != 0) {
+			System.out.printf("\tAftermove Enemy detected!\n");
+			// there is an enemy, so make a plan
+			GridPoint enemy = enemies.get(0);
+			dm.moveOSC(xPos, yPos, enemy.getX(), enemy.getY());
+		} // else do nothing
 	}
 	
 	public void move(int left, int up, DungeonMap dm){

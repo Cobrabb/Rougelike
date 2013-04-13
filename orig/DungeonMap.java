@@ -330,7 +330,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		int yLower = (yPos < 0) ? 0 : yPos;
 		for (int x = xLower; x < xUpper; ++x) {
 			for (int y = yLower; y < yUpper; ++y) {
-				squares[x][y].render(x-xPos, y-yPos, xPos, yPos);
+				squares[x][y].render(x-xPos, y-yPos, xPos, yPos, g);
 			}
 		}
 	}

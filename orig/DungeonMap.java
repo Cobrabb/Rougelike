@@ -307,6 +307,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		}
 		return squares[xCoor][yCoor].isPassable();
 	}
+	
 
 	private boolean validCoordinates(int xCoor, int yCoor) {
 		return (xCoor >= 0 && xCoor < squares.length && yCoor >= 0 && yCoor < squares[0].length);

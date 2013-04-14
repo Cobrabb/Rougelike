@@ -219,7 +219,7 @@ public class OnScreenChar implements Serializable {
 	public boolean canMove(int left, int up, DungeonMap dm){
 		boolean b = dm.isPassable(xPos+left, yPos+up);
 		if(b){
-			move(left, up, dm);
+			dm.attackMove(xPos, yPos, xPos+left, yPos+up, true);
 		}
 		return b;
 	}

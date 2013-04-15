@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
@@ -55,16 +56,16 @@ public class OnScreenChar implements Serializable {
 		this(initializeSprite(c), X, Y, c);
 	}
 	
-	public void draw(int mapX, int mapY, Graphics g){
+	public void draw(int mapX, int mapY, Graphics g, Color tempFade){
 		// draw sprite image
 		if (looks == null) {
 			looks = ImageUtil.getImage(this.imgName);
 			looksFlipped = looks.getFlippedCopy(true, false);
 		}
 		if (tickCounter < TICKLIMIT)
-			looks.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize);
+			looks.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize, tempFade);
 		else
-			looksFlipped.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize);
+			looksFlipped.draw((xPos-mapX)*tileSize, (yPos-mapY)*tileSize, tempFade);
 		
 		++tickCounter;
 		if (tickCounter == TICKLIMIT*2)

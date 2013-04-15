@@ -80,7 +80,10 @@ public class Square implements Serializable {
 			img.draw(x*ImageUtil.getTileWidth(), y*ImageUtil.getTileHeight(), transparency);
 		}
 		if (visible && c != null) {
-			c.draw(px,  py, g);
+			if (tempFade == null)
+				c.draw(px,  py, g, Color.white);
+			else
+				c.draw(px, py, g, tempFade);
 		}
 	}
 	

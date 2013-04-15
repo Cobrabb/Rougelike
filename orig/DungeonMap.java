@@ -601,4 +601,12 @@ OUT:	while (!queue.isEmpty()) {
 		}
 		
 	}
+	
+	public void dropItem(Item i, int x, int y){
+		squares[x][y].dropItem(i);
+	}
+	
+	public Item pickUpItem(int x, int y){
+		return squares[x][y].pickUpItem();
+	}
 }

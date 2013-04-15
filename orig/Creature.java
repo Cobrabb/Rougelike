@@ -750,10 +750,11 @@ public class Creature implements Serializable {
 		equip(i);
 	}
 	
-	public void drop(Item i) {
+	public Item drop(Item i) {
 		this.inventory.remove(i);
 		unequip(i);
 		weight -= i.getWeight();
+		return i;
 	}
 	
 	public ArrayList<Item> getInventory() {

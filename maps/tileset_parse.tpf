@@ -38,7 +38,7 @@
 32
 
 # Number of image files
-4
+5
 
 # First Image filename
 ccrgeek_ground_tileset.png
@@ -59,7 +59,7 @@ W*6+0 H*3+0 dark brown rock
 nethack_tileset.gif
 
 # Tile count
-96
+101
 
 w*4+0 h*21+0 door
 w*11+0 h*21+0 upstairs
@@ -157,25 +157,35 @@ w*36+0 h*2+0 666
 w*11+0 h*9+0 667
 w*12+0 h*9+0 668
 w*13+0 h*9+0 669
+w*26+0 h*11+0 HEAD
+w*18+0 h*10+0 PHYS
+w*9+0 h*10+0 BUFF
+w*0+0 h*12+0 ARMOR
+w*18+0 h*13+0 BOOTS
 
 
-
-
-
-# Fourth File
+# Third File
 player.png
 
 # Tile Count
 1
 0 0 stickhero
 
-
-# Fith File
+# Fourth File
 wonka.gif
 
 #Tile count
 1
 
 0 0 oompa
+
+# Fifth File
+gun.png
+
+#Tile count
+1
+
+0 0 RANGED
+
 # all further lines are ignored
 # the last line could have been 192 96 dark brown rock, or 32*6+0 3*32+0 dark brown rock

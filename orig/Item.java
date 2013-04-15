@@ -3,11 +3,14 @@ package orig;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Image;
+
 
 import orig.Attack.AttackDirection;
 import orig.Attack.AttackPattern;
 import orig.Creature.cStats;
 import orig.Creature.sVal;
+import util.ImageUtil;
 
 public class Item implements Serializable {
 	
@@ -44,6 +47,10 @@ public class Item implements Serializable {
 	private AttackType atype = AttackType.PHYS; // defaults to physical attack
 	private int attackSize = 2; // defaults to attacking 2 spacing (except for point attacks)
 	private boolean equipped = false;
+	
+	private String imgname = "";
+	Image looks = null;
+	int tileSize = 32;
 //	private double wearDmg = 0.0;
 
 	
@@ -84,6 +91,8 @@ public class Item implements Serializable {
 		AttackType at[] = AttackType.values();
 		this.atype = at[(int) (AttackType.NONE.ordinal()*Math.random())];
 		this.attackSize = (int) Math.max((1/(Math.random()+.1)),1);
+		
+		this.imgname = generateImgname();
 	}
 	
 	public Item(Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, double baseDmg, iType type, double weight) {
@@ -204,6 +213,17 @@ public class Item implements Serializable {
 		return this.phys_tech_ratio;
 	}
 	
+	private String generateImgname(){
+		String str;
+		if(type!=iType.HAND){
+			str = type.toString();
+		}
+		else{
+			str = atype.toString();
+		}
+		return str;
+	}
+	
 ////////////////////////////////Stuff for attacking////////////////////////////////////	
 	public Attack attack(int x, int y, AttackDirection ad, Creature c) {
 		int phys = c.getEffective(cStats.STR_PHYS_ATTACK, sVal.CURRENT);
@@ -277,6 +297,13 @@ public class Item implements Serializable {
 			}
 		}
 		return str;
+	}
+	
+	public void draw(int xPos, int yPos){
+		if (looks == null) {
+			looks = ImageUtil.getImage(this.imgname);
+		}
+		looks.draw((xPos)*tileSize, (yPos)*tileSize);
 	}
 
 }

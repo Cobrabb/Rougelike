@@ -351,7 +351,10 @@ public class MainGameState extends BasicGameState{
 			    		menutime = true;
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_COMMA)){
-			    		//attempt pickup
+			    		Item i = dm.pickUpItem(p1.getX(), p1.getY());
+			    		if(i!=null)
+			    			p1.pickup(i);
+			    		kp = true;
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_A)){
 			    		free_mode = true;
@@ -403,7 +406,8 @@ public class MainGameState extends BasicGameState{
 		        		examined = ((mouseY-(header+textAllowed))/textAllowed)+outer;
 		        	}
 		        	else if(mouseX>itemMax+2*tileSize&&mouseX<=itemMax+3*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		p1.drop(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+		        		Item i = p1.drop(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+		        		dm.dropItem(i, p1.getX(), p1.getY());
 		        	}
 		        	else if(mouseX<150&&mouseY>=sizeY-(footer+textAllowed)&&mouseY<=sizeY-(footer)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&scrolldown){
 		        		outer=outer+itemFit;

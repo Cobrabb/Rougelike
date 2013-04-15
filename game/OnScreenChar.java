@@ -270,8 +270,8 @@ public class OnScreenChar implements Serializable {
 		baseCreature.equip(i);
 	}
 	
-	public void drop(Item i){
-		baseCreature.drop(i);
+	public Item drop(Item i){
+		return baseCreature.drop(i);
 	}
 
 	public boolean isPlayer() {
@@ -306,8 +306,12 @@ public class OnScreenChar implements Serializable {
 		return this.baseCreature.detects(this.xPos,this.yPos,osc.getX(),osc.getY(),osc.baseCreature);
 	}
 	
-	public void die(){
-		
+	public ArrayList<Item> die(){
+		ArrayList<Item> a = new ArrayList<Item>();
+		for(int i=0; i<baseCreature.getInventory().size(); i++){
+			a.add(baseCreature.drop(baseCreature.getInventory().get(i)));
+		}
+		return a;
 	}
 	
 }

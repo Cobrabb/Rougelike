@@ -11,6 +11,7 @@ public class Attack {
 		NORTH, EAST, SOUTH, WEST, OTHER, TOTAL;
 		
 		public int getVert() {
+			// TODO: this may be a bug, since "down" may be in the +y direction
 			switch(this) {
 				case NORTH:
 					return 1;

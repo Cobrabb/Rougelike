@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.StateBasedGame;
@@ -21,6 +22,7 @@ import util.DungeonMapGenerator.TileData;
 import util.DungeonMapGenerator.TileType;
 import util.General.Direction;
 import util.General.GridPoint;
+import util.TestUtil;
 
 public class DungeonMap implements TileBasedMap, Serializable { 
 	
@@ -70,6 +72,34 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		this(p, outer);
 	}
 	
+	/**
+	 * This method will show the places that a monster can see on the map as slightly
+	 * tinted a different color
+	 * @param pRadius
+	 * @param mRadius
+	 * @param x
+	 * @param y
+	 * @param color
+	 */
+	private void reveal(int pRadius, int mRadius, int x, int y, Color color) {
+		this.reveal(pRadius, x, y);
+		Iterator<OnScreenChar> it = this.monsters.iterator();
+		while (it.hasNext()) {
+			OnScreenChar monster = it.next();
+			if (monster.isPlayer())
+				continue;
+			int xx = monster.getX();
+			int yy = monster.getY();
+			for (int i = (xx-mRadius); i <= xx+mRadius; ++i) {
+				for (int j = (yy-mRadius); j <= yy+mRadius; ++j) {
+					if (isVisible(i, j, xx, yy, mRadius)) {
+						squares[i][j].setFade(color);
+					}
+				}
+			}
+		}
+	}
+	
 	public void reveal(int radius, int x, int y){
 		for(Square[] sq: squares) {
 			for(Square s: sq) {
@@ -77,8 +107,8 @@ public class DungeonMap implements TileBasedMap, Serializable {
 			}
 		}
 		// for added detail, we'll only illuminate walls that are next to floor tiles
-		for(int i=(x-radius); i<= x+radius; i++ ){
-			for(int j=(y-radius); j<= y+radius; j++){
+		for(int i=(x-radius); i <= x+radius; i++ ){
+			for(int j=(y-radius); j <= y+radius; j++){
 				if (isVisible(i, j, x, y, radius)) {
 					squares[i][j].setVisible();
 				}
@@ -116,7 +146,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		}
 		
 		if(chanceToSee) {
-			int interferenceLimit = 0; // okay if XXX things in the way
+			int interferenceLimit = 0; // okay if XX things in the way
 			int interferenceCount = 0;
 			//System.out.printf("\tThere is a chance we can see (%d, %d) from (%d, %d)!\n", i, j, x, y);
 			// we'll need to do the line thing.
@@ -314,6 +344,8 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	}
 	
 	public void update(int sightRadius, int xPos, int yPos) {
+		// TODO: call the creature's update methods, after? or before? movement
+		// I'll assume before, for now.
 		Iterator<OnScreenChar> it = monsters.iterator();
 		while (it.hasNext()) {
 			OnScreenChar osc = it.next();
@@ -321,7 +353,10 @@ public class DungeonMap implements TileBasedMap, Serializable {
 				osc.move(sightRadius, this);
 			}
 		}
-		this.reveal(sightRadius+3, xPos, yPos);
+		if (TestUtil.DISPLAY_MONSTER_LOS)
+			this.reveal(sightRadius+4, sightRadius, xPos, yPos, Color.red);
+		else
+			this.reveal(sightRadius, xPos, yPos);
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g, int xPos, int yPos, int screenX, int screenY) {
@@ -338,7 +373,6 @@ public class DungeonMap implements TileBasedMap, Serializable {
 
 	@Override
 	public boolean blocked(PathFindingContext arg0, int arg1, int arg2) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -409,7 +443,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	public void attackMove(int fromX, int fromY, int toX, int toY, boolean aggressive) {
 		if (isCreature(toX, toY) && isCreature(fromX, fromY)) {
 			if (aggressive) {
-				// do attack stuff
+				// TODO: implement attacking here
 				System.err.printf("Aha! I have you now!\n");
 			}
 		} else if(isCreature(fromX, fromY)){
@@ -483,10 +517,9 @@ OUT:	while (!queue.isEmpty()) {
 	 * @param onScreenChar The creature
 	 * @return
 	 */
-	// TODO: include Michael's detects(OSC) method
-	public ArrayList<ArrayList<GridPoint>> detectArea(int radius, OnScreenChar onScreenChar) {
-		int xPos = onScreenChar.getX();
-		int yPos = onScreenChar.getY();
+	public ArrayList<ArrayList<GridPoint>> detectArea(int radius, OnScreenChar osc) {
+		int xPos = osc.getX();
+		int yPos = osc.getY();
 		ArrayList<GridPoint> enemies = new ArrayList<GridPoint>();
 		ArrayList<GridPoint> items = new ArrayList<GridPoint>();
 		for (int x = xPos - radius; x <= xPos + radius; ++x) {
@@ -494,8 +527,11 @@ OUT:	while (!queue.isEmpty()) {
 				if (x == xPos && y == yPos)
 					continue; // ignore self.
 				if (isVisible(x, y, xPos, yPos, radius)) {
-					if (isCreature(x, y) && isPlayer(x, y)) { //TODO: and can detect creature, enemy check
-						enemies.add(new GridPoint(x, y));
+					if (isCreature(x, y) && isPlayer(x, y)) { //TODO: enemy check
+						//OnScreenChar other = this.squares[x][y].getOnScreenChar();
+						//TODO: fix bug, detects doesn't work properly
+						//if (osc.detects(other))
+							enemies.add(new GridPoint(x, y));
 					}
 					if (containsItem(x, y)) {
 						items.add(new GridPoint(x, y));

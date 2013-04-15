@@ -24,6 +24,7 @@ public class Square implements Serializable {
 	protected boolean visible;
 	protected boolean seeThrough;
 	protected Stack<Item> itemStack;
+	protected Color tempFade;
 	
 	public Square(boolean pass, Element cons) {
 		this.passable = pass;
@@ -68,8 +69,13 @@ public class Square implements Serializable {
 			} else {
 				transparency = Color.darkGray;
 			}
+			
 			if (!visible) { // not visible, then darken more
 				transparency = transparency.darker(0.50f);
+			} else if (tempFade != null) {
+				transparency = tempFade;
+				if (!passable)
+					transparency = transparency.darker(0.50f);
 			}
 			img.draw(x*ImageUtil.getTileWidth(), y*ImageUtil.getTileHeight(), transparency);
 		}
@@ -97,6 +103,7 @@ public class Square implements Serializable {
 	public void setVisible() {
 		this.seen = true;
 		this.visible = true;
+		this.tempFade = null;
 	}
 	
 	public void setNonvisible() {
@@ -123,5 +130,9 @@ public class Square implements Serializable {
 		if (c != null)
 			return false;
 		return this.seeThrough;
+	}
+
+	public void setFade(Color color) {
+		this.tempFade = color;
 	}
 }

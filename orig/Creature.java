@@ -546,6 +546,10 @@ public class Creature implements Serializable {
 
 	
 ////////////////////////////// Attacking ////////////////////////////////////////////////////////////////////
+	//TODO: relabel this as a melee attack only, and somehow let the creature be able to know
+	// what styles of attack it can do, so that if it has a ranged attack, it tries to attack
+	// from a range instead of just running towards an enemy
+	//TODO: link this with OnScreenChar, so that functions called to OSC ask the base creature to do the methods
 	public ArrayList<Attack> attack(int x, int y, AttackDirection ad) {//the attacking starts here
 		ArrayList<Attack> att = new ArrayList<Attack>(0);
 		for(int i=0; i<this.getNumArms(); i++) {

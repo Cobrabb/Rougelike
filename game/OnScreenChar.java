@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
+import orig.Attack;
+import orig.Attack.AttackDirection;
+import orig.AttackResults;
 import orig.Creature;
 import orig.DungeonMap;
 import orig.Item;
@@ -15,11 +17,13 @@ import util.General.GridPoint;
 import util.ImageUtil;
 
 public class OnScreenChar implements Serializable {
+	// variables related to rendering this character
 	static final int TICKLIMIT = 180;
 	int tickCounter = 0;
 	transient Image looks;
 	transient Image looksFlipped;
 	String imgName;
+	
 	int xPos;
 	int yPos;
 	// the location the monster intends to move to
@@ -30,7 +34,8 @@ public class OnScreenChar implements Serializable {
 	final int tileSize = 32;
 	boolean isPlayer;
 	Stack<GridPoint> pathPlan;
-	
+	//TODO: attack, move, etc, will call the creature's attach stuff, I'll probably also do the same abstraction for inventory at some point...
+
 	public OnScreenChar(int X, int Y, Creature c) {
 		this(c.getRName(), X, Y, c);
 	}
@@ -75,6 +80,23 @@ public class OnScreenChar implements Serializable {
 		ratioMovement = ((double)speed)/((double)playerSpeed);
 	}
 	
+	public void update() {
+		this.baseCreature.update();
+	}
+
+///////////////Attacking/////////////////
+	public ArrayList<Attack> attack(int x, int y, AttackDirection ad) {
+		return this.baseCreature.attack(x, y, ad);
+	}
+	
+	public void takeAttack(Attack a) {
+		this.baseCreature.takeAttack(a);
+	}
+	
+	public void takeAttackResults(AttackResults ar) {
+		this.baseCreature.takeAttackResults(ar);
+	}
+/////////////////////////////////////////
 	//useless
 	public void step(int x, int y, DungeonMap dm){
 		if(xPos>x){
@@ -279,5 +301,4 @@ public class OnScreenChar implements Serializable {
 		return this.baseCreature.detects(this.xPos,this.yPos,osc.getX(),osc.getY(),osc.baseCreature);
 	}
 	
-	//attack, move, etc, will call the creature's attach stuff, I'll probably also do the same abstraction for inventory at some point...
 }

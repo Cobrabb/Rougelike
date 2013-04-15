@@ -21,6 +21,7 @@ import orig.Element;
 import orig.Item;
 import orig.Planet;
 import orig.Race;
+import util.TestUtil;
 import util.General.Direction;
 import util.General.GridPoint;
 
@@ -91,6 +92,7 @@ public class MainGameState extends BasicGameState{
     }
 	
 	public void init(GameContainer container, StateBasedGame Sbg) throws SlickException {
+		//TestUtil.DISPLAY_MONSTER_LOS = true;
 		Element elem1 = new Element("ice", 1.0);
 		Element elem2 = new Element("silver brick", 2.0);
 		Element elem3 = new Element("cobblestone", 2.0);

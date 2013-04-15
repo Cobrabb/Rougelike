@@ -78,8 +78,8 @@ public class CreateCharacterState extends BasicGameState{
     	
     	
     	if(name != null) name.render(gc, gp);
-    	gp.drawString("inputMouse x " + inputMouse.getMouseX() + " y " + inputMouse.getMouseY(), 100, 420);
-    	gp.drawString(mouse, 100, 400);
+    	//gp.drawString("inputMouse x " + inputMouse.getMouseX() + " y " + inputMouse.getMouseY(), 100, 420);
+    	//gp.drawString(mouse, 100, 400);
     	
     	
     	

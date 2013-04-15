@@ -31,16 +31,16 @@ public class MenuState extends BasicGameState{
  
     public void render(GameContainer gc, StateBasedGame sbg, Graphics gp) throws SlickException {
     	gp.drawString("Welcome to a Rougelike", 250, 150);
-    	gp.drawString("inputMouse x " + inputMouse.getMouseX() + " y " + inputMouse.getMouseY(), 100, 420);
-    	gp.drawString(mouse, 100, 400);
+    	//gp.drawString("inputMouse x " + inputMouse.getMouseX() + " y " + inputMouse.getMouseY(), 100, 420);
+    	//gp.drawString(mouse, 100, 400);
     	gp.drawString("Start", 250, 200);
     	gp.drawString("Create Character", 250, 250);
     }
  
     public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
     	Input input = gc.getInput();
-    	int posX = Mouse.getX();
-		int posY = Mouse.getY(); 
+    	//int posX = Mouse.getX();
+		//int posY = Mouse.getY(); 
     	int mouseX = input.getMouseX();
     	int mouseY = input.getMouseY();
     	boolean insideStartGame = false;

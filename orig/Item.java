@@ -270,7 +270,7 @@ public class Item implements Serializable {
 		String str = getName();
 		String temp[] = str.split("[<>]");
 		str = temp[0];
-		str += "\nBase strength : " + this.baseDmg + "\nWeight : " + this.weight + "\nItem health : " + this.health;
+		str += "\nBase strength : " + (int)this.baseDmg + "\nWeight : " + (int)this.weight + "\nItem health : " + (int)this.health;
 		if(this.effects != null) {
 			for(int i=0; i<this.effects.size(); i++) {
 				str += "\n[" + this.effects.get(i).toString() + "]";

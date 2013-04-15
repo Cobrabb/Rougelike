@@ -767,6 +767,18 @@ public class Creature implements Serializable {
 		}
 	}
 	
+	public Item getEquippedFull(int i){
+		if(i>=(this.equipped.length+this.weilding.length) || i < 0) return null;
+		else if(i < this.equipped.length) {
+			if(equipped[i] == null) return null;			
+			return equipped[i];
+		}
+		else {
+			if(weilding[i-this.equipped.length] == null) return null;
+			return this.weilding[i-this.equipped.length];
+		}
+	}
+	
 	private void consolidateWeilding() {
 		int offset = 0;
 		for(int i=0; i<weilding.length; i++) {

@@ -66,7 +66,7 @@ public class MainGameState extends BasicGameState{
 	final int textAllowed = 32; //How much vertical space is allowed for text
 	final int header = 64; //How much vertical space is reserved to make things look nice
 	final int footer = 64; //same except for bottom
-	final int itemFit = ((sizeY-header-footer)/textAllowed)-2; //trust me on this
+	final int itemFit = ((sizeY-header-footer)/textAllowed)-3; //trust me on this
 	final int itemMax = 250; //max length for an item name
 	
 	
@@ -80,6 +80,7 @@ public class MainGameState extends BasicGameState{
 	int outer = 0;
 	int onscreen=0;
 	boolean scrolldown;
+	int examined = -1;
 	
     MainGameState( int stateID ) 
     {
@@ -131,7 +132,7 @@ public class MainGameState extends BasicGameState{
 		p1.pickup(i);
 		p1.pickup(j);
 		p1.pickup(k);
-		for(int numItems=0; numItems<10; numItems++) {
+		for(int numItems=0; numItems<40; numItems++) {
 			p1.pickup(new Item());
 		}
 	
@@ -163,10 +164,10 @@ public class MainGameState extends BasicGameState{
 				onscreen=0;
 				scrolldown = false;
 				for(int i=outer;i<p1.getInventory().size(); i++){
-					g.drawString(p1.getInventory().get(i).getName(),0,header+((i+1)*textAllowed));
-					b_equip.draw(itemMax, header+((i+1)*textAllowed));
-					b_examine.draw(itemMax+tileSize,header+((i+1)*textAllowed));
-					b_drop.draw(itemMax+(tileSize*2),header+((i+1)*textAllowed));
+					g.drawString(p1.getInventory().get(i).getName(),0,header+((i+1-outer)*textAllowed));
+					b_equip.draw(itemMax, header+((i+1-outer)*textAllowed));
+					b_examine.draw(itemMax+tileSize,header+((i+1-outer)*textAllowed));
+					b_drop.draw(itemMax+(tileSize*2),header+((i+1-outer)*textAllowed));
 					onscreen++;
 					if(i>outer+itemFit){
 						scrolldown=true;
@@ -175,6 +176,9 @@ public class MainGameState extends BasicGameState{
 					}
 				}
 				g.drawString("Back",700,header);
+				if(examined>-1){
+					g.drawString(p1.getInventory().get(examined).toString(), 350, header);
+				}
 			}
 			else if(equippedtime){
 				g.drawString("Equipped", 0, header);
@@ -193,6 +197,9 @@ public class MainGameState extends BasicGameState{
 					b_examine.draw(itemMax+tileSize,header+((i+1)*textAllowed));
 				}
 				g.drawString("Back", 0, sizeY-footer-textAllowed);
+				if(examined>-1){
+					g.drawString(p1.getEquippedFull(examined).toString(), 350, header);
+				}
 			}
 			else{
 				g.drawString("Inventory",0,header);
@@ -390,16 +397,17 @@ public class MainGameState extends BasicGameState{
 		        		p1.equip(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        	}
 		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+2*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		//examine
+		        		examined = ((mouseY-(header+textAllowed))/textAllowed)+outer;
 		        	}
 		        	else if(mouseX>itemMax+2*tileSize&&mouseX<=itemMax+3*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		p1.drop(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        	}
-		        	else if(mouseX<150&&mouseY>=footer-textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&scrolldown){
+		        	else if(mouseX<150&&mouseY>=sizeY-(footer+textAllowed)&&mouseY<=sizeY-(footer)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&scrolldown){
 		        		outer=outer+itemFit;
 		        	}
 		        	else if(mouseX>700&&mouseY<header+textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		inventorytime=false;
+		        		examined = -1;
 		        	}
 	    		}
 	    		else if(equippedtime){
@@ -407,12 +415,13 @@ public class MainGameState extends BasicGameState{
 		        	int mouseY = input.getMouseY();
 	    			if(mouseX<150&&mouseY>sizeY-footer-textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 	    				equippedtime=false;
+	    				examined = -1;
 	    			}
 	    			else if(mouseX>itemMax&&mouseX<=itemMax+tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(p1.baseCreature.getNumArms()+4)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		p1.baseCreature.unequip((mouseY-(header+textAllowed))/textAllowed);
 		        	}
-		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+2*tileSize&&mouseY>(header+textAllowed)&&mouseY<(p1.baseCreature.getNumArms()+4)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		//examine
+		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+(2*tileSize)&&mouseY>(header+textAllowed)&&mouseY<(header+(p1.baseCreature.getNumArms()+4)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
+		        		examined = (mouseY-(header+textAllowed))/textAllowed;
 		        	}
 	    		}
 	    		else{

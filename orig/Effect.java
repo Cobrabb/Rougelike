@@ -214,8 +214,9 @@ public class Effect implements Serializable {
 		else str += "Temporarily modifies ";
 		if(this.base) str += this.bstat + " by ";
 		else str += this.cstat + " by ";
+		str+= (int)this.value;
 		if(this.elemental) {
-			str += " of " + this.element;
+			str += " of " + this.element.getName();
 		}
 		str += " for " + this.steps + " moves.";
 		return str;

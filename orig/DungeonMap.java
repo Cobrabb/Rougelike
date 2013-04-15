@@ -444,7 +444,12 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		if (isCreature(toX, toY) && isCreature(fromX, fromY)) {
 			if (aggressive) {
 				// TODO: implement attacking here
-				System.err.printf("Aha! I have you now!\n");
+				if(squares[fromX][fromY].c.isPlayer()){
+					System.err.printf("Die, fell beast!\n");
+				}
+				else{
+					System.err.printf("Aha! I have you now!\n");
+				}
 			}
 		} else if(isCreature(fromX, fromY)){
 			OnScreenChar osc = this.squares[fromX][fromY].c;

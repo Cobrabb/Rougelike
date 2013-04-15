@@ -258,6 +258,10 @@ public class OnScreenChar implements Serializable {
 		return baseCreature.getEquipped(i);
 	}
 	
+	public Item getEquippedFull(int i){
+		return baseCreature.getEquippedFull(i);
+	}
+	
 	public int getNumArms(){
 		return baseCreature.getNumArms();
 	}

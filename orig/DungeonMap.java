@@ -413,6 +413,27 @@ public class DungeonMap implements TileBasedMap, Serializable {
 
 	public void setPlanet(Planet plan) {
 		this.planet = plan;
+		if(monsters.size()<=1){
+			int j = (int)(Math.random()*10+5);
+			for(int i=0; i<j; i++){
+				int k = (int)(Math.random()*this.planet.getNumResidents());
+				Creature c = new Creature(planet.getResident(k));
+				addOnScreenchar(new OnScreenChar(0,0,c, true));
+				if(planet.getDungeonFloor()>1){
+					int[] limits = {85, 95, 100};
+					int check = (int)(Math.random()*100);
+					for (int ii = 0; ii < limits.length; ++ii) {
+						if (check < limits[ii]) {
+							k = ii;
+							break;
+						}
+					}
+					c.autoLvlPointsBy(planet.getDungeonFloor()+k-1);
+				}
+				k = (int)(Math.random()*2+1);
+				c.pickAndEquip(new Item());
+			}
+		}
 	}
 
 	public HashSet<GridPoint> getStairList() {

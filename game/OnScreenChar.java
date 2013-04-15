@@ -306,4 +306,8 @@ public class OnScreenChar implements Serializable {
 		return this.baseCreature.detects(this.xPos,this.yPos,osc.getX(),osc.getY(),osc.baseCreature);
 	}
 	
+	public void die(){
+		
+	}
+	
 }

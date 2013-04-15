@@ -34,9 +34,9 @@ public class MainGameState extends BasicGameState{
 	Image b_unequip = null;
 	Image b_drop = null;
 	Image b_examine = null;
-	Race r = new Race();
-	Creature c = new Creature(r);
-	Creature d = new Creature(r);
+	Creature c = null;
+	
+	
 	ArrayList<Item> items;
 	OnScreenChar o1;
 	Planet planet = null;
@@ -93,7 +93,7 @@ public class MainGameState extends BasicGameState{
     }
 	
 	public void init(GameContainer container, StateBasedGame Sbg) throws SlickException {
-		TestUtil.DISPLAY_MONSTER_LOS = true;
+		//TestUtil.DISPLAY_MONSTER_LOS = true;
 		Element elem1 = new Element("ice", 1.0);
 		Element elem2 = new Element("silver brick", 2.0);
 		Element elem3 = new Element("cobblestone", 2.0);
@@ -104,6 +104,10 @@ public class MainGameState extends BasicGameState{
 		player = "stickhero";
 		enemy = "stickenemy";
 		
+		
+		c = new Creature(new Race());
+		
+	
 		//buttons
 		b_equip = new Image("data/tiles/button_equip.png");
 		b_unequip = new Image("data/tiles/button_unequip.png");
@@ -205,8 +209,7 @@ public class MainGameState extends BasicGameState{
 				g.drawString("Inventory",0,header);
 				g.drawString("Equipped", 0, header+(1*textAllowed));
 				g.drawString("Help", 0, header+(2*textAllowed));
-				g.drawString("Save Game", 0, header+(3*textAllowed));
-				g.drawString("Return", 0,header+(4*textAllowed));
+				g.drawString("Return", 0,header+(3*textAllowed));
 			}
 		}
     }
@@ -437,9 +440,6 @@ public class MainGameState extends BasicGameState{
 		        		helptime = true;
 		        	}
 		        	else if(mouseX<150&&mouseY<header+(4*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
-		        		//SAVE GAME
-		        	}
-		        	else if(mouseX<150&&mouseY<header+(5*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		menutime = false;
 		        	}
 	    		}

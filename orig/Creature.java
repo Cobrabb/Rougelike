@@ -745,6 +745,11 @@ public class Creature implements Serializable {
 		weight += i.getWeight();
 	}
 	
+	public void pickAndEquip(Item i){
+		pickup(i);
+		equip(i);
+	}
+	
 	public void drop(Item i) {
 		this.inventory.remove(i);
 		unequip(i);

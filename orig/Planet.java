@@ -177,7 +177,7 @@ public class Planet {
 			}
 			
 			//generate creatures
-			j = (int)(Math.random()*8+3);
+			j = (int)(Math.random()*8+10);
 			this.residents = new Race[j];
 			for(int i=0; i<j; i++){
 				residents[i] = new Race(this.e, L);
@@ -375,5 +375,9 @@ public class Planet {
 			int pSightRadius = 5;
 			dm.reveal(pSightRadius, gp.getX(), gp.getY());
 			return true;
+		}
+		
+		public int getDungeonFloor(){
+			return this.dungeonFloor;
 		}
 }

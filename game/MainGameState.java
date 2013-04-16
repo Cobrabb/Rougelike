@@ -154,11 +154,14 @@ public class MainGameState extends BasicGameState{
 				dm.render(container, sbg, g, p1.getX() - numXtiles/2, p1.getY() - numYtiles/2, numXtiles, numYtiles);
 				mapX = p1.getX() - numXtiles/2;
 				mapY = p1.getY() - numYtiles/2;
+				if(p1.isDead()){
+					System.out.println("OH DEAR YOU ARE DEAD");
+				}
 			}
 		}
 		else{
 			if(helptime){
-				g.drawString("HELP TEXT GOES HERE", 0, header);
+				g.drawString("Controls:\n (A)ttack, (I)nventory, E(X)amine, (H)elp, (Q)uaff \n Escape - Open Menu (Clickable) \n If Melee weapon equipped, move into enemy to attack. \n Try not to die!", 0, header);
 				g.drawString("Back", 0, sizeY-footer-textAllowed);
 			}
 			else if(inventorytime){
@@ -180,30 +183,44 @@ public class MainGameState extends BasicGameState{
 					}
 				}
 				g.drawString("Back",700,header);
+				b_equip.draw(itemMax+4*tileSize, header+1*textAllowed);
+				b_examine.draw(itemMax+4*tileSize, header+2*textAllowed);
+				b_drop.draw(itemMax+4*tileSize, header+3*textAllowed);
+				g.drawString("quip", itemMax+5*tileSize, header+1*textAllowed+10);
+				g.drawString("amine", itemMax+5*tileSize, header+2*textAllowed+10);
+				g.drawString("E", itemMax+4*tileSize-10, header+2*textAllowed+10);
+				g.drawString("rop", itemMax+5*tileSize, header+3*textAllowed+10);
+				
 				if(examined>-1){
-					g.drawString(p1.getInventory().get(examined).toString(), 350, header);
+					g.drawString(p1.getInventory().get(examined).toString(), 350, header+4*textAllowed);
 				}
 			}
 			else if(equippedtime){
 				g.drawString("Equipped", 0, header);
-				g.drawString("Head: "+p1.getEquipped(0), 0, header+textAllowed);
+				g.drawString("Head: "+p1.getEquippedLess(0), 0, header+textAllowed);
 				b_unequip.draw(itemMax, header+(1*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(1*textAllowed));
-				g.drawString("Body: "+p1.getEquipped(1), 0, header+(2*textAllowed));
+				g.drawString("Body: "+p1.getEquippedLess(1), 0, header+(2*textAllowed));
 				b_unequip.draw(itemMax, header+(2*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(2*textAllowed));
-				g.drawString("Legs: "+p1.getEquipped(2), 0, header+(3*textAllowed));
+				g.drawString("Legs: "+p1.getEquippedLess(2), 0, header+(3*textAllowed));
 				b_unequip.draw(itemMax, header+(3*textAllowed));
 				b_examine.draw(itemMax+tileSize,header+(3*textAllowed));
 				for(int i=3;i<p1.getNumArms()+3;i++){
-					g.drawString("Hands: "+p1.getEquipped(i), 0, header+(i+1)*textAllowed);
+					g.drawString("Hands: "+p1.getEquippedLess(i), 0, header+(i+1)*textAllowed);
 					b_unequip.draw(itemMax, header+((i+1)*textAllowed));
 					b_examine.draw(itemMax+tileSize,header+((i+1)*textAllowed));
 				}
 				g.drawString("Back", 0, sizeY-footer-textAllowed);
 				if(examined>-1){
-					g.drawString(p1.getEquippedFull(examined).toString(), 350, header);
+					if(p1.getEquippedFull(examined)!=null)
+						g.drawString(p1.getEquippedFull(examined).toString(), 350, header+4*textAllowed);
 				}
+				b_unequip.draw(itemMax+4*tileSize, header+1*textAllowed);
+				b_examine.draw(itemMax+4*tileSize, header+2*textAllowed);
+				g.drawString("nequip", itemMax+5*tileSize, header+1*textAllowed+10);
+				g.drawString("amine", itemMax+5*tileSize, header+2*textAllowed+10);
+				g.drawString("E", itemMax+4*tileSize-10, header+2*textAllowed+10);
 			}
 			else{
 				g.drawString("Inventory",0,header);
@@ -377,11 +394,16 @@ public class MainGameState extends BasicGameState{
 			    		storeX = mapX;
 			    		storeY = mapY;
 			    	}
+			    	else if(input.isKeyDown(Input.KEY_Q)){
+			    		//drink health potion
+			    		kp = true;
+			    	}
 			    	if(kp){
 			    		//dm.reveal(sightRadius, p1.xPos, p1.yPos);
 			    		inputDelta=100;
 			    		//o1.step(p1.xPos, p1.yPos, dm);
 			    		dm.update(sightRadius, p1.xPos, p1.yPos);
+			    		p1.update();
 			    	}
 	    		}
 	    	}

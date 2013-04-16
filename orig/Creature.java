@@ -74,6 +74,7 @@ public class Creature implements Serializable {
 	private int maxLvl = 100;
 	private int baseGain;
 	private int initCap = 5*cStats.TOTAL.ordinal();
+	private Item unarmed = Item.unarmed(this);
 	
 
 	/*
@@ -258,7 +259,7 @@ public class Creature implements Serializable {
 		for(int i=0; i<effects.size(); i++) {
 			e = effects.get(i);
 			double value = e.getValue(), dmg = e.getValue();
-			if(e.isElemental()) {
+			if(e.isElemental()&&e!=null) {
 				dmg = value*UET.getUET().getDmg(e.getElement(),this.casing);
 				dmg += value*UET.getUET().getDmg(e.getElement(),this.fluid);
 				dmg += value*UET.getUET().getDmg(e.getElement(),this.organs);
@@ -555,7 +556,7 @@ public class Creature implements Serializable {
 		for(int i=0; i<this.getNumArms(); i++) {
 			if(this.weilding[i] != null && i<this.weilding.length)	att.add(this.weilding[i].attack(x, y, ad, this));
 			else {
-				//handle unarmed case
+				att.add(unarmed.attack(x, y, ad, this));
 			}
 		}
 		return att;
@@ -584,9 +585,13 @@ public class Creature implements Serializable {
 		}
 		if(atStr > 0) {
 			double dmg = 0;
+			//I don't see why any of this should be null, but for whatever reason it is, so I did null checks...
 			for(int i=0; i<a.getWeapon().getConsists().length; i++) {
+				if(a.getWeapon().getConsists()[i]!=null&&this.casing!=null)
 				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.casing);
+				if(a.getWeapon().getConsists()[i]!=null&&this.fluid!=null)
 				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.fluid);
+				if(a.getWeapon().getConsists()[i]!=null&&this.organs!=null)
 				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.organs);
 			}
 			dmg /= a.getWeapon().getConsists().length*3;
@@ -743,6 +748,18 @@ public class Creature implements Serializable {
 	public void pickup(Item i) {
 		this.inventory.add(i);
 		weight += i.getWeight();
+	}
+	
+	public String getEquippedLess(int i){
+		String str = getEquipped(i);
+		String r = "";
+		for(int j=0;j<str.length();j++){
+			if(str.charAt(j)!='<'){
+				r+=str.charAt(j);
+			}
+			else break;
+		}
+		return r;
 	}
 	
 	public void pickAndEquip(Item i){

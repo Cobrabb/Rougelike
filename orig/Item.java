@@ -87,7 +87,7 @@ public class Item implements Serializable {
 			this.effects.add(new Effect());
 		}
 		AttackPattern ap[] = AttackPattern.values();
-		this.pattern = ap[(int) (AttackPattern.OTHER.ordinal()*Math.random())];
+		this.pattern = ap[(int) (AttackPattern.CIRCLE.ordinal()*Math.random())];
 		AttackType at[] = AttackType.values();
 		this.atype = at[(int) (AttackType.NONE.ordinal()*Math.random())];
 		this.attackSize = (int) Math.max((1/(Math.random()+.1)),1);
@@ -241,6 +241,7 @@ public class Item implements Serializable {
 		double dmg = 0, count = 0;
 		for(Element ae : a.getWeapon().getConsists()) {
 			for(Element me : this.consists) {
+				if(ae!=null&&me!=null) //once again, no idea why null
 				dmg += atStr*UET.getUET().getDmg(ae, me);
 				count++;
 			}
@@ -264,6 +265,7 @@ public class Item implements Serializable {
 			double dmg = 0, count = 0, atStr = ar.getAttackStrength();
 			for(Element ae : ar.getConsists()) {
 				for(Element me : this.consists) {
+					if(ae!=null&&me!=null) //you get the picture
 					dmg += atStr*UET.getUET().getDmg(ae, me);
 					count++;
 				}
@@ -290,6 +292,11 @@ public class Item implements Serializable {
 		String str = getName();
 		String temp[] = str.split("[<>]");
 		str = temp[0];
+		str+= "\nThis is a ";
+		if(type==iType.HAND){
+			str+=atype.toString().toLowerCase()+" ";
+		}
+		str+= type.toString().toLowerCase();
 		str += "\nBase strength : " + (int)this.baseDmg + "\nWeight : " + (int)this.weight + "\nItem health : " + (int)this.health;
 		if(this.effects != null) {
 			for(int i=0; i<this.effects.size(); i++) {

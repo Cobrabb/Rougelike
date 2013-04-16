@@ -116,7 +116,9 @@ public class UET {
 	
 	public double getDmg(Element attack, Element defend) {
 		double dRM, density, gran, mal;
+		if(this.elementList.indexOf(attack)!=-1&&this.elementList.indexOf(defend)!=-1)
 		dRM = this.dmgRatioMultiplier[this.elementList.indexOf(attack)][this.elementList.indexOf(defend)];
+		else dRM = 0;
 		density = attack.getDensity()/defend.getDensity();
 		gran = defend.getGranularity();
 		mal = attack.getMal()/defend.getMal();

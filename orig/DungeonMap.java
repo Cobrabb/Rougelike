@@ -18,6 +18,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
+import orig.Attack.AttackDirection;
+
 import util.DungeonMapGenerator.TileData;
 import util.DungeonMapGenerator.TileType;
 import util.General.Direction;
@@ -344,13 +346,12 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	}
 	
 	public void update(int sightRadius, int xPos, int yPos) {
-		// TODO: call the creature's update methods, after? or before? movement
-		// I'll assume before, for now.
 		Iterator<OnScreenChar> it = monsters.iterator();
 		while (it.hasNext()) {
 			OnScreenChar osc = it.next();
 			if (!osc.isPlayer()) {
 				osc.move(sightRadius, this);
+				osc.update();
 			}
 		}
 		if (TestUtil.DISPLAY_MONSTER_LOS)
@@ -465,11 +466,29 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		if (isCreature(toX, toY) && isCreature(fromX, fromY)) {
 			if (aggressive) {
 				// TODO: implement attacking here
-				if(squares[fromX][fromY].c.isPlayer()){
-					System.err.printf("Die, fell beast!\n");
+				System.err.printf("Aha! I have you now!\n");
+				ArrayList<Attack> a = null;
+				if(fromX<toX){
+					a = this.squares[fromX][fromY].c.attack(toX, toY, AttackDirection.EAST);
+				}
+				else if(fromX>toX){
+					a = this.squares[fromX][fromY].c.attack(toX, toY, AttackDirection.WEST);
+				}
+				else if(fromY<toY){
+					a = this.squares[fromX][fromY].c.attack(toX, toY, AttackDirection.SOUTH);
 				}
 				else{
-					System.err.printf("Aha! I have you now!\n");
+					a = this.squares[fromX][fromY].c.attack(toX, toY, AttackDirection.NORTH);
+				}
+				if(a!=null){
+					for(int i=0; i<a.size(); i++){
+						for(int j=0; j<a.get(i).getPattern().size(); j++){
+							int[] z = a.get(i).getPattern().get(j);
+							if(squares[z[0]][z[1]].c!=null){
+								squares[z[0]][z[1]].c.takeAttack(a.get(i));
+							}
+						}
+					}
 				}
 			}
 		} else if(isCreature(fromX, fromY)){
@@ -579,7 +598,7 @@ OUT:	while (!queue.isEmpty()) {
 		return isCreature(x, y) && this.squares[x][y].c.isPlayer();
 	}
 
-	private boolean isCreature(int x, int y) {
+	public boolean isCreature(int x, int y) {
 		return validCoordinates(x, y) && this.squares[x][y].c != null;
 	}
 	

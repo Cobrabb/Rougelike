@@ -97,22 +97,6 @@ public class OnScreenChar implements Serializable {
 	public void takeAttackResults(AttackResults ar) {
 		this.baseCreature.takeAttackResults(ar);
 	}
-/////////////////////////////////////////
-	//useless
-	public void step(int x, int y, DungeonMap dm){
-		if(xPos>x){
-			move(-1, 0, dm);
-		}
-		else if(xPos<x){
-			move(1, 0, dm);
-		}
-		if(yPos>y){
-			move(0, -1, dm);
-		}
-		else if(yPos<y){
-			move(0, 1, dm);
-		}
-	}
 	
 	/**
 	 * This method tells the OnScreenChar to ask the dmap for information about
@@ -238,9 +222,10 @@ public class OnScreenChar implements Serializable {
 		this.yPos = newY;
 	}
 	
+	//player only
 	public boolean canMove(int left, int up, DungeonMap dm){
 		boolean b = dm.isPassable(xPos+left, yPos+up);
-		if(b){
+		if(b||dm.isCreature(xPos+left, yPos+up)){
 			dm.attackMove(xPos, yPos, xPos+left, yPos+up, true);
 		}
 		return b;
@@ -260,6 +245,10 @@ public class OnScreenChar implements Serializable {
 	
 	public Item getEquippedFull(int i){
 		return baseCreature.getEquippedFull(i);
+	}
+	
+	public String getEquippedLess(int i){
+		return baseCreature.getEquippedLess(i);
 	}
 	
 	public int getNumArms(){
@@ -312,6 +301,10 @@ public class OnScreenChar implements Serializable {
 			a.add(baseCreature.drop(baseCreature.getInventory().get(i)));
 		}
 		return a;
+	}
+
+	public boolean isDead() {
+		return baseCreature.isDead();
 	}
 	
 }

@@ -54,7 +54,6 @@ public class Square implements Serializable {
 	}
 	
 	public void render(int x, int y, int px, int py, Graphics g) {
-		// TODO Auto-generated method stub
 		if (noImage()) {
 			if (imgName != null) {
 				img = ImageUtil.getImage(imgName);

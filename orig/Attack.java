@@ -14,9 +14,9 @@ public class Attack {
 			// TODO: this may be a bug, since "down" may be in the +y direction
 			switch(this) {
 				case NORTH:
-					return 1;
-				case SOUTH:
 					return -1;
+				case SOUTH:
+					return 1;
 				default:
 					return 0;
 			}

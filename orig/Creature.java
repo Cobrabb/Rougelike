@@ -74,7 +74,7 @@ public class Creature implements Serializable {
 	private int maxLvl = 100;
 	private int baseGain;
 	private int initCap = 5*cStats.TOTAL.ordinal();
-	private Item unarmed = Item.unarmed(this);
+	private Item unarmed; // = Item.unarmed(this);
 	
 
 	/*
@@ -157,6 +157,7 @@ public class Creature implements Serializable {
 		for(int i=0; i<r.getEffects().size();i++) {
 			this.effects.add(new Effect(r.getEffects().get(i)));
 		}
+		this.unarmed = Item.unarmed(this);
 	}
 	
 	public Element[] getConsists() {
@@ -585,13 +586,9 @@ public class Creature implements Serializable {
 		}
 		if(atStr > 0) {
 			double dmg = 0;
-			//I don't see why any of this should be null, but for whatever reason it is, so I did null checks...
 			for(int i=0; i<a.getWeapon().getConsists().length; i++) {
-				if(a.getWeapon().getConsists()[i]!=null&&this.casing!=null)
 				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.casing);
-				if(a.getWeapon().getConsists()[i]!=null&&this.fluid!=null)
 				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.fluid);
-				if(a.getWeapon().getConsists()[i]!=null&&this.organs!=null)
 				dmg += atStr*UET.getUET().getDmg(a.getWeapon().getConsists()[i],this.organs);
 			}
 			dmg /= a.getWeapon().getConsists().length*3;

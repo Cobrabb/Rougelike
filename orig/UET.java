@@ -7,7 +7,7 @@ import orig.Element;
 import orig.Language;
 
 public class UET {
-	public static UET uET = null;
+	private static UET uET = null;
 	
 	private final Language l;
 	public final int WATER = 0;
@@ -115,6 +115,10 @@ public class UET {
 	}
 	
 	public double getDmg(Element attack, Element defend) {
+		if (attack == null)
+			throw new RuntimeException("Attack was passed in as null.");
+		if (defend == null)
+			throw new RuntimeException("Defend was passed in as null.");
 		double dRM, density, gran, mal;
 		if(this.elementList.indexOf(attack)!=-1&&this.elementList.indexOf(defend)!=-1)
 		dRM = this.dmgRatioMultiplier[this.elementList.indexOf(attack)][this.elementList.indexOf(defend)];

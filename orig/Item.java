@@ -59,11 +59,11 @@ public class Item implements Serializable {
 		iType types[] = iType.values();
 		this.type = types[(int) (Math.random()*iType.TOTAL.ordinal())];
 		//generate random elements for consists and repairs
-		this.consists = new Element[(int) Math.max((1.0/Math.random()),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
+		this.consists = new Element[(int) Math.max((1.0/(Math.random()+0.1)),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
 		for(int i=0; i<this.consists.length; i++) {
 			this.consists[i] = UET.getUET().getElementList().get((int) (Math.min((UET.TOTAL)*Math.random(),UET.TOTAL-1)));
 		}
-		this.repairs = new Element[(int) Math.max((1.0/Math.random()),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
+		this.repairs = new Element[(int) Math.max((1.0/(Math.random()+0.1)),1)]; //create a new element array with random number  of slots, weighted toward fewer slots (having at least 1)
 		for(int i=0; i<this.repairs.length; i++) {
 			this.repairs[i] = UET.getUET().getElementList().get((int) (Math.min((UET.TOTAL)*Math.random(),UET.TOTAL-1)));
 		}
@@ -81,7 +81,7 @@ public class Item implements Serializable {
 		this.techRequired = (int) (100*Math.random()); //generate tech level required
 		this.phys_tech_ratio = Math.random(); //generate random ratio of physical and tech
 		this.weight = 1/(.7*Math.random()+.2);
-		this.health = 5/Math.random();
+		this.health = 5/(Math.random()+0.01);
 		this.effects = new ArrayList<Effect>(0);
 		while(Math.random() < .7) {
 			this.effects.add(new Effect());
@@ -241,7 +241,6 @@ public class Item implements Serializable {
 		double dmg = 0, count = 0;
 		for(Element ae : a.getWeapon().getConsists()) {
 			for(Element me : this.consists) {
-				if(ae!=null&&me!=null) //once again, no idea why null
 				dmg += atStr*UET.getUET().getDmg(ae, me);
 				count++;
 			}

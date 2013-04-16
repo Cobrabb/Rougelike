@@ -264,7 +264,6 @@ public class Item implements Serializable {
 			double dmg = 0, count = 0, atStr = ar.getAttackStrength();
 			for(Element ae : ar.getConsists()) {
 				for(Element me : this.consists) {
-					if(ae!=null&&me!=null) //you get the picture
 					dmg += atStr*UET.getUET().getDmg(ae, me);
 					count++;
 				}

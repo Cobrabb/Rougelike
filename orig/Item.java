@@ -49,7 +49,7 @@ public class Item implements Serializable {
 	private boolean equipped = false;
 	
 	private String imgname = "";
-	Image looks = null;
+	transient Image looks = null;
 	int tileSize = 32;
 //	private double wearDmg = 0.0;
 

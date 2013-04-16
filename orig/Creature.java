@@ -594,6 +594,9 @@ public class Creature implements Serializable {
 			dmg /= a.getWeapon().getConsists().length*3;
 			dmg = Math.min(dmg, this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()]);
 			this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] -= dmg;
+			/*System.out.printf("Current health of %s: %d/%d\n", this.name,
+					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()],
+					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.MAX.ordinal()]);*/
 			attEff = new ArrayList<Effect>(0);
 			for(int i=0; i<this.effects.size(); i++) {
 				if(this.effects.get(i).isAttack()) {

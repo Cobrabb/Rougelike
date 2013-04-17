@@ -111,6 +111,29 @@ public class Item implements Serializable {
 		this.type = type;
 		this.weight = weight;
 		this.effects = new ArrayList<Effect>();
+		this.health = 5/(Math.random()+0.01);
+		this.name = new Language().generate();
+		while(Math.random() < .3) this.effects.add(new Effect());
+	}
+	
+	public Item(String name, Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, double baseDmg, iType type, double weight) {
+		if(consists != null) {
+			this.consists = consists;
+		}
+		else this.consists = new Element[0];
+		if(repairs != null) {
+			this.repairs = repairs;
+		}
+		else this.repairs = new Element[0];
+		this.hands = hands;
+		this.techRequired = techRequired;
+		this.phys_tech_ratio = phys_tech_ratio;
+		this.baseDmg = baseDmg;
+		this.type = type;
+		this.weight = weight;
+		this.effects = new ArrayList<Effect>();
+		this.health = 5/(Math.random()+0.01);
+		this.name = name;
 		while(Math.random() < .3) this.effects.add(new Effect());
 	}
 	
@@ -139,7 +162,7 @@ public class Item implements Serializable {
 	}
 
 	public static Item unarmed(Creature c) {
-		Item i = new Item(c.getConsists(), null, 1, 0, 0.0,.01,iType.HAND,0);
+		Item i = new Item(c.getConsists(), null, 1, 0, 0.0,1,iType.HAND,0);
 		i.attack = true;
 		i.attackSize = 1;
 		i.atype = AttackType.PHYS;

@@ -434,7 +434,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	public void setPlanet(Planet plan) {
 		this.planet = plan;
 		if(monsters.size()<=1){
-			int j = (int)(Math.random()*5+5);
+			int j = (int)(Math.random()*1+5);
 			for(int i=0; i<j; i++){
 				int k = (int)(Math.random()*this.planet.getNumResidents());
 				Creature c = new Creature(planet.getResident(k));
@@ -510,6 +510,15 @@ public class DungeonMap implements TileBasedMap, Serializable {
 							}
 						}
 					}
+				}
+				OnScreenChar osc = squares[toX][toY].c;
+				if(!osc.isPlayer() && osc.isDead()) {
+					ArrayList<Item> items = osc.die();
+					for(Item i : items) {
+						squares[toX][toY].dropItem(i);
+					}
+					removeOnScreenChar(toX, toY);
+					monsters.remove(osc);
 				}
 			}
 		} else if(isCreature(fromX, fromY)){

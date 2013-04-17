@@ -22,6 +22,9 @@ import orig.Creature;
 import orig.Creature.cStats;
 import orig.Creature.sVal;
 import orig.Element;
+import orig.Item;
+import orig.Item.AttackType;
+import orig.Item.iType;
 import orig.Race;
 import orig.UET;
 import util.ImageUtil;
@@ -156,7 +159,7 @@ public class CreateCharacterState extends BasicGameState{
         		    ( mouseY >= 130 && mouseY <= 130 + 20) ){
         		   
     		{
-    			System.out.println(Math.pow((Math.random()*200),.5));
+    			
     			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
     																																	//casing							//fluid						//organs
     					Race human = new Race("human", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.MEAT), e.getElementList().get(e.WATER), e.getElementList().get(e.MEAT), 2, 2, new ArrayList<Race>());
@@ -180,7 +183,7 @@ public class CreateCharacterState extends BasicGameState{
         		    ( mouseY >= 180 && mouseY <= 190+50) ){// +50 because game does  not start at 0,0 have to offset it by 50
         		    
     		{
-    			System.out.println("***********************************************************************");
+    			
     			if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
     																																				//casing							//fluid						//organs
     					Race argok = new Race("argok", 0, new Element(/* "Produces",5,7,8*/) , new Element(/*"Consumes",12,10,11*/), e.getElementList().get(e.STONE), e.getElementList().get(e.DIRT), e.getElementList().get(e.WOOD), 4, 2, new ArrayList<Race>());
@@ -217,7 +220,12 @@ public class CreateCharacterState extends BasicGameState{
     					wonka.gain(cStats.SPEED_MOVE, sVal.XP, 11);
     					
     					
+    					
     					Creature c = new Creature(wonka, name.getText());
+    					Element array[] = new Element[1];
+    					array[0] = e.getElementList().get(e.FUDGE);
+    					c.pickAndEquip(new Item("Candy cane",array,null, 1, 0, .5, 15, iType.HAND, 1));
+    					
     					
     					MainGameState.loadedCreature = c;
     					sbg.enterState(MainGame.MAINGAMESTATE);

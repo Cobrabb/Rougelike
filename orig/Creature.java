@@ -100,6 +100,7 @@ public class Creature implements Serializable {
 				this.cStat[i][j] = r.get(c[i],v[j]);
 			}
 		}
+		if(this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] < 10) this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] = 10;
 		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
 		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
 			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
@@ -424,6 +425,7 @@ public class Creature implements Serializable {
 		this.cStat[s.ordinal()][sVal.XP.ordinal()] -= ((int) mul*Math.pow(this.cStat[s.ordinal()][sVal.LEVEL.ordinal()],rate));
 		this.cStat[s.ordinal()][sVal.LEVEL.ordinal()]++;
 		this.cStat[s.ordinal()][sVal.MAX.ordinal()] += lvlGain;
+		if(s == cStats.STAM_HEALTH) this.cStat[s.ordinal()][sVal.MAX.ordinal()] += 9*lvlGain;
 		// current = max (unless temp effect has it above max already)
 		if(this.cStat[s.ordinal()][sVal.CURRENT.ordinal()] < this.cStat[s.ordinal()][sVal.MAX.ordinal()]) {
 			this.cStat[s.ordinal()][sVal.CURRENT.ordinal()] = this.cStat[s.ordinal()][sVal.MAX.ordinal()];

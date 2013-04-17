@@ -56,6 +56,7 @@ public class MainGameState extends BasicGameState{
 	//player stuff
 	OnScreenChar p1;
 	int sightRadius;
+	boolean dead;
 	
 	//dungeon stuff
 	int mapX = 0;
@@ -148,6 +149,7 @@ public class MainGameState extends BasicGameState{
 		for(int numItems=0; numItems<40; numItems++) {
 			p1.pickup(new Item());
 		}
+		dead = false;
 	
 	}
  
@@ -164,7 +166,8 @@ public class MainGameState extends BasicGameState{
 				mapX = p1.getX() - numXtiles/2;
 				mapY = p1.getY() - numYtiles/2;
 				if(p1.isDead()){
-					System.out.println("OH DEAR YOU ARE DEAD");
+					//System.out.println("OH DEAR YOU ARE DEAD");
+					dead = true;
 				}
 			}
 		}
@@ -244,6 +247,10 @@ public class MainGameState extends BasicGameState{
     	Input input = gc.getInput();
     	boolean kp = false;
     	inputDelta-=delta;
+    	if(dead) {
+    		sbg.enterState(MainGame.MENUSTATE);
+    		return;
+    	}
     	if(inputDelta<0){
     		if (loadedCreature != null) {
     			OnScreenChar temp = p1;

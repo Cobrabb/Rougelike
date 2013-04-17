@@ -434,7 +434,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	public void setPlanet(Planet plan) {
 		this.planet = plan;
 		if(monsters.size()<=1){
-			int j = (int)(Math.random()*10+5);
+			int j = (int)(Math.random()*5+5);
 			for(int i=0; i<j; i++){
 				int k = (int)(Math.random()*this.planet.getNumResidents());
 				Creature c = new Creature(planet.getResident(k));

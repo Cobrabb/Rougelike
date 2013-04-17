@@ -63,6 +63,7 @@ public class Creature implements Serializable {
 	private double weight;
 	private ArrayList<Effect> effects;
 	private ArrayList<String> friendly;
+	private double Health;
 	
 	
 	// behind the scenes
@@ -76,44 +77,6 @@ public class Creature implements Serializable {
 	private int initCap = 5*cStats.TOTAL.ordinal();
 	private Item unarmed; // = Item.unarmed(this);
 	
-
-	/*
-	public Creature(String name, String rName, int diet, Element consumes, Element produces, Element casing, Element fluid, Element organs, boolean genders, int numArms, int numLegs, int[][] cStat, int[][] bStat, ArrayList<Item> inventory, Item[] equipped, ArrayList<Item> weilding, int MaxInventory, int availHands, double weight, int initCap) {
-		this.name = name;
-		this.rName = rName;
-//		this.diet = diet;
-//		this.consumes = consumes;
-//		this.produces = produces;
-		this.casing = casing;
-		this.fluid = fluid;
-		this.organs = organs;
-//		this.genders = genders;
-		this.numArms = numArms;
-		this.cStat = new int[cStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		for(int i=0; i<cStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.cStat[i][j] = cStat[i][j];
-			}
-		}
-		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
-		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
-			for(int j=0; j<sVal.TOTAL.ordinal(); j++) {
-				this.bStat[i][j] = bStat[i][j];
-			}
-		}
-		if(inventory != null) this.inventory = inventory;
-		else this.inventory = new ArrayList<Item>(0);
-		if(equipped != null) this.equipped = equipped;
-		else this.equipped = new Item[slots];
-		if(weilding != null) this.weilding = weilding;
-		else this.weilding = new ArrayList<Item>(0);
-		this.MaxInventory = MaxInventory;
-		if(availHands <= numArms && availHands >= 0) this.availHands = availHands;
-		else availHands = numArms;
-		this.weight = weight;
-		this.initCap = initCap;
-	}
-	*/
 	public Creature (Race r) {
 		this(r, r.getL().generate());
 	}
@@ -158,6 +121,9 @@ public class Creature implements Serializable {
 			this.effects.add(new Effect(r.getEffects().get(i)));
 		}
 		this.unarmed = Item.unarmed(this);
+		for(int i=0; i<this.numArms; i++) {
+			this.weilding[i] = this.unarmed;
+		}
 	}
 	
 	public Element[] getConsists() {
@@ -594,6 +560,7 @@ public class Creature implements Serializable {
 			dmg /= a.getWeapon().getConsists().length*3;
 			dmg = Math.min(dmg, this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()]);
 			this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] -= dmg;
+			System.out.println(this.getName() + " took " + dmg + " from " + a.getAttacker().getName()+ "'s " + a.getWeapon().getName() + ". It now has " + cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] + " health.");
 			/*System.out.printf("Current health of %s: %d/%d\n", this.name,
 					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()],
 					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.MAX.ordinal()]);*/
@@ -664,7 +631,7 @@ public class Creature implements Serializable {
 			if(availHands >= i.getHands()) {
 			//if(availHands >= i.getHands() && getEffective(cStats.TECH_WEAPON,sVal.CURRENT) >= i.getTechRequired()) {
 				for(int j=0; j<weilding.length; j++) {
-					if(weilding[j] == null) {
+					if(weilding[j] == null || weilding[j] == unarmed) {
 						weilding[j] = i;
 						//if i is a multiple hand weapon, store the offHand holder in next spots
 						for(int k=1; k<i.getHands(); k++) {
@@ -838,8 +805,8 @@ public class Creature implements Serializable {
 		double stealthScore = this.getEffective(cStats.STEALTH_SIGHT,sVal.CURRENT);
 		double detectScore = c.getEffective(cStats.DETECT_SIGHT,sVal.CURRENT);
 		//stealth increases with distance 
-		// stealth and detect both get 50% of their value plus up to 50% (random)
-		if(stealthScore*Math.pow(distance, 1.25)*(.5+.5*Math.random()) > detectScore*(.5+.5*Math.random())) {
+		// stealth and detect both get 80% of their value plus up to 20% (random)
+		if(stealthScore*Math.pow(distance, 1.25)*(.8+.2*Math.random()) > detectScore*(.8+.2*Math.random())) {
 			// not detected 
 			this.gain(cStats.STEALTH_SIGHT,sVal.XP,(int) Math.floor(detectScore/distance));
 			return false;

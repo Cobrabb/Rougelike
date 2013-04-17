@@ -21,6 +21,7 @@ import orig.Element;
 import orig.Item;
 import orig.Planet;
 import orig.Race;
+import orig.UET;
 import util.TestUtil;
 import util.General.Direction;
 import util.General.GridPoint;
@@ -93,10 +94,18 @@ public class MainGameState extends BasicGameState{
     }
 	
 	public void init(GameContainer container, StateBasedGame Sbg) throws SlickException {
+		///*
 		//TestUtil.DISPLAY_MONSTER_LOS = true;
-		Element elem1 = new Element("ice", 1.0);
-		Element elem2 = new Element("silver brick", 2.0);
-		Element elem3 = new Element("cobblestone", 2.0);
+		Element elem1 = UET.getUET().getElementList().get(0);
+		Element elem2 = UET.getUET().getElementList().get(1);
+		Element elem3 = UET.getUET().getElementList().get(2);
+		///*Element elem2 = new Element("silver brick", 2.0);
+		//Element elem3 = new Element("cobblestone", 2.0);
+		/*/
+		Element elem1 = UET.getUET().getElementArray()[(int) (UET.TOTAL*Math.random())];
+		Element elem2 = UET.getUET().getElementArray()[(int) (UET.TOTAL*Math.random())];
+		Element elem3 = UET.getUET().getElementArray()[(int) (UET.TOTAL*Math.random())];
+		*/
 		planet = new Planet(new Element[] {elem1, elem2, elem3}, new int[]{5, 3, 3} );
 		//String path = planet.generateMap("map1");
 		//planet.setCurrentDungeon(path);

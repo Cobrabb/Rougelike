@@ -71,12 +71,12 @@ public class Item implements Serializable {
 		if(this.type == iType.HAND) {
 			this.attack = (Math.random() < .85); // 85% chance of being weapon (as opposed to shield)
 			this.hands = (int) Math.max((4*Math.random()),1); //generate random number of hands (at least 1 hand though)
-			this.baseDmg = ((this.level/(Math.random()+.3)))/100.0*this.hands; //generate random damage (assuming more hands means a more powerful weapon)
+			this.baseDmg = 100*((this.level/(Math.random()+.3)))/100.0*this.hands; //generate random damage (assuming more hands means a more powerful weapon)
 		}
 		else {
 			this.attack = false;
 			this.hands = 0;
-			this.baseDmg = this.level/(Math.random()+.1); //generate random damage
+			this.baseDmg = this.level/(Math.random()+.01); //generate random damage
 		}
 		this.techRequired = (int) (100*Math.random()); //generate tech level required
 		this.phys_tech_ratio = Math.random(); //generate random ratio of physical and tech

@@ -55,6 +55,7 @@ public class Attack {
 		}
 		//this.attackStrength = item.
 		decodePattern(item.getAttackPattern(), item.getAttackSize());
+		System.out.println("Attack from " + attacker.getName() + " with " + weapon.getName() + "  for " + this.attackStrength);
 	}
 /*
 	public Attack(int x, int y, AttackPattern ap, int attackSize, Creature attacker, AttackDirection ad) {

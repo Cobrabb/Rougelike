@@ -10,15 +10,18 @@ public class UET {
 	private static UET uET = null;
 	
 	private final Language l;
-	public final int WATER = 0;
-	public final int MEAT = 1;
-	public final int STONE = 2;
-	public final int FUDGE = 3;
-	public final int METAL = 4;
-	public final int DIRT = 5;
-	public final int WOOD = 6;
+	public static final int ICE = 0;
+	public static final int SILVERBRICK = 1;
+	public final int COBBLESTONE = 2;
+	public final int WATER = 3;
+	public final int MEAT = 4;
+	public final int STONE = 5;
+	public final int FUDGE = 6;
+	public final int METAL = 7;
+	public final int DIRT = 8;
+	public final int WOOD = 9;
 	
-	public static final int TOTAL = 20;
+	public static final int TOTAL = 25;
 	private ArrayList<Element> elementList = new ArrayList<Element>();
 	
 	
@@ -34,7 +37,15 @@ public class UET {
 				c = 'A'-1;
 			}
 		}
+		Element elem1 = new Element("ice", 1.0);
+		Element elem2 = new Element("silver brick", 2.0);
+		Element elem3 = new Element("cobblestone", 2.0);
+	
 		l = new Language("Language",0,temp,true);
+		elementList.add(elem1);
+		elementList.add(elem2);
+		elementList.add(elem3);
+		
 		elementList.add(new Element("Water", 1 ,1 , 1));
 		elementList.add(new Element("Meat", 2, 1 , 1));
 		elementList.add(new Element("Stone", 3.2 ,1 , 1));

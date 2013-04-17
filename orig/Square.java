@@ -26,6 +26,7 @@ public class Square implements Serializable {
 	protected Stack<Item> itemStack;
 	protected Color tempFade;
 	
+	
 	public Square(boolean pass, Element cons) {
 		this.passable = pass;
 		this.consists = cons;

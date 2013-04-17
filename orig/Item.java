@@ -171,6 +171,7 @@ public class Item implements Serializable {
 		return this.type;
 	}
 	
+	
 	public String getName(){
 		String str = this.name;
 		if(this.hands > 1) str += "(" + this.hands + " hands)";

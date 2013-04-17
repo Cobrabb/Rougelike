@@ -53,7 +53,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	
 	// List of creatures active on the map, not including player?
 	HashSet<OnScreenChar> monsters;
-	
+	HashSet<Item> items;
 	public DungeonMap(){ //completely random constructor, probably not necessary.
 	}
 	
@@ -86,6 +86,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	private void reveal(int pRadius, int mRadius, int x, int y, Color color) {
 		this.reveal(pRadius, x, y);
 		Iterator<OnScreenChar> it = this.monsters.iterator();
+		
 		while (it.hasNext()) {
 			OnScreenChar monster = it.next();
 			if (monster.isPlayer())
@@ -222,6 +223,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		this.stairList = new HashSet<GridPoint>();
 		this.playerSpawns = new HashSet<GridPoint>();
 		this.monsters = new HashSet<OnScreenChar>();
+		this.items = new HashSet<Item>();
 		
 		for (int x = 0; x < mapDetails.length; ++x) {
 			for (int y = 0; y < mapDetails.length; ++y) {
@@ -310,6 +312,23 @@ public class DungeonMap implements TileBasedMap, Serializable {
 			if (squares[x][y].getOnScreenChar() == null) {
 				squares[x][y].setOnScreenChar(c);
 				c.setPosition(x, y);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean putOnScreenItem(int x, int y, Item item) {
+		if (validCoordinates(x, y)) {
+			GridPoint gp = new GridPoint(x, y);
+			if (doorList.contains(gp)) {
+				
+			} else if (stairList.contains(gp)) {
+				
+			}
+			if (squares[x][y].getOnScreenChar() == null) {
+				squares[x][y].dropItem(item);
+				
 				return true;
 			}
 		}
@@ -420,6 +439,8 @@ public class DungeonMap implements TileBasedMap, Serializable {
 				int k = (int)(Math.random()*this.planet.getNumResidents());
 				Creature c = new Creature(planet.getResident(k));
 				addOnScreenchar(new OnScreenChar(0,0,c, true));
+				addOnScreenItem(new Item());
+				
 				if(planet.getDungeonFloor()>1){
 					int[] limits = {85, 95, 100};
 					int check = (int)(Math.random()*100);
@@ -615,6 +636,20 @@ OUT:	while (!queue.isEmpty()) {
 			if (isPassable(x, y)) {
 				this.monsters.add(osc);
 				putOnScreenChar(x, y, osc, false);
+				done = true;
+			}
+		}
+		
+	}
+	
+	public void addOnScreenItem(Item item) {
+		boolean done = false;
+		while (!done) {
+			int x = (int)(Math.random()*this.squares.length);
+			int y = (int)(Math.random()*this.squares[0].length);
+			if (isPassable(x, y)) {
+				this.items.add(item);
+				putOnScreenItem(x, y, item);
 				done = true;
 			}
 		}

@@ -32,6 +32,7 @@ public class Planet {
 		private int dungeonRow;
 		private int dungeonCol;
 		private Race[] residents; //the native creatures on the planet
+	
 		
 		final int numTypes = 3; //the number of types of planets. Currently 1 = normal, 2 = aquatic, and 3 = gaseous. This is based on the most common element in the first 3.
 		int type;
@@ -182,6 +183,8 @@ public class Planet {
 			for(int i=0; i<j; i++){
 				residents[i] = new Race(this.e, L);
 			}
+			
+			//BRANDON
 			
 			// create map generator
 			this.mapGenerator = new DungeonMapGenerator(this);

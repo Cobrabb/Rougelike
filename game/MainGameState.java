@@ -167,6 +167,7 @@ public class MainGameState extends BasicGameState{
 		g.setColor(Color.green);
 		g.drawRect(1030, 50, 150, 20);
 		int calc = (p1.getHealth()/p1.getMaxHealth())*150;
+		System.out.println(p1.getHealth()+" "+p1.getMaxHealth()+" "+calc);
 		g.fillRect(1030, 50, calc, 20);
 		g.setColor(Color.white);
 		if(!menutime){

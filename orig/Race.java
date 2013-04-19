@@ -432,6 +432,7 @@ private void lvlUp(cStats s) {
 	this.cStat[s.ordinal()][sVal.XP.ordinal()] -= ((int) mul*Math.pow(this.cStat[s.ordinal()][sVal.LEVEL.ordinal()],rate));
 	this.cStat[s.ordinal()][sVal.LEVEL.ordinal()]++;
 	this.cStat[s.ordinal()][sVal.MAX.ordinal()] += lvlGain;
+	if(s == cStats.STAM_HEALTH) this.cStat[s.ordinal()][sVal.MAX.ordinal()] += lvlGain; 
 	// current = max (unless temp effect has it above max already)
 	if(this.cStat[s.ordinal()][sVal.CURRENT.ordinal()] < this.cStat[s.ordinal()][sVal.MAX.ordinal()]) {
 		this.cStat[s.ordinal()][sVal.CURRENT.ordinal()] = this.cStat[s.ordinal()][sVal.MAX.ordinal()];

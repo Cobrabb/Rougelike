@@ -100,6 +100,7 @@ public class Creature implements Serializable {
 				this.cStat[i][j] = r.get(c[i],v[j]);
 			}
 		}
+		if(this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.MAX.ordinal()] < 10) this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.MAX.ordinal()] = 10;
 		if(this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] < 10) this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] = 10;
 		this.bStat = new int[bStats.TOTAL.ordinal()][sVal.TOTAL.ordinal()];
 		for(int i=0; i<bStats.TOTAL.ordinal(); i++) {
@@ -612,7 +613,7 @@ public class Creature implements Serializable {
 					this.gain(e.getCStat(), e.getSVal(), (int) Math.floor(e.getValue()));
 				}
 			}
-			else effects.add(new Effect(e));
+			else effects.add(e.apply());
 		}
 	}
 	
@@ -668,6 +669,9 @@ public class Creature implements Serializable {
 			if(equipped[i.getType().ordinal()] != null) equipped[i.getType().ordinal()].unequip();
 			equipped[i.getType().ordinal()] = i;
 			i.equip();
+			for(int j=0; j<i.getEffects().size(); j++) {
+				effects.add(new Effect(i.getEffects().get(j)));
+			}
 			return true;
 		}
 		//return false;

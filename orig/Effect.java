@@ -147,6 +147,20 @@ public class Effect implements Serializable {
 		this.steps = steps;
 	}
 	
+	public Effect apply() {
+		//returns a defensive effect (applied to self)
+		Effect eff;
+		if(isBase()) {
+			eff = new Effect(this.getBStat(),this.getSVal(),this.getValue(),this.getSteps());
+			eff.attack = false;
+		}
+		else {
+			eff = new Effect(this.getCStat(),this.getSVal(),this.getValue(),this.getSteps());
+			eff.attack = false;
+		}
+		return eff;
+	}
+	
 	public cStats getCStat() {
 		return this.cstat;
 	}

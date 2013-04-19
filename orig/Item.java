@@ -331,7 +331,7 @@ public class Item implements Serializable {
 		}
 		str+= type.toString().toLowerCase();
 		str += "\nBase strength : %.2f / %.2f\nWeight : %.2f\nItem health : %d / %d";
-		str = String.format(str, this.baseDmg, this.getBaseDmg(),this.weight,(int) this.health,(int) this.maxHealth);
+		str = String.format(str, this.getBaseDmg(), this.baseDmg, this.weight,(int) this.health,(int) this.maxHealth);
 		if(this.effects != null) {
 			for(int i=0; i<this.effects.size(); i++) {
 				str += "\n[" + this.effects.get(i).toString() + "]";

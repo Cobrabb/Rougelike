@@ -158,6 +158,17 @@ public class MainGameState extends BasicGameState{
 	}
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
+		g.setColor(Color.white);
+		g.fillRect(1024, 0, 200, 672);
+		g.setColor(Color.gray);
+		g.fillRect(1024, 0, 4, 672);
+		g.setColor(Color.black);
+		g.drawString("Health:", 1030, 0);
+		g.setColor(Color.green);
+		g.drawRect(1030, 50, 150, 20);
+		int calc = (p1.getHealth()/p1.getMaxHealth())*150;
+		g.fillRect(1030, 50, calc, 20);
+		g.setColor(Color.white);
 		if(!menutime){
 			if(free_mode){
 				DungeonMap dm = planet.getCurrentDungeon();

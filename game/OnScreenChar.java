@@ -12,6 +12,8 @@ import orig.Attack;
 import orig.Attack.AttackDirection;
 import orig.AttackResults;
 import orig.Creature;
+import orig.Creature.cStats;
+import orig.Creature.sVal;
 import orig.DungeonMap;
 import orig.Item;
 import util.General.GridPoint;
@@ -307,4 +309,12 @@ public class OnScreenChar implements Serializable {
 		return baseCreature.isDead();
 	}
 	
+	
+	public int getHealth(){
+		return baseCreature.getEffective(cStats.STAM_HEALTH, sVal.CURRENT);
+	}
+	
+	public int getMaxHealth(){
+		return baseCreature.getEffective(cStats.STAM_HEALTH, sVal.MAX);
+	}
 }

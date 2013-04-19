@@ -199,7 +199,8 @@ public class Creature implements Serializable {
 	public int getEffective(cStats s, sVal v) {
 		//returns effective value for stat (useful for current/max)
 		bStats b = decode(s);
-		int eff = (int) (base_creat_ratio*bStat[decode(s).ordinal()][v.ordinal()] + cStat[s.ordinal()][v.ordinal()]);
+		//int eff = (int) (base_creat_ratio*bStat[decode(s).ordinal()][v.ordinal()] + cStat[s.ordinal()][v.ordinal()]);
+		int eff = cStat[s.ordinal()][v.ordinal()];
 		if(this.effects != null) {
 			for(int i=0; i<effects.size(); i++) {
 				if(!effects.get(i).isBase()) {
@@ -533,12 +534,13 @@ public class Creature implements Serializable {
 	
 	public void takeAttack(Attack a) {
 		//get resistances from univeral reaction table
-		double atStr = a.getAttackStrength();
+		double atStr = a.getAttackStrength(), block = 0;
 		ArrayList<Effect> attEff;
 		for(int i=0; i<this.equipped.length; i++) {
 			if(this.equipped[i] != null) {
 				this.equipped[i].takeAttack(a,atStr);
-				atStr -= this.equipped[i].getAttackSize();
+				block = Math.min(atStr, this.equipped[i].getBaseDmg());
+				atStr -= block;
 			}
 			
 			/*
@@ -561,7 +563,7 @@ public class Creature implements Serializable {
 			}
 			dmg /= a.getWeapon().getConsists().length*3;
 			dmg = Math.min(dmg, this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()]);
-			this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] -= dmg;
+			this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] -= (int) dmg;
 			System.out.println(this.getName() + " took " + dmg + " from " + a.getAttacker().getName()+ "'s " + a.getWeapon().getName() + ". It now has " + cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] + " health.");
 			/*System.out.printf("Current health of %s: %d/%d\n", this.name,
 					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()],
@@ -602,7 +604,15 @@ public class Creature implements Serializable {
 	
 	public void attackEffect(Effect e) {
 		if(e != null && e.isAttack()) { //if it is an attack
-			effects.add(new Effect(e));
+			if(e.getSVal() == sVal.XP) {
+				if(e.isBase()) {
+					this.gain(e.getBStat(), sVal.XP, (int) Math.floor(e.getValue()));
+				}
+				else {
+					this.gain(e.getCStat(), e.getSVal(), (int) Math.floor(e.getValue()));
+				}
+			}
+			else effects.add(new Effect(e));
 		}
 	}
 	
@@ -676,6 +686,7 @@ public class Creature implements Serializable {
 						weilding[j+k] = null;
 					}
 					consolidateWeilding();
+					equip(unarmed);
 					return true;
 				}
 			}
@@ -708,6 +719,7 @@ public class Creature implements Serializable {
 				}
 				availHands += hands;
 				consolidateWeilding();
+				equip(unarmed);
 				return true;
 			}
 		}

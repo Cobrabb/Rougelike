@@ -41,6 +41,7 @@ public class Item implements Serializable {
 	private String name = "";
 	private double weight = 0.0;
 	private double health = 0.0;
+	private double maxHealth = 0.0;
 	private boolean attack = false; //whether it is an attack or defense item
 	private ArrayList<Effect> effects = null; //does item pass on any additional effects
 	private AttackPattern pattern = AttackPattern.POINT; // how does this item attack, defaults to a point
@@ -82,6 +83,7 @@ public class Item implements Serializable {
 		this.phys_tech_ratio = Math.random(); //generate random ratio of physical and tech
 		this.weight = 1/(.7*Math.random()+.2);
 		this.health = 5/(Math.random()+0.01);
+		this.maxHealth = this.health;
 		this.effects = new ArrayList<Effect>(0);
 		while(Math.random() < .7) {
 			this.effects.add(new Effect());
@@ -112,6 +114,7 @@ public class Item implements Serializable {
 		this.weight = weight;
 		this.effects = new ArrayList<Effect>();
 		this.health = 5/(Math.random()+0.01);
+		this.maxHealth = this.health;
 		this.name = new Language().generate();
 		while(Math.random() < .3) this.effects.add(new Effect());
 	}
@@ -133,6 +136,7 @@ public class Item implements Serializable {
 		this.weight = weight;
 		this.effects = new ArrayList<Effect>();
 		this.health = 5/(Math.random()+0.01);
+		this.maxHealth = this.health;
 		this.name = name;
 		while(Math.random() < .3) this.effects.add(new Effect());
 	}
@@ -158,7 +162,7 @@ public class Item implements Serializable {
 	}
 	
 	public double getBaseDmg() {
-		return this.baseDmg;
+		return this.baseDmg*this.health/this.maxHealth;
 	}
 
 	public static Item unarmed(Creature c) {
@@ -167,6 +171,7 @@ public class Item implements Serializable {
 		i.attackSize = 1;
 		i.atype = AttackType.PHYS;
 		i.health = 9999999; //your hands shouldn't break
+		i.maxHealth = i.health;
 		i.name = "Bare Hand";
 		i.pattern = AttackPattern.POINT;
 		i.effects = new ArrayList<Effect>(); //no effects
@@ -175,6 +180,7 @@ public class Item implements Serializable {
 	
 	public static Item healthPotion(double strength) {
 		Item i = new Item(null, null,0,0,0.0,0,iType.HAND,.1);
+		i.pattern = AttackPattern.POINT;
 		i.attack = false;
 		i.effects = new ArrayList<Effect>();
 		i.effects.add(new Effect(cStats.STAM_HEALTH,sVal.CURRENT,strength,1,true));
@@ -188,6 +194,11 @@ public class Item implements Serializable {
 		newItem.attack = false;
 		newItem.effects = new ArrayList<Effect>(0);
 		return newItem;
+	}
+	
+	public Item dropFull() {
+		this.health = this.maxHealth;
+		return this;
 	}
 
 	public iType getType() {
@@ -319,7 +330,8 @@ public class Item implements Serializable {
 			str+=atype.toString().toLowerCase()+" ";
 		}
 		str+= type.toString().toLowerCase();
-		str += "\nBase strength : " + (int)this.baseDmg + "\nWeight : " + (int)this.weight + "\nItem health : " + (int)this.health;
+		str += "\nBase strength : %.2f / %.2f\nWeight : %.2f\nItem health : %d / %d";
+		str = String.format(str, this.baseDmg, this.getBaseDmg(),this.weight,(int) this.health,(int) this.maxHealth);
 		if(this.effects != null) {
 			for(int i=0; i<this.effects.size(); i++) {
 				str += "\n[" + this.effects.get(i).toString() + "]";

@@ -298,7 +298,7 @@ public class OnScreenChar implements Serializable {
 	public ArrayList<Item> die(){
 		ArrayList<Item> a = new ArrayList<Item>();
 		for(int i=0; i<baseCreature.getInventory().size(); i++){
-			a.add(baseCreature.drop(baseCreature.getInventory().get(i)));
+			a.add(baseCreature.drop(baseCreature.getInventory().get(i).dropFull()));
 		}
 		return a;
 	}

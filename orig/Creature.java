@@ -533,7 +533,7 @@ public class Creature implements Serializable {
 		return att;
 	}
 	
-	public void takeAttack(Attack a) {
+	public String takeAttack(Attack a) {
 		//get resistances from univeral reaction table
 		double atStr = a.getAttackStrength(), block = 0;
 		ArrayList<Effect> attEff;
@@ -555,6 +555,7 @@ public class Creature implements Serializable {
 			attEff = null;
 			*/
 		}
+		String str="";
 		if(atStr > 0) {
 			double dmg = 0;
 			for(int i=0; i<a.getWeapon().getConsists().length; i++) {
@@ -565,7 +566,7 @@ public class Creature implements Serializable {
 			dmg /= a.getWeapon().getConsists().length*3;
 			dmg = Math.min(dmg, this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()]);
 			this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] -= (int) dmg;
-			System.out.println(this.getName() + " took " + dmg + " from " + a.getAttacker().getName()+ "'s " + a.getWeapon().getName() + ". It now has " + cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] + " health.");
+			str = this.getName() + " took " + dmg + " from " + a.getAttacker().getName()+ "'s " + a.getWeapon().getName() + ". It now has " + cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()] + " health.";
 			/*System.out.printf("Current health of %s: %d/%d\n", this.name,
 					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()],
 					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.MAX.ordinal()]);*/
@@ -583,11 +584,13 @@ public class Creature implements Serializable {
 				a.getAttacker().takeAttackResults(ar);
 			}
 			
+			
 		}
 		//apply effects
 		for(int i=0; i<a.getEffects().size(); i++) {
 			attackEffect(a.getEffects().get(i));
 		}
+		return str;
 	}
 	
 	public void takeAttackResults(AttackResults ar) {

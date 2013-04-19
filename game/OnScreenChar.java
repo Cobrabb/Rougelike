@@ -12,6 +12,8 @@ import orig.Attack;
 import orig.Attack.AttackDirection;
 import orig.AttackResults;
 import orig.Creature;
+import orig.Creature.cStats;
+import orig.Creature.sVal;
 import orig.DungeonMap;
 import orig.Item;
 import util.General.GridPoint;
@@ -90,8 +92,8 @@ public class OnScreenChar implements Serializable {
 		return this.baseCreature.attack(x, y, ad);
 	}
 	
-	public void takeAttack(Attack a) {
-		this.baseCreature.takeAttack(a);
+	public String takeAttack(Attack a) {
+		return this.baseCreature.takeAttack(a);
 	}
 	
 	public void takeAttackResults(AttackResults ar) {
@@ -114,11 +116,12 @@ public class OnScreenChar implements Serializable {
 	 * @param radius The area around the monster which it can see
 	 * @param dm The current map
 	 */
-	public void move(int radius, DungeonMap dm) {
+	public ArrayList<String> move(int radius, DungeonMap dm) {
 		// find targets of interest:
 		ArrayList<ArrayList<GridPoint>> targets = dm.detectArea(radius, this);
 		ArrayList<GridPoint> enemies = targets.get(0);
 		ArrayList<GridPoint> treasure = targets.get(1);
+		ArrayList<String> astr = new ArrayList<String>();
 		int totalTargets = enemies.size() + treasure.size();
 		// if nothing interesting around
 		if (totalTargets == 0) {
@@ -129,7 +132,7 @@ public class OnScreenChar implements Serializable {
 				// assuming that the plan has no invalid moves
 				GridPoint next = pathPlan.pop();
 				//System.out.printf("\tAttackmove from (%d, %d) to %s\n", xPos, yPos, next);
-				dm.attackMove(xPos, yPos, next.getX(), next.getY(), true);
+				astr = dm.attackMove(xPos, yPos, next.getX(), next.getY(), true);
 			} else {
 				//System.out.printf("\tWe have no plan...\n");
 				// no plan, or nowhere else to go according to plan
@@ -180,6 +183,7 @@ public class OnScreenChar implements Serializable {
 			GridPoint enemy = enemies.get(0);
 			dm.moveOSC(xPos, yPos, enemy.getX(), enemy.getY());
 		} // else do nothing
+		return astr;
 	}
 	
 	public void move(int left, int up, DungeonMap dm){
@@ -307,4 +311,12 @@ public class OnScreenChar implements Serializable {
 		return baseCreature.isDead();
 	}
 	
+	
+	public int getHealth(){
+		return baseCreature.getEffective(cStats.STAM_HEALTH, sVal.CURRENT);
+	}
+	
+	public int getMaxHealth(){
+		return baseCreature.getEffective(cStats.STAM_HEALTH, sVal.MAX);
+	}
 }

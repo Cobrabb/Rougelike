@@ -53,7 +53,8 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	
 	// List of creatures active on the map, not including player?
 	HashSet<OnScreenChar> monsters;
-	HashSet<Item> items;
+	ArrayList<OnScreenChar> deathList;
+	
 	public DungeonMap(){ //completely random constructor, probably not necessary.
 	}
 	
@@ -223,7 +224,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		this.stairList = new HashSet<GridPoint>();
 		this.playerSpawns = new HashSet<GridPoint>();
 		this.monsters = new HashSet<OnScreenChar>();
-		this.items = new HashSet<Item>();
+		this.deathList = new ArrayList<OnScreenChar>();
 		
 		for (int x = 0; x < mapDetails.length; ++x) {
 			for (int y = 0; y < mapDetails.length; ++y) {
@@ -368,7 +369,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		Iterator<OnScreenChar> it = monsters.iterator();
 		while (it.hasNext()) {
 			OnScreenChar osc = it.next();
-			if (!osc.isPlayer()) {
+			if (!osc.isPlayer() && !osc.isDead()) {
 				osc.move(sightRadius, this);
 				osc.update();
 			}
@@ -377,6 +378,14 @@ public class DungeonMap implements TileBasedMap, Serializable {
 			this.reveal(sightRadius+4, sightRadius, xPos, yPos, Color.red);
 		else
 			this.reveal(sightRadius, xPos, yPos);
+		removeDeadMonsters();
+	}
+
+	private void removeDeadMonsters() {
+		for (int i = 0; i < deathList.size(); ++i) {
+			monsters.remove(deathList.get(i));
+		}
+		deathList.clear();
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g, int xPos, int yPos, int screenX, int screenY) {
@@ -518,7 +527,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 						squares[toX][toY].dropItem(i);
 					}
 					removeOnScreenChar(toX, toY);
-					monsters.remove(osc);
+					addToDeathList(osc);
 				}
 			}
 		} else if(isCreature(fromX, fromY)){
@@ -528,6 +537,10 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		}
 	}
 	
+	private void addToDeathList(OnScreenChar osc) {
+		this.deathList.add(osc);
+	}
+
 	/**
 	 * This method is what an OSC calls to tell the map to move it to the
 	 * location it desires, in the best way possible?
@@ -657,7 +670,6 @@ OUT:	while (!queue.isEmpty()) {
 			int x = (int)(Math.random()*this.squares.length);
 			int y = (int)(Math.random()*this.squares[0].length);
 			if (isPassable(x, y)) {
-				this.items.add(item);
 				putOnScreenItem(x, y, item);
 				done = true;
 			}

@@ -95,6 +95,10 @@ public class MainGameState extends BasicGameState{
     }
 	
 	public void init(GameContainer container, StateBasedGame Sbg) throws SlickException {
+		setup();
+	}
+	
+	public void setup() throws SlickException {
 		///*
 		//TestUtil.DISPLAY_MONSTER_LOS = true;
 		Element elem1 = UET.getUET().getElementList().get(0);
@@ -248,11 +252,14 @@ public class MainGameState extends BasicGameState{
     	boolean kp = false;
     	inputDelta-=delta;
     	if(dead) {
+    		dead = false;
+    		setup();
     		sbg.enterState(MainGame.MENUSTATE);
     		return;
     	}
     	if(inputDelta<0){
     		if (loadedCreature != null) {
+    			setup();
     			OnScreenChar temp = p1;
     			p1 = new OnScreenChar(p1.getX(), p1.getY(), loadedCreature);
     			p1.setAsPlayer();

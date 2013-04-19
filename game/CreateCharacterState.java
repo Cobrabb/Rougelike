@@ -171,7 +171,7 @@ public class CreateCharacterState extends BasicGameState{
     					Creature c = new Creature(human, name.getText());
     				
     					MainGameState.loadedCreature = c;
-    					sbg.enterState(MainGame.MAINGAMESTATE);
+    					enterMainGame(sbg);
     					
     	    		
     	    	}
@@ -195,7 +195,7 @@ public class CreateCharacterState extends BasicGameState{
     					Creature c = new Creature(argok, name.getText());
     					
     					MainGameState.loadedCreature = c;
-    					sbg.enterState(MainGame.MAINGAMESTATE);
+    					enterMainGame(sbg);
     					
     	    		
     	    	}
@@ -228,7 +228,7 @@ public class CreateCharacterState extends BasicGameState{
     					
     					
     					MainGameState.loadedCreature = c;
-    					sbg.enterState(MainGame.MAINGAMESTATE);
+    					enterMainGame(sbg);
     					
     	    		
     	    	}
@@ -257,6 +257,11 @@ public class CreateCharacterState extends BasicGameState{
     	}
     	*/
     	
+    }
+    
+    private void enterMainGame(StateBasedGame sbg) {
+    	state = 0;
+		sbg.enterState(MainGame.MAINGAMESTATE);
     }
     
     

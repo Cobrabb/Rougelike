@@ -365,12 +365,17 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		return (xCoor >= 0 && xCoor < squares.length && yCoor >= 0 && yCoor < squares[0].length);
 	}
 	
-	public void update(int sightRadius, int xPos, int yPos) {
+	public ArrayList<String> update(int sightRadius, int xPos, int yPos) {
 		Iterator<OnScreenChar> it = monsters.iterator();
-		while (it.hasNext()) {
+		ArrayList<String> astr = new ArrayList<String>();
+		ArrayList<String> temp = new ArrayList<String>();
+ 		while (it.hasNext()) {
 			OnScreenChar osc = it.next();
 			if (!osc.isPlayer() && !osc.isDead()) {
-				osc.move(sightRadius, this);
+				temp = osc.move(sightRadius, this);
+				for(int i=0; i<temp.size(); i++){
+					astr.add(temp.get(i));
+				}
 				osc.update();
 			}
 		}
@@ -379,6 +384,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 		else
 			this.reveal(sightRadius, xPos, yPos);
 		removeDeadMonsters();
+		return astr;
 	}
 
 	private void removeDeadMonsters() {
@@ -492,7 +498,8 @@ public class DungeonMap implements TileBasedMap, Serializable {
 	 * @param toY
 	 * @param aggressive Indicates whether the monster is intending to attack
 	 */
-	public void attackMove(int fromX, int fromY, int toX, int toY, boolean aggressive) {
+	public ArrayList<String> attackMove(int fromX, int fromY, int toX, int toY, boolean aggressive) {
+		ArrayList<String> astring = new ArrayList<String>();
 		if (isCreature(toX, toY) && isCreature(fromX, fromY)) {
 			if (aggressive) {
 				// TODO: implement attacking here
@@ -515,7 +522,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 						for(int j=0; j<a.get(i).getPattern().size(); j++){
 							int[] z = a.get(i).getPattern().get(j);
 							if(squares[z[0]][z[1]].c!=null){
-								squares[z[0]][z[1]].c.takeAttack(a.get(i));
+								astring.add(squares[z[0]][z[1]].c.takeAttack(a.get(i)));
 							}
 						}
 					}
@@ -535,6 +542,7 @@ public class DungeonMap implements TileBasedMap, Serializable {
 			removeOnScreenChar(fromX, fromY);
 			putOnScreenChar(toX, toY, osc, true);
 		}
+		return astring;
 	}
 	
 	private void addToDeathList(OnScreenChar osc) {

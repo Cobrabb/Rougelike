@@ -57,6 +57,7 @@ public class MainGameState extends BasicGameState{
 	OnScreenChar p1;
 	int sightRadius;
 	boolean dead;
+	ArrayList<String> attacks = new ArrayList<String>();
 	
 	//dungeon stuff
 	int mapX = 0;
@@ -167,8 +168,11 @@ public class MainGameState extends BasicGameState{
 		g.setColor(Color.green);
 		g.drawRect(1030, 50, 150, 20);
 		int calc = (p1.getHealth()/p1.getMaxHealth())*150;
-		System.out.println(p1.getHealth()+" "+p1.getMaxHealth()+" "+calc);
 		g.fillRect(1030, 50, calc, 20);
+		g.setColor(Color.black);
+		for(int i=0; i<attacks.size(); i++){
+			g.drawString(attacks.get(i), 1030, 75+(i*textAllowed));
+		}
 		g.setColor(Color.white);
 		if(!menutime){
 			if(free_mode){
@@ -437,7 +441,10 @@ public class MainGameState extends BasicGameState{
 			    		//dm.reveal(sightRadius, p1.xPos, p1.yPos);
 			    		inputDelta=100;
 			    		//o1.step(p1.xPos, p1.yPos, dm);
-			    		dm.update(sightRadius, p1.xPos, p1.yPos);
+			    		attacks = dm.update(sightRadius, p1.xPos, p1.yPos);
+			    		for(int i=0; i<attacks.size(); i++){
+			    			System.out.println(attacks.get(i));
+			    		}
 			    		p1.update();
 			    	}
 	    		}

@@ -117,6 +117,7 @@ public class Item implements Serializable {
 		this.maxHealth = this.health;
 		this.name = new Language().generate();
 		while(Math.random() < .3) this.effects.add(new Effect());
+		this.imgname = generateImgname();
 	}
 	
 	public Item(String name, Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, double baseDmg, iType type, double weight) {
@@ -139,6 +140,7 @@ public class Item implements Serializable {
 		this.maxHealth = this.health;
 		this.name = name;
 		while(Math.random() < .3) this.effects.add(new Effect());
+		this.imgname = generateImgname();
 	}
 	
 	public Item(String name, Element[] consists, Element[] repairs, int hands, int techRequired, double phys_tech_ratio, double baseDmg, iType type, double weight, double health) {
@@ -161,6 +163,7 @@ public class Item implements Serializable {
 		this.maxHealth = this.health;
 		this.name = name;
 		while(Math.random() < .3) this.effects.add(new Effect());
+		this.imgname = generateImgname();
 	}
 	
 	public Element[] getConsists() {

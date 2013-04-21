@@ -12,8 +12,9 @@ public class MainGame extends StateBasedGame{
 	public static final int MENUSTATE = 0;
 	public static final int MAINGAMESTATE = 1;
 	public static final int CHARACTERCREATESTATE = 2;
+	public static final int WINGAMESTATE = 3;
 	
-	public static final int sizeX = 1224;
+	public static final int sizeX = 1324;
 	public static final int sizeY = 672;
 
 	public MainGame(){
@@ -24,6 +25,7 @@ public class MainGame extends StateBasedGame{
     	this.addState(new MenuState(MENUSTATE));
     	this.addState(new MainGameState(MAINGAMESTATE));
     	this.addState(new CreateCharacterState(CHARACTERCREATESTATE));
+    	this.addState(new WinGameState(WINGAMESTATE));
     }
    public static void main(String[] args) {
 	   MapUtil.setFolderDirectory("maps");

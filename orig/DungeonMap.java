@@ -672,6 +672,34 @@ OUT:	while (!queue.isEmpty()) {
 		
 	}
 	
+	public void addEndGame(){
+		boolean done = false;
+		int x = 0;
+		int y = 0;
+		while(!done){
+			x = (int)(Math.random()*this.squares.length);
+			y = (int)(Math.random()*this.squares[0].length);
+			done = true;
+			for(int i=-1; i<2; i++){
+				for(int j=-1; j<2; j++){
+					if(validCoordinates(x+i, y+j)){
+						if(!squares[x+i][y+j].isPassable()){
+							done = false;
+							break;
+						}
+					}
+				}
+				if(!done) break;
+			}
+		}
+		squares[x][y] = new Square(true);
+	}
+	public boolean isWinner(int x, int y){
+		if(validCoordinates(x, y))
+		return squares[x][y].wingame;
+		else return false;
+	}
+	
 	public void addOnScreenItem(Item item) {
 		boolean done = false;
 		while (!done) {

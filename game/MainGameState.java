@@ -16,6 +16,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import orig.Creature;
+import orig.Creature.cStats;
 import orig.DungeonMap;
 import orig.Element;
 import orig.Item;
@@ -57,7 +58,6 @@ public class MainGameState extends BasicGameState{
 	OnScreenChar p1;
 	int sightRadius;
 	boolean dead;
-	ArrayList<String> attacks = new ArrayList<String>();
 	
 	//dungeon stuff
 	int mapX = 0;
@@ -160,7 +160,7 @@ public class MainGameState extends BasicGameState{
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 		g.setColor(Color.white);
-		g.fillRect(1024, 0, 200, 672);
+		g.fillRect(1024, 0, 300, 672);
 		g.setColor(Color.gray);
 		g.fillRect(1024, 0, 4, 672);
 		g.setColor(Color.black);
@@ -170,9 +170,11 @@ public class MainGameState extends BasicGameState{
 		int calc = (p1.getHealth()/p1.getMaxHealth())*150;
 		g.fillRect(1030, 50, calc, 20);
 		g.setColor(Color.black);
-		for(int i=0; i<attacks.size(); i++){
-			g.drawString(attacks.get(i), 1030, 75+(i*textAllowed));
-		}
+		g.drawString("Current health: "+p1.getEffective(cStats.STAM_HEALTH), 1030, 75);
+		g.drawString("Current strength: "+p1.getEffective(cStats.STR_PHYS_ATTACK), 1030, 75+(1*textAllowed));
+		g.drawString("Current attack speed: "+p1.getEffective(cStats.SPEED_ATTACK), 1030, 75+(2*textAllowed));
+		g.drawString("Current move speed: "+p1.getEffective(cStats.SPEED_MOVE), 1030, 75+(3*textAllowed));
+		g.drawString("Current armor: "+p1.getEffective(cStats.TECH_ARMOR), 1030, 75+(4*textAllowed));
 		g.setColor(Color.white);
 		if(!menutime){
 			if(free_mode){
@@ -353,53 +355,70 @@ public class MainGameState extends BasicGameState{
 		    		dm = planet.getCurrentDungeon();
 			    	if(input.isKeyDown(Input.KEY_NUMPAD1)){
 			    		kp = true;
-			    		if(p1.canMove(-1, 1, dm)){
+			    		int ret1 = p1.canMove(-1, 1, dm);
+					    if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+					    else if (ret1==1){		
 			    			mapX--;
 			    			mapY++;
 			    		}
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_NUMPAD2)||input.isKeyDown(Input.KEY_DOWN)){
 			    		kp = true;
-			    		if(p1.canMove(0, 1, dm)){
+			    		int ret1 = p1.canMove(0, 1, dm);
+			    		if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+			    		else if (ret1==1){
 			    			mapY++;
 			    		}
+			    		
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_NUMPAD3)){
 			    		kp = true;
-			    		if(p1.canMove(1, 1, dm)){
+			    		int ret1 = p1.canMove(1, 1, dm);
+			    		if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+			    		else if (ret1==1){
 			    			mapX++;
 			    			mapY++;
 			    		}
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_NUMPAD6)||input.isKeyDown(Input.KEY_RIGHT)){
 			    		kp = true;
-			    		if(p1.canMove(1, 0, dm)){
+			    		int ret1 = p1.canMove(1, 0, dm);
+			    		if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+			    		else if (ret1==1){
 			    			mapX++;
 			    		}
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_NUMPAD9)){
 			    		kp = true;
-			    		if(p1.canMove(1, -1, dm)){
+			    		int ret1 = p1.canMove(1, -1, dm);
+			    		if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+			    		else if (ret1==1){
 			    			mapX++;
 			    			mapY--;
 			    		}
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_NUMPAD8)||input.isKeyDown(Input.KEY_UP)){
 			    		kp = true;
-			    		if(p1.canMove(0, -1, dm)){
+			    		int ret1 = p1.canMove(0, -1, dm);
+			    		if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+			    		else if (ret1==1){
 			    			mapY--;
 			    		}
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_NUMPAD7)){
 			    		kp = true;
-			    		if(p1.canMove(-1, -1, dm)){
+			    		int ret1 = p1.canMove(-1, -1, dm);
+			    		if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+			    		else if (ret1==1){
 			    			mapX--;
 			    			mapY--;
 			    		}
 			    	}
 			    	else if(input.isKeyDown(Input.KEY_NUMPAD4)||input.isKeyDown(Input.KEY_LEFT)){
 			    		kp = true;
-			    		if(p1.canMove(-1, 0, dm)){
+			    		int ret1 = p1.canMove(-1, 0, dm);
+			    		if(ret1==2) sbg.enterState(MainGame.WINGAMESTATE);
+			    		else if (ret1==1){
 			    			mapX--;
 			    		}
 			    	}
@@ -441,10 +460,7 @@ public class MainGameState extends BasicGameState{
 			    		//dm.reveal(sightRadius, p1.xPos, p1.yPos);
 			    		inputDelta=100;
 			    		//o1.step(p1.xPos, p1.yPos, dm);
-			    		attacks = dm.update(sightRadius, p1.xPos, p1.yPos);
-			    		for(int i=0; i<attacks.size(); i++){
-			    			System.out.println(attacks.get(i));
-			    		}
+			    		dm.update(sightRadius, p1.xPos, p1.yPos);
 			    		p1.update();
 			    	}
 	    		}
@@ -462,9 +478,11 @@ public class MainGameState extends BasicGameState{
 		        	int mouseY = input.getMouseY();
 		        	if(mouseX<150&&mouseY<header+textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&outer>0){
 		        		outer=outer-itemFit;
+		        		examined=-1;
 		        	}
 		        	else if(mouseX>itemMax&&mouseX<=itemMax+tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		p1.equip(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
+		        		examined = -1;
 		        	}
 		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+2*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		examined = ((mouseY-(header+textAllowed))/textAllowed)+outer;
@@ -472,9 +490,11 @@ public class MainGameState extends BasicGameState{
 		        	else if(mouseX>itemMax+2*tileSize&&mouseX<=itemMax+3*tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(onscreen+1)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		Item i = p1.drop(p1.getInventory().get(((mouseY-(header+textAllowed))/textAllowed)+outer));
 		        		dm.dropItem(i, p1.getX(), p1.getY());
+		        		examined = -1;
 		        	}
 		        	else if(mouseX<150&&mouseY>=sizeY-(footer+textAllowed)&&mouseY<=sizeY-(footer)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)&&scrolldown){
 		        		outer=outer+itemFit;
+		        		examined = -1;
 		        	}
 		        	else if(mouseX>700&&mouseY<header+textAllowed&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		inventorytime=false;
@@ -490,9 +510,11 @@ public class MainGameState extends BasicGameState{
 	    			}
 	    			else if(mouseX>itemMax&&mouseX<=itemMax+tileSize&&mouseY>(header+textAllowed)&&mouseY<(header+(p1.baseCreature.getNumArms()+4)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		p1.baseCreature.unequip((mouseY-(header+textAllowed))/textAllowed);
+		        		examined = -1;
 		        	}
 		        	else if(mouseX>itemMax+tileSize&&mouseX<=itemMax+(2*tileSize)&&mouseY>(header+textAllowed)&&mouseY<(header+(p1.baseCreature.getNumArms()+4)*textAllowed)&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 		        		examined = (mouseY-(header+textAllowed))/textAllowed;
+		        		examined = -1;
 		        	}
 	    		}
 	    		else{

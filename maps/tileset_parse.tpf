@@ -59,7 +59,7 @@ W*6+0 H*3+0 dark brown rock
 nethack_tileset.gif
 
 # Tile count
-102
+103
 
 w*4+0 h*21+0 door
 w*11+0 h*21+0 upstairs
@@ -163,6 +163,7 @@ w*9+0 h*10+0 BUFF
 w*0+0 h*12+0 ARMOR
 w*18+0 h*13+0 BOOTS
 w*25+0 h*16+0 POTION
+w*2+0 h*14+0 spaceship
 
 
 # Third File

@@ -227,12 +227,18 @@ public class OnScreenChar implements Serializable {
 	}
 	
 	//player only
-	public boolean canMove(int left, int up, DungeonMap dm){
+	public int canMove(int left, int up, DungeonMap dm){
 		boolean b = dm.isPassable(xPos+left, yPos+up);
+		if(dm.isWinner(xPos+left, yPos+up)){
+			return 2;
+		}
 		if(b||dm.isCreature(xPos+left, yPos+up)){
 			dm.attackMove(xPos, yPos, xPos+left, yPos+up, true);
 		}
-		return b;
+		if(b){
+			return 1;
+		}
+		return 0;
 	}
 	
 	public void pickup(Item i){
@@ -318,5 +324,9 @@ public class OnScreenChar implements Serializable {
 	
 	public int getMaxHealth(){
 		return baseCreature.getEffective(cStats.STAM_HEALTH, sVal.MAX);
+	}
+	
+	public double getEffective(cStats c){
+		return baseCreature.getEffective(c, sVal.CURRENT);
 	}
 }

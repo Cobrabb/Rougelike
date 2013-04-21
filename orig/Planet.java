@@ -32,6 +32,7 @@ public class Planet {
 		private int dungeonRow;
 		private int dungeonCol;
 		private Race[] residents; //the native creatures on the planet
+		private int counter = 0;
 	
 		
 		final int numTypes = 3; //the number of types of planets. Currently 1 = normal, 2 = aquatic, and 3 = gaseous. This is based on the most common element in the first 3.
@@ -319,6 +320,12 @@ public class Planet {
 
 		protected void setCurrentDungeon(String mapPath) {
 			this.currentDungeon = MapUtil.readMap(mapPath);
+			if(dungeonFloor==4){
+				counter++;
+				if(counter==4){
+					currentDungeon.addEndGame();
+				}
+			}
 			//System.err.printf("Current map name is %s\n", mapPath);
 			this.currentDungeon.setPlanet(this);
 		}

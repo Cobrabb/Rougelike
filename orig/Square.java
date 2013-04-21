@@ -25,7 +25,16 @@ public class Square implements Serializable {
 	protected boolean seeThrough;
 	protected Stack<Item> itemStack;
 	protected Color tempFade;
+	public boolean wingame;
 	
+	public Square(boolean wingame){
+		this.wingame = true;
+		this.passable = true;
+		this.imgName = "spaceship";
+		this.seen = false;
+		this.seeThrough = true;
+		itemStack = new Stack<Item>();
+	}
 	
 	public Square(boolean pass, Element cons) {
 		this.passable = pass;

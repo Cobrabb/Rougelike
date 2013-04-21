@@ -537,7 +537,7 @@ public class Creature implements Serializable {
 		ArrayList<Effect> attEff;
 		for(int i=0; i<this.equipped.length; i++) {
 			if(this.equipped[i] != null) {
-				this.equipped[i].takeAttack(a,atStr);
+				this.equipped[i].takeAttack(a,atStr,this);///this.getEffective(cStats.TECH_ARMOR,sVal.CURRENT));
 				block = Math.min(atStr, this.equipped[i].getBaseDmg());
 				atStr -= block;
 			}
@@ -569,20 +569,18 @@ public class Creature implements Serializable {
 					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.CURRENT.ordinal()],
 					this.cStat[cStats.STAM_HEALTH.ordinal()][sVal.MAX.ordinal()]);*/
 			attEff = new ArrayList<Effect>(0);
-			for(int i=0; i<this.effects.size(); i++) {
-				if(this.effects.get(i).isAttack()) {
-					attEff.add(this.effects.get(i));
+			if(a.getWeapon().getType() == iType.HAND && a.getWeapon().getAttackType() == AttackType.PHYS) {
+				for(int i=0; i<this.effects.size(); i++) {
+					if(this.effects.get(i).isAttack()) {
+						attEff.add(this.effects.get(i));
+					}
 				}
 			}
 			//adds XP to strength and tech (proportional to weapon)
-			attEff.add(new Effect(cStats.STR_PHYS_ATTACK,sVal.XP,(1.0-a.getWeapon().getPhysTech())*dmg,true));
-			attEff.add(new Effect(cStats.TECH_WEAPON,sVal.XP,(1.0-a.getWeapon().getPhysTech())*dmg,true));
-			if(a.getWeapon().getType() == iType.HAND && a.getWeapon().getAttackType() == AttackType.PHYS) {
-				AttackResults ar = new AttackResults(attEff,null,dmg);
-				a.getAttacker().takeAttackResults(ar);
-			}
-			
-			
+			attEff.add(new Effect(cStats.STR_PHYS_ATTACK,sVal.XP,-1*(1.0-a.getWeapon().getPhysTech())*dmg,true));
+			attEff.add(new Effect(cStats.TECH_WEAPON,sVal.XP,-1*(1.0-a.getWeapon().getPhysTech())*dmg,true));
+			AttackResults ar = new AttackResults(attEff,null,dmg);
+			a.getAttacker().takeAttackResults(ar);
 		}
 		//apply effects
 		for(int i=0; i<a.getEffects().size(); i++) {
@@ -826,9 +824,10 @@ public class Creature implements Serializable {
 		double detectScore = c.getEffective(cStats.DETECT_SIGHT,sVal.CURRENT);
 		//stealth increases with distance 
 		// stealth and detect both get 80% of their value plus up to 20% (random)
-		if(stealthScore*Math.pow(distance, 1.25)*(.8+.2*Math.random()) > detectScore*(.8+.2*Math.random())) {
+		// equal stealth and detect should be equal detection vs hidden at 4 squares
+		if(stealthScore*(.8+.2*Math.random()) > 4*detectScore*(.8+.2*Math.random())) {
 			// not detected 
-			this.gain(cStats.STEALTH_SIGHT,sVal.XP,(int) Math.floor(detectScore/distance));
+			this.gain(cStats.STEALTH_SIGHT,sVal.XP,(int) Math.floor(4*detectScore/distance));
 			return false;
 		}
 		else {

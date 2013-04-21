@@ -41,7 +41,7 @@ public class Item implements Serializable {
 	private String name = "";
 	private double weight = 0.0;
 	private double health = 0.0;
-	private double maxHealth = 0.0;
+	private final double maxHealth;
 	private boolean attack = false; //whether it is an attack or defense item
 	private ArrayList<Effect> effects = null; //does item pass on any additional effects
 	private AttackPattern pattern = AttackPattern.POINT; // how does this item attack, defaults to a point
@@ -192,13 +192,10 @@ public class Item implements Serializable {
 	}
 
 	public static Item unarmed(Creature c) {
-		Item i = new Item(c.getConsists(), null, 0, 0, 0.0,1,iType.HAND,0);
+		Item i = new Item("Bare Hand",c.getConsists(), null, 0, 0, 0.0,1,iType.HAND,0,999999);
 		i.attack = true;
 		i.attackSize = 1;
 		i.atype = AttackType.PHYS;
-		i.health = 9999999; //your hands shouldn't break
-		i.maxHealth = i.health;
-		i.name = "Bare Hand";
 		i.pattern = AttackPattern.POINT;
 		i.effects = new ArrayList<Effect>(); //no effects
 		i.invulnerable = true; //can't take damage
@@ -307,7 +304,7 @@ public class Item implements Serializable {
 		return this.atype;
 	}
 	
-	public void takeAttack(Attack a,double atStr) {
+	public void takeAttack(Attack a,double atStr,Creature defender) {
 		double dmg = 0, count = 0;
 		for(Element ae : a.getWeapon().getConsists()) {
 			for(Element me : this.consists) {
@@ -315,16 +312,18 @@ public class Item implements Serializable {
 				count++;
 			}
 		}
-		dmg /= count;
+		if(count > 0) 	dmg /= count;
 		if(!this.invulnerable) this.health -= dmg;
 		if(this.health < 0) this.health = 0;
+		else if(this.health > this.maxHealth) this.health = this.maxHealth;
 		
 		if(a.getWeapon().getAttackType() == AttackType.PHYS){
 			ArrayList<Element> elements = new ArrayList<Element>(0);
 			for(Element e : this.consists) {
 				elements.add(e);
 			}
-			AttackResults ar = new AttackResults(this.effects, this, dmg);
+			double skillFactor = (1-a.getWeapon().getPhysTechRatio())*defender.getEffective(cStats.STR_PHYS_ATTACK,sVal.CURRENT) +  a.getWeapon().getPhysTechRatio()*defender.getEffective(cStats.TECH_WEAPON,sVal.CURRENT);
+			AttackResults ar = new AttackResults(this.effects, this, dmg/skillFactor);
 			a.getWeapon().takeAttackResults(ar); 
 		}
 	}

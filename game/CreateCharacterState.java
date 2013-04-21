@@ -170,8 +170,8 @@ public class CreateCharacterState extends BasicGameState{
     					Element array[] = new Element[1];
     					array[0] = e.getElementList().get(e.METAL);
     					Creature c = new Creature(human, name.getText());
-    					c.pickAndEquip(new Item("Metal Sword",array,null, 1, 0, .5, 15, iType.HAND, 1));
-    					c.pickAndEquip(new Item("Metal Tunic",array,null, 50, 0, .5, 15, iType.ARMOR, 1,100));
+    					c.pickAndEquip(new Item("Metal Sword",array,null, 1, 0, .5, 15, iType.HAND, 1,100));
+    					c.pickAndEquip(new Item("Metal Tunic",array,null, 1, 0, .5, 15, iType.ARMOR, 1,100));
     					c.pickAndEquip(new Item("Metal Boots",array,null, 1, 0, .5, 15, iType.BOOTS, 1,100));
     					c.pickAndEquip(new Item("Metal Helm",array,null, 1, 0, .5, 15, iType.HEAD, 1,100));
     					MainGameState.loadedCreature = c;
@@ -199,8 +199,8 @@ public class CreateCharacterState extends BasicGameState{
     					Creature c = new Creature(argok, name.getText());
     					Element array[] = new Element[1];
     					array[0] = e.getElementList().get(e.STONE);
-    					c.pickAndEquip(new Item("Blarg",array,null, 1, 0, .5, 15, iType.HAND, 1));
-    					c.pickAndEquip(new Item("Stone Tunic",array,null, 50, 0, .5, 15, iType.ARMOR, 1,100));
+    					c.pickAndEquip(new Item("Blarg",array,null, 1, 0, .5, 15, iType.HAND, 1,100));
+    					c.pickAndEquip(new Item("Stone Tunic",array,null, 1, 0, .5, 15, iType.ARMOR, 1,100));
     					c.pickAndEquip(new Item("Stone Boots",array,null, 1, 0, .5, 15, iType.BOOTS, 1,100));
     					c.pickAndEquip(new Item("Stone Helm",array,null, 1, 0, .5, 15, iType.HEAD, 1,100));
     					
@@ -236,7 +236,7 @@ public class CreateCharacterState extends BasicGameState{
     					Creature c = new Creature(wonka, name.getText());
     					Element array[] = new Element[1];
     					array[0] = e.getElementList().get(e.FUDGE);
-    					c.pickAndEquip(new Item("Candy cane",array,null, 1, 0, .5, 15, iType.HAND, 1));
+    					c.pickAndEquip(new Item("Candy cane",array,null, 1, 0, .5, 15, iType.HAND, 1,100));
     					c.pickAndEquip(new Item("Fudge Tunic",array,null, 1, 0, .5, 15, iType.ARMOR, 1,100));
     					c.pickAndEquip(new Item("Fudge Boots",array,null, 1, 0, .5, 15, iType.BOOTS, 1,100));
     					c.pickAndEquip(new Item("Fudge Helm",array,null, 1, 0, .5, 15, iType.HEAD, 1,100));

@@ -237,13 +237,11 @@ public class Creature implements Serializable {
 			if(e.isTemp()) {
 				//do nothing, just leave in effects and it modifies effective value
 			}
-			else {
-				if(e.isBase()) {
-					this.bStat[e.getBStat().ordinal()][e.getSVal().ordinal()] += dmg;
-				}
-				else {
-					this.cStat[e.getCStat().ordinal()][e.getSVal().ordinal()] += dmg;
-				}
+			else if(e.isBase() && !e.isAttack()) { //attack effects should be converted to defensive before being applied
+				this.bStat[e.getBStat().ordinal()][e.getSVal().ordinal()] += dmg;
+			}
+			else if(!e.isAttack()){
+				this.cStat[e.getCStat().ordinal()][e.getSVal().ordinal()] += dmg;
 			}
 			//decrements steps remaining
 			effects.get(i).update();
@@ -647,7 +645,7 @@ public class Creature implements Serializable {
 			if(availHands >= i.getHands()) {
 			//if(availHands >= i.getHands() && getEffective(cStats.TECH_WEAPON,sVal.CURRENT) >= i.getTechRequired()) {
 				for(int j=0; j<weilding.length; j++) {
-					if(weilding[j] == null || weilding[j] == unarmed) {
+					if(weilding[j] == null || (weilding[j] == unarmed && i != unarmed)) {
 						weilding[j] = i;
 						//if i is a multiple hand weapon, store the offHand holder in next spots
 						for(int k=1; k<i.getHands(); k++) {
@@ -657,7 +655,7 @@ public class Creature implements Serializable {
 						i.equip();
 						return true;
 					}
-					else if(weilding[j] == i) {
+					else if(weilding[j] == i && i != unarmed) {
 						return true;
 					}
 				}
@@ -699,11 +697,12 @@ public class Creature implements Serializable {
 			}
 			return false;
 		}
-		else {
+		else if(equipped[i.getType().ordinal()] == i) {
 			equipped[i.getType().ordinal()] = null;
 			i.unequip();
 			return true;
 		}
+		return false;
 	}
 	
 	public boolean unequip(int n) {
@@ -716,7 +715,7 @@ public class Creature implements Serializable {
 			}
 		}
 		else if(n<this.slots+this.weilding.length) {
-			if(this.weilding[n-this.slots] != null && this.weilding[n-this.slots].getHands() > 0) {
+			if(this.weilding[n-this.slots] != null && this.weilding[n-this.slots] != unarmed) {
 				int hands = this.weilding[n-this.slots].getHands();
 				this.weilding[n-this.slots].unequip();
 				this.weilding[n-this.slots] = null;

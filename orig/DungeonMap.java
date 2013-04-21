@@ -624,9 +624,9 @@ OUT:	while (!queue.isEmpty()) {
 					continue; // ignore self.
 				if (isVisible(x, y, xPos, yPos, radius)) {
 					if (isCreature(x, y) && isPlayer(x, y)) { //TODO: enemy check
-						//OnScreenChar other = this.squares[x][y].getOnScreenChar();
+						OnScreenChar other = this.squares[x][y].getOnScreenChar();
 						//TODO: fix bug, detects doesn't work properly
-						//if (osc.detects(other))
+						if (osc.detects(other))
 							enemies.add(new GridPoint(x, y));
 					}
 					if (containsItem(x, y)) {

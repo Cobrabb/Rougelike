@@ -148,14 +148,14 @@ public class Effect implements Serializable {
 	}
 	
 	public Effect apply() {
-		//returns a defensive effect (applied to self)
+		//returns a defensive effect (applied to self) (and therefore flips positive to negative so they take damage)
 		Effect eff;
 		if(isBase()) {
-			eff = new Effect(this.getBStat(),this.getSVal(),this.getValue(),this.getSteps());
+			eff = new Effect(this.getBStat(),this.getSVal(),-1*(this.getValue()),this.getSteps());
 			eff.attack = false;
 		}
 		else {
-			eff = new Effect(this.getCStat(),this.getSVal(),this.getValue(),this.getSteps());
+			eff = new Effect(this.getCStat(),this.getSVal(),-1*(this.getValue()),this.getSteps());
 			eff.attack = false;
 		}
 		return eff;

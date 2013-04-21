@@ -48,6 +48,7 @@ public class Item implements Serializable {
 	private AttackType atype = AttackType.PHYS; // defaults to physical attack
 	private int attackSize = 2; // defaults to attacking 2 spacing (except for point attacks)
 	private boolean equipped = false;
+	private boolean invulnerable = false;
 	
 	private String imgname = "";
 	transient Image looks = null;
@@ -191,7 +192,7 @@ public class Item implements Serializable {
 	}
 
 	public static Item unarmed(Creature c) {
-		Item i = new Item(c.getConsists(), null, 1, 0, 0.0,1,iType.HAND,0);
+		Item i = new Item(c.getConsists(), null, 0, 0, 0.0,1,iType.HAND,0);
 		i.attack = true;
 		i.attackSize = 1;
 		i.atype = AttackType.PHYS;
@@ -200,6 +201,7 @@ public class Item implements Serializable {
 		i.name = "Bare Hand";
 		i.pattern = AttackPattern.POINT;
 		i.effects = new ArrayList<Effect>(); //no effects
+		i.invulnerable = true; //can't take damage
 		return i;
 	}
 	
@@ -209,6 +211,13 @@ public class Item implements Serializable {
 		i.attack = false;
 		i.effects = new ArrayList<Effect>();
 		i.effects.add(new Effect(cStats.STAM_HEALTH,sVal.CURRENT,strength,1,true));
+		i.invulnerable = true;
+		return i;
+	}
+
+	public static Item healthPotion() {
+		double strength = Math.random()*40;
+		Item i = healthPotion(strength);
 		return i;
 	}
 	
@@ -218,6 +227,7 @@ public class Item implements Serializable {
 		newItem.name = temp[0];
 		newItem.attack = false;
 		newItem.effects = new ArrayList<Effect>(0);
+		newItem.invulnerable = true;
 		return newItem;
 	}
 	
@@ -306,7 +316,7 @@ public class Item implements Serializable {
 			}
 		}
 		dmg /= count;
-		this.health -= dmg;
+		if(!this.invulnerable) this.health -= dmg;
 		if(this.health < 0) this.health = 0;
 		
 		if(a.getWeapon().getAttackType() == AttackType.PHYS){
@@ -320,7 +330,7 @@ public class Item implements Serializable {
 	}
 	
 	public void takeAttackResults(AttackResults ar) {
-		if(ar != null) {//takes reflected damaged
+		if(ar != null && !this.invulnerable) {//takes reflected damaged
 			double dmg = 0, count = 0, atStr = ar.getAttackStrength();
 			for(Element ae : ar.getConsists()) {
 				for(Element me : this.consists) {

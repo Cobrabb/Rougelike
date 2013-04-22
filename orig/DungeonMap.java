@@ -708,7 +708,7 @@ OUT:	while (!queue.isEmpty()) {
 		while (!done) {
 			int x = (int)(Math.random()*this.squares.length);
 			int y = (int)(Math.random()*this.squares[0].length);
-			if (isPassable(x, y)) {
+			if (isPassable(x, y) && !(this.squares[x][y] instanceof Stairs)) {
 				putOnScreenItem(x, y, item);
 				done = true;
 			}

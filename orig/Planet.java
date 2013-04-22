@@ -322,7 +322,7 @@ public class Planet {
 			this.currentDungeon = MapUtil.readMap(mapPath);
 			if(dungeonFloor==4){
 				counter++;
-				if(counter==4){
+				if(counter>=2){
 					currentDungeon.addEndGame();
 				}
 			}

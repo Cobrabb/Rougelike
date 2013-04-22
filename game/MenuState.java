@@ -60,6 +60,7 @@ public class MenuState extends BasicGameState{
     		
     	}
     	if (insideStartGame&& input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){
+    		MainGameState.skipRender = false;
     		sbg.enterState(MainGame.MAINGAMESTATE);
     	}
     	if (clickcc&& input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ){

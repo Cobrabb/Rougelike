@@ -73,7 +73,7 @@ public class MainGameState extends BasicGameState{
 	final int itemMax = 250; //max length for an item name
 	
 	//trick variable so that we don't render the wrong stuff for a bit
-	boolean skipRender = true;
+	static boolean skipRender = true;
 	
 	int inputDelta = 100;
 	boolean menutime = false;
@@ -103,7 +103,7 @@ public class MainGameState extends BasicGameState{
 	
 	public void setup() throws SlickException {
 		///*
-		//TestUtil.DISPLAY_MONSTER_LOS = true;
+		TestUtil.DISPLAY_MONSTER_LOS = true;
 		Element elem1 = UET.getUET().getElementList().get(0);
 		Element elem2 = UET.getUET().getElementList().get(1);
 		Element elem3 = UET.getUET().getElementList().get(2);

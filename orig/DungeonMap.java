@@ -521,8 +521,11 @@ public class DungeonMap implements TileBasedMap, Serializable {
 					for(int i=0; i<a.size(); i++){
 						for(int j=0; j<a.get(i).getPattern().size(); j++){
 							int[] z = a.get(i).getPattern().get(j);
-							if(squares[z[0]][z[1]].c!=null){
-								astring.add(squares[z[0]][z[1]].c.takeAttack(a.get(i)));
+							// make sure that this place is valid before we attack it
+							if(validCoordinates(z[0], z[1])) {
+								if(squares[z[0]][z[1]].c!=null){
+									astring.add(squares[z[0]][z[1]].c.takeAttack(a.get(i)));
+								}
 							}
 						}
 					}

@@ -72,6 +72,8 @@ public class MainGameState extends BasicGameState{
 	final int itemFit = ((sizeY-header-footer)/textAllowed)-3; //trust me on this
 	final int itemMax = 250; //max length for an item name
 	
+	//trick variable so that we don't render the wrong stuff for a bit
+	boolean skipRender = true;
 	
 	int inputDelta = 100;
 	boolean menutime = false;
@@ -159,6 +161,11 @@ public class MainGameState extends BasicGameState{
 	}
  
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
+		if (skipRender) {
+			g.setColor(Color.white);
+			g.drawString("Loading planet...", 500, 250);
+			return;
+		}
 		g.setColor(Color.white);
 		g.fillRect(1024, 0, 300, 672);
 		g.setColor(Color.gray);
@@ -271,6 +278,7 @@ public class MainGameState extends BasicGameState{
     	inputDelta-=delta;
     	if(dead) {
     		dead = false;
+    		skipRender = true; // so that we don't load the wrong stuff
     		setup();
     		sbg.enterState(MainGame.MENUSTATE);
     		return;
@@ -284,6 +292,7 @@ public class MainGameState extends BasicGameState{
     			dm.removeOnScreenChar(p1.getX(), p1.getY());
     			dm.putOnScreenChar(p1.getX(), p1.getY(), p1, false);
     			loadedCreature = null;
+    			skipRender = false;
     		}
 	    	if(!menutime){
 	    		if(free_mode){ //keypresses for free camera mode
